@@ -1,0 +1,338 @@
+﻿@using AnotherSpaceGame.Data
+@using AnotherSpaceGame.Services
+@using Microsoft.AspNetCore.Identity
+@inject IUserStatusService UserStatusService
+@inject UserManager<ApplicationUser> UserManager
+@inject ApplicationDbContext DbContext
+
+@{
+    var status = UserStatusService.GetCurrentStatus(User);
+    var user = UserManager.GetUserAsync(User).Result;
+    int unreadCount = 0;
+    if (user != null)
+    {
+        unreadCount = DbContext.PrivateMessages.Count(m => m.ReceiverId == user.Id && !m.IsRead);
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AnotherSpaceGame</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AnotherSpaceGame.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="Home" asp-page="/Views/Index">AnotherSpaceGame</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Command
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Missions">Missions</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Information
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/EmpireSummary">Empire Summary</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/ImportantEvents">Important Events</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Economy
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/ManageColonies">Manage Colonies</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Projects">Projects</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Market">Market</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Science
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Explore">Explore</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Research">Research</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Artifacts">Artifacts</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Military
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/BuildShips">Builds Ships</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/ManageFleet">Manage Fleet</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Intelligence">Intelligence</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Attack">Attack</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/BattleLogs">Battle Logs</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Federation
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationRankings">Rankings</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationCreate">Create New Federation</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationMembers">My Federation</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationDiscussion">Discussion</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationWar">Wars</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationBattleLogs">Activity</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationElection">Election</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationResign">Resign</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Rankings
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/RankingTopEmpires">Top 50 Empires</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/RankingRankNearMe">Rank Near Me</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/RankingAllStats">Other Rankings</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Game Info
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Manual">Manual</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/Rules">Rules</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="gameDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gameDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/RestartEmpire">Restart Empire</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/AccountInfo">Account Info</a>
+                                </li>
+                                <!-- Add more dropdown items as needed -->
+                            </ul>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button id="chat-toggle-btn" class="btn btn-primary rounded-circle" title="Toggle Chat">
+        <i class="bi bi-chat-dots"></i>
+    </button>
+
+    <!-- Chat Panel -->
+    <div id="chat-panel" style="display:none;">
+        <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
+            <span><i class="bi bi-chat-dots"></i> Game Chat</span>
+            <button type="button" class="btn-close" aria-label="Close" id="chat-close-btn"></button>
+        </div>
+        <div id="chat-messages">
+            <!-- Messages will appear here -->
+        </div>
+        <form id="chat-input-area" autocomplete="off">
+            <div class="input-group">
+                <input type="text" class="form-control" id="chat-input" placeholder="Type a message..." />
+                <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+            </div>
+        </form>
+    </div>
+    <!-- Fixed Bottom Bar -->
+    <div id="game-status-bar" class="bg-dark text-light d-flex flex-row justify-content-center align-items-center"
+         style="position:fixed;bottom:0;left:0;width:100vw;height:48px;z-index:2000;box-shadow:0 -2px 8px rgba(0,0,0,0.1);font-size:1rem;">
+        <div class="mx-3">
+            <i class="bi bi-person"></i>
+            <span>Username:</span>
+            <strong>@status.Username</strong>
+        </div>
+        <div class="mx-3">
+            <i class="bi bi-cash-coin"></i>
+            <span>Credits:</span>
+            <strong>@status.Credits</strong>
+        </div>
+        <div class="mx-3">
+            <i class="bi bi-egg-fried"></i>
+            <span>Food:</span>
+            <strong>@status.Food</strong>
+        </div>
+        <div class="mx-3">
+            <i class="bi bi-lightning-charge"></i>
+            <span>Power Rating:</span>
+            <strong>@status.PowerRating</strong>
+        </div>
+        <div class="mx-3">
+            <i class="bi bi-hourglass-split"></i>
+            <span>Turns:</span>
+            <strong>@status.Turns</strong>
+        </div>
+        <div class="mx-3">
+            <a asp-area="Game" asp-page="/Income" class="text-light" title="Income">
+                <i class="bi bi-currency-dollar"></i> Income
+            </a>
+        </div>
+        <div class="mx-3">
+            <a asp-area="Game" asp-page="/PrivateMessages" class="text-light" title="Private Messages">
+                <i class="bi bi-envelope"></i> Private Messages
+                @if (unreadCount > 0)
+                {
+                    <span class="badge bg-danger">@unreadCount</span>
+                }
+            </a>
+        </div>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - AnotherSpaceGame - <a asp-area="Home" asp-page="/Views/Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        // Chat panel toggle logic
+        $(function () {
+            $('#chat-toggle-btn').on('click', function () {
+                $('#chat-panel').toggle();
+            });
+            $('#chat-close-btn').on('click', function () {
+                $('#chat-panel').hide();
+            });
+        });
+
+        // SignalR chat logic
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chathub")
+            .build();
+
+        connection.on("ReceiveMessage", function (user, message) {
+            const encodedMsg = `<div class="mb-2"><strong>${user}:</strong> ${$('<div>').text(message).html()}</div>`;
+            $('#chat-messages').append(encodedMsg);
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        $('#chat-input-area').on('submit', function (e) {
+            e.preventDefault();
+            var msg = $('#chat-input').val().trim();
+            if (msg) {
+                connection.invoke("SendMessage", msg).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                $('#chat-input').val('');
+            }
+        });
+    </script>
+</body>
+</html>
