@@ -1,0 +1,36 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.TechnologyResearchModel
+@{
+    ViewData["Title"] = "Technology Research";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+<table>
+    <thead>
+        <tr>
+            <th>Research</th>
+            <th>Turns Required</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var research in Model.ListOfAvailableResearch)
+        {
+            <tr>
+                <td>@research.Name</td>
+                <td>@research.TurnsRequired</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        <input type="hidden" name="SelectedResearchName" value="@research.Name" />
+                        <input type="number" name="TurnsToInvest" min="1" max="@research.TurnsRequired" value="1" />
+                        <button type="submit">Research</button>
+                        @Html.AntiForgeryToken()
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

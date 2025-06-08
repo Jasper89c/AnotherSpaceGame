@@ -1,0 +1,56 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.RankingTopEmpiresModel
+@{
+    ViewData["Title"] = "Top 50 Empires";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Top 50 Empires</h2>
+
+<p>Here are the top 50 empires in the galaxy based on their power rating and total planets.</p>
+
+@if (Model.CurrentUserEmpire != null && Model.CurrentUserRank != null)
+{
+    <div class="alert alert-info mt-4">
+        <strong>Your Empire Stats:</strong><br />
+        <b>Rank:</b> @Model.CurrentUserRank of @Model.TotalEmpires<br />
+        <b>Username:</b> @Model.CurrentUserEmpire.Username<br />
+        <b>Faction:</b> @Model.CurrentUserEmpire.Faction<br />
+        <b>Total Planets:</b> @Model.CurrentUserEmpire.TotalPlanets<br />
+        <b>Power Rating:</b> @Model.CurrentUserEmpire.PowerRating
+    </div>
+}
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Ranking</th>
+            <th></th>
+            <th>Username</th>
+            <th>Faction</th>
+            <th>Total Planets</th>
+            <th>Power Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.TopEmpires.Count; i++)
+        {
+            var empire = Model.TopEmpires[i];
+            <tr>
+                <td>@(i + 1)</td>
+                <td>
+                    <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@empire.Id" title="View Empire">
+                        <i class="bi bi-info-circle"></i>
+                    </a>
+                </td>
+                <td>@empire.Username</td>
+                <td>@empire.Faction</td>
+                <td>@empire.TotalPlanets</td>
+                <td>@empire.PowerRating</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p class="text-muted mb-2">
+    <small>Tables last updated: @Model.LastUpdate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</small>
+</p>

@@ -1,0 +1,109 @@
+﻿@page "{id:int}"
+@model AnotherSpaceGame.Areas.Game.Pages.FederationLookUpModel
+@{
+    ViewData["Title"] = "Federation Details";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+@if (Model.Federation == null)
+{
+    <div class="alert alert-danger">Federation not found.</div>
+}
+else
+{
+    <h2>@Model.Federation.FederationName</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Leader</dt>
+        <dd class="col-sm-9">@Model.Federation.FederationLeader?.UserName</dd>
+
+        <dt class="col-sm-3">Total Power Rating</dt>
+        <dd class="col-sm-9">@Model.Federation.TotalPowerating</dd>
+
+        <dt class="col-sm-3">Total Planets</dt>
+        <dd class="col-sm-9">@Model.Federation.TotalPlanets</dd>
+
+        <dt class="col-sm-3">Total Members</dt>
+        <dd class="col-sm-9">@Model.Federation.TotalMembers</dd>
+
+        <dt class="col-sm-3">Created At</dt>
+        <dd class="col-sm-9">@Model.Federation.CreatedAt.ToString("yyyy-MM-dd")</dd>
+
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Federation.FederationDescription</dd>
+    </dl>
+
+    <div class="mt-4">
+        <h4>Current War Target</h4>
+        @if (Model.OutgoingWar != null)
+        {
+            <div class="alert alert-warning">
+                This federation has declared war on: <strong>@Model.OutgoingWar.DefenderFederation.FederationName</strong>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success">
+                This federation has not declared war on any federation.
+            </div>
+        }
+
+        <h4 class="mt-3">Federations at War with This Federation</h4>
+        @if (Model.IncomingWars != null && Model.IncomingWars.Any())
+        {
+            <ul>
+                @foreach (var war in Model.IncomingWars)
+                {
+                    <li>@war.AttackerFederation.FederationName</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                No federations have declared war on this federation.
+            </div>
+        }
+    </div>
+
+    <!-- Apply to Federation Button -->
+    <form method="post" asp-page-handler="Apply">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-primary">Apply to Federation</button>
+        @Html.AntiForgeryToken()
+    </form>
+
+    @if (Model.Federation.FederationMembers != null && Model.Federation.FederationMembers.Any())
+    {
+        <h3>Members</h3>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>User Name</th>
+                    <th>Power Rating</th>
+                    <th>Total Planets</th>
+                    <th>Faction</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var member in Model.Federation.FederationMembers)
+            {
+                <tr>
+                    <td>@member.UserName</td>
+                    <td>@member.PowerRating</td>
+                    <td>@member.TotalPlanets</td>
+                    <td>@member.Faction</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">No members found in this federation.</div>
+    }
+}

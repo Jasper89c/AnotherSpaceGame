@@ -1,0 +1,43 @@
+﻿@page  
+@model AnotherSpaceGame.Areas.Game.Pages.ArtifactsModel  
+@{  
+    ViewData["Title"] = "Your Artifacts";  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+}  
+
+<h2>Your Artifacts</h2>  
+
+<a asp-page="/ArtifactsInUniverse" class="btn btn-link mb-3">View All Artifacts in Universe</a>  
+
+@if (Model.UserArtifacts == null || !Model.UserArtifacts.Any())  
+{  
+    <div class="alert alert-info">You have no artifacts.</div>  
+}  
+else  
+{  
+    <table class="table table-bordered table-striped">  
+        <thead>  
+            <tr>  
+                <th>Name</th>  
+                <th>Type</th>  
+                <th>Owned</th>  
+                <th>Max</th>  
+            </tr>  
+        </thead>  
+        <tbody>  
+        @foreach (var artifact in Model.UserArtifacts)  
+        {  
+            <tr>  
+                <td>  
+                    <a asp-page="/UseArtifact" asp-route-id="@artifact.Id">  
+                        @artifact.ArtifactName  
+                    </a>  
+                </td>  
+                <td>@artifact.ArtifactType</td>  
+                <td>@artifact.Total</td>  
+                <td>@artifact.MaxTotal</td>  
+            </tr>  
+        }  
+        </tbody>  
+    </table>  
+}

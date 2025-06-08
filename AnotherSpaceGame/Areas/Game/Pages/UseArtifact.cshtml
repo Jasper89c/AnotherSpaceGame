@@ -1,0 +1,49 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.UseArtifactModel
+@{
+    ViewData["Title"] = "Use Artifacts";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Use Artifact</h2>
+
+@if (!string.IsNullOrEmpty(Model.UseMessage))
+{
+    <div class="alert alert-success">@Model.UseMessage</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (Model.Artifact != null)
+{
+    <div class="mb-3">
+        <strong>Artifact:</strong> @Model.Artifact.ArtifactName<br />
+        <strong>Type:</strong> @Model.Artifact.ArtifactType<br />
+        <strong>Owned:</strong> @Model.Artifact.Total<br />
+        <strong>Max:</strong> @Model.Artifact.MaxTotal
+    </div>
+    <form method="post">
+        <input type="hidden" name="Id" value="@Model.Artifact.Id" />
+        <div class="mb-3">
+            <label for="TargetUsername" class="form-label">Target Username:</label>
+            <input type="text" id="TargetUsername" name="TargetUsername" class="form-control" required />
+            <div class="form-text">
+                Enter the username of the player you want to use this artifact on.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Use Artifact</button>
+        <a asp-page="/Artifacts" class="btn btn-secondary ms-2">Cancel</a>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">Artifact not found or you do not have access to this artifact.</div>
+}

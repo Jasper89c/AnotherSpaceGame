@@ -1,0 +1,45 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.InfectPlanetModel
+@{
+    ViewData["Title"] = "Infect Planet";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+@if (Model.Planet != null)
+{
+    <h2>Infect Planet</h2>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <td>@Model.Planet.Name</td>
+        </tr>
+        <tr>
+            <th>Type</th>
+            <td>@Model.Planet.Type</td>
+        </tr>
+        <tr>
+            <th>Total Land</th>
+            <td>@Model.Planet.TotalLand</td>
+        </tr>
+        <tr>
+            <th>Available Ore</th>
+            <td>@Model.Planet.AvailableOre</td>
+        </tr>
+        <!-- Add more planet details as needed -->
+    </table>
+
+    <form method="post">
+        <input type="hidden" asp-for="PlanetId" />
+        <button type="submit" class="btn btn-danger">
+            Confirm Infect (Cost: 5 Turns)
+        </button>
+        @Html.AntiForgeryToken()
+    </form>    
+}
+else
+{
+    <p>Planet not found.</p>
+}

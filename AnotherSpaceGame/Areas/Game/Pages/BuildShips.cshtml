@@ -1,0 +1,126 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.BuildShipsModel
+@{
+    ViewData["Title"] = "Builds Ships";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var user = Model.CurrentUser;
+    var maxTurns = user?.Turns?.MaxTurns ?? 0;
+}
+
+<h2>Build Ships</h2>
+
+@if (Model.BuildableShips == null || !Model.BuildableShips.Any())
+{
+    <div class="alert alert-info">No ships available to build.</div>
+}
+else
+{
+    <form method="post">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Ship Name</th>
+                    <th>Total in Fleet</th>
+                    <th>Build</th>
+                    <th>Total Power Rating</th>
+                    <th>Turns</th>
+                    <th>Range</th>
+                    <th>Weapon</th>
+                    <th>Hull</th>
+                    <th>Power</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var ship in Model.BuildableShips
+                .OrderByDescending(s => Model.UserFleet?.FirstOrDefault(f => f.ShipId == s.Id)?.TotalPowerRating ?? 0)
+                .ThenBy(s => s.ShipType))
+            {
+                var fleet = Model.UserFleet?.FirstOrDefault(f => f.ShipId == ship.Id);
+                var totalInFleet = fleet?.TotalShips ?? 0;
+                var totalPower = fleet?.TotalPowerRating ?? 0;
+                var buildRate = ship.BuildRate > 0 ? ship.BuildRate : 1;
+                var collapseId = $"collapse-ship-{ship.Id}";
+            <tr>
+                <td>@ship.ShipName</td>
+                <td>@totalInFleet</td>
+                <td>
+                    <input type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control" value="0" />
+                </td>
+                <td>@totalPower</td>
+                <td>
+                    <span id="turns-@ship.Id">0</span>
+                </td>
+                <td>@ship.Range</td>
+                <td>@ship.Weapon</td>
+                <td>@ship.Hull</td>
+                <td>@ship.PowerRating</td>
+                        <td class="details-toggle" data-bs-target="#@collapseId" style="cursor:pointer;" title="Click to show/hide details">
+                            <i class="bi bi-info-square" aria-label="Details"></i>
+                        </td>
+            </tr>
+            <tr class="collapse" id="@collapseId">
+                <td colspan="10">
+                    <strong>Ship Data:</strong>
+                    <ul class="mb-0">
+                        <li><strong>Name:</strong> @ship.ShipName</li>
+                        <li><strong>Type:</strong> @ship.ShipType</li>
+                        <li><strong>Range:</strong> @ship.Range</li>
+                        <li><strong>Weapon:</strong> @ship.Weapon</li>
+                                <li><strong>Energy Weapon:</strong> @ship.EnergyWeapon</li>
+                                <li><strong>Kinetic Weapon:</strong> @ship.KineticWeapon</li>
+                                <li><strong>Missile Weapon:</strong> @ship.MissileWeapon</li>
+                                <li><strong>Chemical Weapon:</strong> @ship.ChemicalWeapon</li>
+                        <li><strong>Hull:</strong> @ship.Hull</li>
+                                <li><strong>Energy Shield:</strong> @(ship.EnergyShield.ToString("P0"))</li>
+                                <li><strong>Kinetic Shield:</strong> @(ship.KineticShield.ToString("P0"))</li>
+                                <li><strong>Missile Shield:</strong> @(ship.MissileShield.ToString("P0"))</li>
+                                <li><strong>Chemical Shield:</strong> @(ship.ChemicalShield.ToString("P0"))</li>
+                        <li><strong>Power Rating:</strong> @ship.PowerRating</li>
+                        <li><strong>Build Rate:</strong> @ship.BuildRate</li>
+                                <li><strong>Cost To Build:</strong> @ship.CostToBuild</li>
+                                <li><strong>Scanner Rating:</strong> @ship.ScanningPower</li>
+                                <li><strong>No Defense:</strong> @ship.NoDefense</li>
+                                <li><strong>No Retal:</strong> @ship.NoRetal</li>
+                                <li><strong>Terran Metal Cost:</strong> @ship.TerranMetal</li>
+                                <li><strong>Red Crystal Cost:</strong> @ship.RedCrystal</li>
+                                <li><strong>White Crystal Cost:</strong> @ship.WhiteCrystal</li>
+                                <li><strong>Rutile Cost:</strong> @ship.Rutile</li>
+                                <li><strong>Composite Cost:</strong> @ship.Composite</li>
+                                <li><strong>Strafez Organism Cost:</strong> @ship.StrafezOrganism</li>
+                                <li><strong>Ship Capture Chance:</strong> @(ship.CapChance.ToString("P0"))</li>
+                        <!-- Add more ship properties here as needed -->
+                    </ul>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Build Selected Ships</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <script>
+        // Update turns required as user types
+        document.querySelectorAll('input[name^="BuildAmounts"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                var shipId = this.name.match(/\d+/)[0];
+                var buildAmount = parseInt(this.value) || 0;
+                var buildRate = parseInt(this.getAttribute('max')) / @maxTurns;
+                var turns = buildRate > 0 ? Math.ceil(buildAmount / buildRate) : 0;
+                document.getElementById('turns-' + shipId).innerText = turns;
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.details-toggle').forEach(function(td) {
+            td.addEventListener('click', function() {
+                var target = td.getAttribute('data-bs-target');
+                var collapseEl = document.querySelector(target);
+                if (collapseEl) {
+                    var bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                    bsCollapse.toggle();
+                }
+            });
+        });
+    </script>
+}

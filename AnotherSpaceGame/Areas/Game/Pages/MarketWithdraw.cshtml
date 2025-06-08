@@ -1,0 +1,74 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.MarketWithdrawModel
+@{
+    ViewData["Title"] = "Withdraw Market Posts";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (TempData["MarketWithdrawSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["MarketWithdrawSuccess"]</div>
+}
+@if (TempData["MarketWithdrawError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MarketWithdrawError"]</div>
+}
+
+<h2>Your Market Posts</h2>
+
+@if (Model.UserMarketPosts == null || !Model.UserMarketPosts.Any())
+{
+    <div class="alert alert-info">You have no active market posts.</div>
+}
+else
+{
+    <form method="post" asp-page-handler="BatchWithdraw" onsubmit="return confirmBatchWithdraw();">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="select-all" onclick="toggleAll(this)" />
+                    </th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th>Expires</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var post in Model.UserMarketPosts)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="WithdrawPostIds" value="@post.Id" />
+                    </td>
+                    <td>@post.MarketType</td>
+                    <td>@post.Amount</td>
+                    <td>@post.Price</td>
+                    <td>@post.DateTime.ToString("g")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-danger btn-sm">Withdraw Selected</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <script>
+        function toggleAll(source) {
+            checkboxes = document.getElementsByName('WithdrawPostIds');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        function confirmBatchWithdraw() {
+            var checkboxes = document.getElementsByName('WithdrawPostIds');
+            var anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+            if (!anyChecked) {
+                alert('Please select at least one post to withdraw.');
+                return false;
+            }
+            return confirm('Are you sure you want to withdraw the selected market posts?');
+        }
+    </script>
+}

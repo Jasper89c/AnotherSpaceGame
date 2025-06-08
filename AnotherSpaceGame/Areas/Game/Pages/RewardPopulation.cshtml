@@ -1,0 +1,48 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.RewardPopulationModel
+@{
+    ViewData["Title"] = "Reward Population";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Reward Population</h2>
+
+@if (TempData["RewardMessage"] != null)
+{
+    <div class="alert alert-success">@Html.Raw(TempData["RewardMessage"])</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (Model.Planet != null)
+{
+    <div class="mb-3">
+        <strong>Colony:</strong> @Model.Planet.Name<br />
+        <strong>Current Population:</strong> @Model.Planet.CurrentPopulation<br />
+        <strong>Current Loyalty:</strong> @Model.Planet.Loyalty
+    </div>
+    <form method="post">
+        <input type="hidden" name="Id" value="@Model.Planet.Id" />
+        <div class="mb-3">
+            <label for="TurnsToUse" class="form-label">Turns to use (1-45):</label>
+            <input type="number" id="TurnsToUse" name="TurnsToUse" class="form-control" min="1" max="45" value="1" required />
+            <div class="form-text">
+                Each turn increases loyalty by 5 and costs (@Model.Planet.CurrentPopulation * 2) credits per turn.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Reward Population</button>
+        <a asp-page="/ManagePlanet" asp-route-id="@Model.Planet.Id" class="btn btn-secondary ms-2">Cancel</a>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">Planet not found or you do not have access to this planet.</div>
+}

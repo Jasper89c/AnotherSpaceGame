@@ -1,0 +1,202 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ManagePlanetModel
+@{
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    ViewData["Title"] = "Manage Planet";
+}
+
+<h2>Planet Details</h2>
+
+<partial name="_ValidationSummary" />
+@if (!string.IsNullOrEmpty(Model.TurnMessage))
+{
+    <div class="alert alert-success">@Html.Raw(Model.TurnMessage)</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (Model.Planet != null)
+{
+<div class="row">
+    <div class="col-md-6">
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr><th colspan="2">Colony Information</th></tr>
+                <tr>
+                    <th>Name</th>
+                    <td>@Model.Planet.Name</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td>@Model.Planet.Type</td>
+                </tr>
+                <tr>
+                    <th>Available Ore</th>
+                    <td>@Model.Planet.AvailableOre</td>
+                </tr>
+                <tr>
+                    <th>Mineral Produced</th>
+                    <td>@Model.Planet.MineralProduced</td>
+                </tr>
+                <tr>
+                    <th>Total Land</th>
+                    <td>@Model.Planet.TotalLand</td>
+                </tr>
+                <tr>
+                    <th>Food Required</th>
+                    <td>@Model.Planet.FoodRequired</td>
+                </tr>
+                <tr>
+                    <th>Goods Required</th>
+                    <td>@Model.Planet.GoodsRequired</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr><th colspan="2">Population</th></tr>
+                <tr>
+                    <th>Current Population</th>
+                    <td>@Model.Planet.CurrentPopulation</td>
+                </tr>
+                <tr>
+                    <th>Max Population</th>
+                    <td>@Model.Planet.MaxPopulation</td>
+                </tr>
+                <tr>
+                    <th>Loyalty</th>
+                    <td>@Model.Planet.Loyalty</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr><th colspan="2">Construction</th></tr>
+                <tr>
+                    <th>Available Labor</th>
+                    <td>@Model.Planet.AvailableLabour</td>
+                </tr>
+                <tr>
+                    <th>Land Available</th>
+                    <td>@Model.Planet.LandAvailable</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr><th colspan="2">Manage Infrastructure</th></tr>
+                <tr>
+                    <td colspan="2">
+                        <form method="post" class="row g-2 align-items-center">
+                            <input type="hidden" name="id" value="@Model.Planet.Id" />
+                            <div class="col-auto">
+                                <label for="housing" class="form-label mb-0">Housing:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="housing" name="housing" class="form-control" min="0" value="0" />
+                            </div>
+                            <div class="col-auto">
+                                <label for="commercial" class="form-label mb-0">Commercial:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="commercial" name="commercial" class="form-control" min="0" value="0" />
+                            </div>
+                            <div class="col-auto">
+                                <label for="agriculture" class="form-label mb-0">Agriculture:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="agriculture" name="agriculture" class="form-control" min="0" value="0" />
+                            </div>
+                            <div class="col-auto">
+                                <label for="industry" class="form-label mb-0">Industry:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="industry" name="industry" class="form-control" min="0" value="0" />
+                            </div>
+                            <div class="col-auto">
+                                <label for="mining" class="form-label mb-0">Mining:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" id="mining" name="mining" class="form-control" min="0" value="0" />
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col-auto mt-2">
+                                <button type="submit" name="action" value="build" class="btn btn-primary">Build Selected</button>
+                            </div>
+                            <div class="col-auto mt-2">
+                                <button type="submit" name="action" value="demolish" class="btn btn-danger">Demolish Selected</button>
+                            </div>
+                                @Html.AntiForgeryToken()
+                        </form>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <tr><th colspan="2">Empire Information</th></tr>
+                <tr>
+                    <th>Raw Material</th>
+                    <td>@Model.RawMaterial</td>
+                </tr>
+                <tr>
+                    <th>Consumer Goods</th>
+                    <td>@Model.Goods</td>
+                </tr>
+                <tr>
+                    <th>Ore</th>
+                    <td>@Model.Ore</td>
+                </tr>
+            </tbody>
+        </table>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr><th colspan="2">Your Command</th></tr>
+                    <tr>
+                        <td>
+                            <a asp-page="/RewardPopulation" asp-route-id="@Model.Planet.Id" class="btn btn-outline-primary w-100 mb-2">
+                                Reward Population
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a asp-page="/ExcavationDig" asp-route-id="@Model.Planet.Id" class="btn btn-outline-secondary w-100 mb-2">
+                                Excavation Dig
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a asp-page="/PlunderColony" asp-route-id="@Model.Planet.Id" class="btn btn-outline-danger w-100">
+                                Plunder Colony
+                            </a>
+                        </td>
+                    </tr>
+                    @if (Model.Faction == AnotherSpaceGame.Models.Faction.Viral | Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-page="/InfectPlanet" asp-route-id="@Model.Planet.Id" class="btn btn-outline-warning w-100">
+                                    Infect Planet
+                                </a>
+                            </td>
+                        </tr>
+                    }
+    )
+                </tbody>
+            </table>
+    </div>
+</div>
+}
+else
+{
+    <div class="alert alert-warning">Planet not found or you do not have access to this planet.</div>
+}

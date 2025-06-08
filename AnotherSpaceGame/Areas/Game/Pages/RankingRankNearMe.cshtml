@@ -1,0 +1,103 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.RankingRankNearMeModel
+@{
+    ViewData["Title"] = "Rank Near Me";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    int startRank = (Model.CurrentPage - 1) * Model.PageSize + 1;
+}
+
+<h2>Rank Near Me</h2>
+
+<form method="get" class="mb-3">
+    <label for="pageSize" class="form-label">Page Size:</label>
+    <select id="pageSize" name="PageSize" class="form-select d-inline w-auto" onchange="this.form.submit()">
+        @foreach (var size in new[] { 20, 40, 60, 80, 100 })
+        {
+            <option value="@size" @(Model.PageSize == size ? "selected" : "")>@size</option>
+        }
+    </select>
+    <input type="hidden" name="page" value="@Model.CurrentPage" />
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th></th>
+            <th>Username</th>
+            <th>Faction</th>
+            <th>Planets</th>
+            <th>Power Rating</th>
+            <th>Attack</th>
+            <th>PR Ratio (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Users.Count; i++)
+        {
+            var user = Model.Users[i];
+            var rank = startRank + i;
+            bool isCurrent = user.Id == Model.CurrentUserId;
+            <tr class="@(isCurrent ? "table-info" : "")">
+                @if(user.IsNPC == false)
+                {
+                    <td>@rank</td>
+                }
+                else
+                {
+                    <td style="color:magenta;">NPC</td>
+                }
+                @if (user.IsNPC == false)
+                {
+                    <td>
+                        <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@user.Id" title="View Empire">
+                            <i class="bi bi-info-square"></i>
+                        </a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-area="Game" asp-page="/NPCLookup" asp-route-id="@user.Id" title="View Empire">
+                            <i class="bi bi-info-square"></i>
+                        </a>
+                    </td>
+                }                
+                @if (user.IsNPC == false)
+                {
+                    <td>@user.UserName</td>
+                }
+                else
+                {
+                    <td style="color:magenta;">@user.UserName</td>
+                }
+                <td>@user.Faction</td>
+                <td>@user.TotalPlanets</td>
+                <td>@user.PowerRating</td>
+                <td>
+                    <a asp-area="Game" asp-page="/Attack" asp-route-id="@user.UserName" class="btn btn-sm btn-danger">
+                        Attack
+                    </a>
+                </td>
+                <td>@user.PrRatio.ToString("0.##")%</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" asp-route-page="@(Model.CurrentPage - 1)" asp-route-PageSize="@Model.PageSize">Previous</a>
+        </li>
+        @for (int p = 1; p <= Model.TotalPages; p++)
+        {
+            <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-route-page="@p" asp-route-PageSize="@Model.PageSize">@p</a>
+            </li>
+        }
+        <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" asp-route-page="@(Model.CurrentPage + 1)" asp-route-PageSize="@Model.PageSize">Next</a>
+        </li>
+    </ul>
+</nav>

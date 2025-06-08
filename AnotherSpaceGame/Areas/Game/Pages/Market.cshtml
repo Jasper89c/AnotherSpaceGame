@@ -1,0 +1,119 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.MarketModel
+@{
+    ViewData["Title"] = "Market";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (TempData["MarketSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MarketSuccess"]
+    </div>
+}
+
+<h2>Market</h2>
+
+<!-- Show user's current commodity amounts -->
+<div class="mb-4">
+    <h4>Your Commodities</h4>
+    <ul>
+        <li>Credits: @Model.UserCommodities?.Credits ?? 0</li>
+        <li>Food: @Model.UserCommodities?.Food ?? 0</li>
+        <li>Ore: @Model.UserCommodities?.Ore ?? 0</li>
+        <li>Raw Material: @Model.UserCommodities?.RawMaterial ?? 0</li>
+        <li>Consumer Goods: @Model.UserCommodities?.ConsumerGoods ?? 0</li>
+        <li>Terran Metal: @Model.UserCommodities?.TerranMetal ?? 0</li>
+        <li>Red Crystal: @Model.UserCommodities?.RedCrystal ?? 0</li>
+        <li>White Crystal: @Model.UserCommodities?.WhiteCrystal ?? 0</li>
+        <li>Rutile: @Model.UserCommodities?.Rutile ?? 0</li>
+        <li>Composite: @Model.UserCommodities?.Composite ?? 0</li>
+        <li>Strafez Organism: @Model.UserCommodities?.StrafezOrganism ?? 0</li>
+    </ul>
+    <a asp-area="Game" asp-page="/MarketWithdraw" class="btn btn-secondary btn-sm mt-2">Withdraw from Market</a>
+</div>
+
+@foreach (var marketType in Enum.GetValues(typeof(AnotherSpaceGame.Models.MarketType)).Cast<AnotherSpaceGame.Models.MarketType>())
+{
+    <div class="mb-5">
+        <h4>@marketType.ToString() Market</h4>
+
+        <!-- Sell Form -->
+        <form method="post" asp-page-handler="Sell" class="row g-2 mb-3">
+            <input type="hidden" name="SellMarketType" value="@marketType" />
+            <div class="col-auto">
+                <input type="number" name="SellAmount"
+                       min="1"
+                       max="@Model.MarketLimits[marketType].MaxAmount"
+                       class="form-control form-control-sm"
+                       placeholder="Amount"
+                       required />
+            </div>
+            <div class="col-auto">
+                <input type="number" name="SellPrice"
+                       min="@Model.MarketLimits[marketType].MinPrice"
+                       max="@Model.MarketLimits[marketType].MaxPrice"
+                       class="form-control form-control-sm"
+                       placeholder="Price"
+                       required />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary btn-sm">Sell</button>
+            </div>
+            <div class="col-auto text-muted small">
+                (Min price: @Model.MarketLimits[marketType].MinPrice,
+                 Max price: @Model.MarketLimits[marketType].MaxPrice,
+                 Max amount: @Model.MarketLimits[marketType].MaxAmount)
+            </div>
+            @Html.AntiForgeryToken()
+        </form>
+
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th>Expires</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.MarketPostsByType.TryGetValue(marketType, out var posts) && posts.Any())
+            {
+                foreach (var post in posts)
+                {
+                    <tr>
+                        <td>@post.Amount</td>
+                        <td>@post.Price</td>
+                        <td>@post.DateTime.ToString("g")</td>
+                        <td>
+                            <form method="post" asp-page-handler="Buy">
+                                <input type="hidden" name="PostId" value="@post.Id" />
+                                <input type="number" name="BuyAmount" min="1" max="@post.Amount" value="1" class="form-control form-control-sm d-inline-block" style="width:80px;" />
+                                <button type="submit" class="btn btn-success btn-sm">Buy</button>
+                                    @Html.AntiForgeryToken()
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No posts available.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

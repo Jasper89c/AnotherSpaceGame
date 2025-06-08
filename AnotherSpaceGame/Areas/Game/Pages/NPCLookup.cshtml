@@ -1,0 +1,85 @@
+﻿@page "{id?}"
+@model AnotherSpaceGame.Areas.Game.Pages.NPCLookUpModel
+@{
+    ViewData["Title"] = "NPC Intelligence";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var now = DateTime.UtcNow;
+    var remaining = (Model.DamageProtection > now)
+        ? Model.DamageProtection - now
+        : TimeSpan.Zero;
+    var hours = (int)remaining.TotalHours;
+    var minutes = remaining.Minutes;
+}
+
+<h2>Empire Summary</h2>
+<table class="table table-bordered">
+    <tr>
+        <th>Username</th>
+        <td>@Model.Username</td>
+    </tr>
+    <tr>
+        <th>Damage Protection</th>
+        <td>
+            @if (remaining > TimeSpan.Zero)
+            {
+                @($"{hours} hour{(hours == 1 ? "" : "s")} {minutes} minute{(minutes == 1 ? "" : "s")} remaining")
+            }
+            else
+            {
+                <span class="text-danger">Out of Damage Protection</span>
+            }
+        </td>
+    </tr>
+    <tr>
+        <th>Faction</th>
+        <td>@Model.Faction</td>
+    </tr>
+    <tr>
+        <th>Total Colonies</th>
+        <td>@Model.TotalColonies</td>
+    </tr>
+    <tr>
+        <th>Total Planets</th>
+        <td>@Model.TotalPlanets</td>
+    </tr>
+    <tr>
+        <th>Power Rating</th>
+        <td>@Model.PowerRating</td>
+    </tr>
+    <tr>
+        <th>Federation</th>
+        <td>@Model.Federation</td>
+    </tr>
+    <tr>
+        <th>Playing Since</th>
+        <td>@Model.PlayingSince</td>
+    </tr>
+    <tr>
+        <th>Empire Age</th>
+        <td>@Model.EmpireAge</td>
+    </tr>
+    <tr>
+        <th>Battles Won</th>
+        <td>@Model.BattlesWon</td>
+    </tr>
+    <tr>
+        <th>Battles Lost</th>
+        <td>@Model.BattlesLost</td>
+    </tr>
+    <tr>
+        <th>Colonies Won</th>
+        <td>@Model.ColoniesWon</td>
+    </tr>
+    <tr>
+        <th>Colonies Lost</th>
+        <td>@Model.ColoniesLost</td>
+    </tr>
+    <tr>
+        <th>Colonies Explored</th>
+        <td>@Model.ColoniesExplored</td>
+    </tr>
+    <tr>
+        <th>Planets Plundered</th>
+        <td>@Model.PlanetsPlundered</td>
+    </tr>
+</table>

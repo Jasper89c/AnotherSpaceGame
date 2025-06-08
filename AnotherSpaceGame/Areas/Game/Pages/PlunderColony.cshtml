@@ -1,0 +1,46 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.PlunderColonyModel
+@{
+    ViewData["Title"] = "Plunder Colony";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Plunder Colony</h2>
+
+@if (!string.IsNullOrEmpty(Model.PlunderMessage))
+{
+    <div class="alert alert-success">@Html.Raw(Model.PlunderMessage)</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (Model.Planet != null)
+{
+    <div class="mb-3">
+        <h4>Colony: @Model.Planet.Name</h4>
+        <p>
+            <strong>Warning:</strong> Plundering this planet will permanently delete it and use <strong>5 turns</strong>.
+        </p>
+        <p>
+            Are you sure you want to plunder this colony?
+        </p>
+        <p>Credits Gained On Plunder: @Model.creditsGainedForPlunder</p>
+    </div>
+    <form method="post">
+        <input type="hidden" name="Id" value="@Model.Planet.Id" />
+        <button type="submit" class="btn btn-danger">Plunder Colony (5 Turns)</button>
+        <a asp-page="/ManagePlanet" asp-route-id="@Model.Planet.Id" class="btn btn-secondary ms-2">Cancel</a>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">Planet not found or you do not have access to this planet.</div>
+}

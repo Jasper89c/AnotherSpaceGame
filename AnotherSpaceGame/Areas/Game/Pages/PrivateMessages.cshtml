@@ -1,0 +1,63 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.PrivateMessagesModel
+@{
+    ViewData["Title"] = "Private Messages"; 
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Private Messages</h2>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+
+<form method="post" class="mb-4">
+    <div class="mb-2">
+        <label asp-for="ReceiverUserName" class="form-label">To (username):</label>
+        <input asp-for="ReceiverUserName" class="form-control" />
+        <span asp-validation-for="ReceiverUserName" class="text-danger"></span>
+    </div>
+    <div class="mb-2">
+        <label asp-for="Content" class="form-label">Message:</label>
+        <textarea asp-for="Content" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Send</button>
+    @Html.AntiForgeryToken()
+</form>
+
+<h4>Recent Messages</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Message</th>
+            <th>Sent At</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var msg in Model.Messages)
+    {
+        <tr>
+            <td>@msg.Sender?.UserName</td>
+            <td>@msg.Receiver?.UserName</td>
+            <td>@msg.Content</td>
+            <td>@msg.SentAt.ToLocalTime().ToString("g")</td>
+                <td>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@msg.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Delete this message?');">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                    @Html.AntiForgeryToken()
+                </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

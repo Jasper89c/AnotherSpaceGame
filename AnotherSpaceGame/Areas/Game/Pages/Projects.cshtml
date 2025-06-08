@@ -1,0 +1,144 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ProjectsModel
+@{
+    ViewData["Title"] = "Projects";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Capsule Lab Project</h2>
+
+@if (Model.Faction == AnotherSpaceGame.Models.Faction.Terran || Model.Faction == AnotherSpaceGame.Models.Faction.AMiner || Model.Faction == AnotherSpaceGame.Models.Faction.Marauder || Model.Faction == AnotherSpaceGame.Models.Faction.Guardian)
+{    
+<div>
+    <p>
+            @if (Model.ClusterResearch.ColonyClusterLevel1 == true)
+            {
+                <a asp-page="/Game/CreateColonyCluster" asp-route-id="1">Create Colony Cluster Level 1</a>                  
+            }
+            @if (Model.ClusterResearch.ColonyClusterLevel2 == true)
+            {
+                <a asp-page="/Game/CreateColonyCluster" asp-route-id="2">Create Colony Cluster Level 2</a>
+            }
+            @if (Model.ClusterResearch.ColonyClusterLevel3 == true)
+            {
+                <a asp-page="/Game/CreateColonyCluster" asp-route-id="3">Create Colony Cluster Level 3</a>
+            }
+    </p>
+    </div>
+}
+else if (Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
+{
+    @if(Model.ViralSpecificResearch.ViralClustering == true)
+    {
+    <p>        
+        <a asp-page="/Game/CreateColonyCluster" asp-route-id="4">Create Tainted C.2</a>
+        <a asp-page="/Game/CreateColonyCluster" asp-route-id="5">Create Tainted C.3</a>
+        <a asp-page="/Game/CreateColonyCluster" asp-route-id="6">Create Tainted C.4</a>
+        <a asp-page="/Game/CreateColonyCluster" asp-route-id="7">Create Infected Colony Cluster 2</a>
+        <a asp-page="/Game/CreateColonyCluster" asp-route-id="8">Create Infected Colony Cluster 3</a>
+    </p>
+    }
+}
+else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
+{
+    @if (Model.CollectiveSpecificResearch.CollectiveClustering == true)
+    {
+        <p>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="9">Create Similare C.2</a>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="10">Create Similare C.3</a>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="11">Create Similare C.4</a>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="14">Create Similare C.5</a>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="12">Create Assimilated Cluster 2</a>
+            <a asp-page="/Game/CreateColonyCluster" asp-route-id="13">Create Assimilated Cluster 3</a>
+        </p>
+    }
+}
+
+@if (Model.UserProjects.CapsuleLab != true)
+{
+    <div>
+        <p>Turns Required: @Model.UserProjects.CapsuleLabTurnsRequired</p>
+        <p>Credits Required: @Model.UserProjects.CapsuleLabCreditsRequired</p>
+        <p>Status: @(Model.UserProjects.CapsuleLab ? "Locked" : "Unlocked")</p>
+    </div>
+    <form method="post" asp-page-handler="InvestCapsuleLab">
+        <label>Turns to Invest:</label>
+        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <br />
+        <label>Credits to Invest:</label>
+        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.CapsuleLabCreditsRequired" />
+        <br />
+        <button type="submit">Invest</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <p>@Model.StatusMessage</p>
+}
+else if (Model.UserProjects.CapsuleLab == true)
+{
+    <p>
+        <a asp-page="/Game/CapsuleLab">Go to Capsule Lab</a>
+    </p>
+}
+else
+{
+    <p>No project data found.</p>
+}
+
+@if (Model.UserProjects.Itech != true)
+{
+    <div>
+        <p>Turns Required: @Model.UserProjects.ItechTurnsRequired</p>
+        <p>Credits Required: @Model.UserProjects.ItechCreditsRequired</p>
+        <p>Status: @(Model.UserProjects.Itech ? "Locked" : "Unlocked")</p>
+    </div>
+    <form method="post" asp-page-handler="InvestItech">
+        <label>Turns to Invest:</label>
+        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <br />
+        <label>Credits to Invest:</label>
+        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.ItechCreditsRequired" />
+        <br />
+        <button type="submit">Invest</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <p>@Model.StatusMessage</p>
+}
+else if (Model.UserProjects.Itech == true)
+{
+    <p>
+        <a asp-page="/Game/Itech">Go to Itech</a>
+    </p>
+}
+else
+{
+    <p>No project data found.</p>
+}
+
+@if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
+{
+    <div>
+        <p>Turns Required: @Model.UserProjects.UnreverseEngineeringTurnsRequired</p>
+        <p>Credits Required: @Model.UserProjects.UnreverseEngineeringCreditsRequired</p>
+        <p>Status: @(Model.UserProjects.UnreverseEngineering ? "Locked" : "Unlocked")</p>
+    </div>
+    <form method="post" asp-page-handler="InvestUnreverseEngineering">
+        <label>Turns to Invest:</label>
+        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <br />
+        <label>Credits to Invest:</label>
+        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.UnreverseEngineeringCreditsRequired" />
+        <br />
+        <button type="submit">Invest</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <p>@Model.StatusMessage</p>
+}
+else if (Model.UserProjects.UnreverseEngineering == true)
+{
+    <p>
+        <a asp-page="/Game/UnreverseEngineering">Go to Unreverse Engineering</a>
+    </p>
+}
+else
+{
+}

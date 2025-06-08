@@ -1,0 +1,45 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ManageFleetModel
+@{
+     ViewData["Title"] = "Manage Fleet";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Your Fleet</h2>
+
+@if (Model.UserFleets == null || !Model.UserFleets.Any())
+{
+    <div class="alert alert-info">You have no ships in your fleet.</div>
+}
+else
+{
+    <form method="post">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Ship ID</th>
+                    <th>Total Ships</th>
+                    <th>Total Power Rating</th>
+                    <th>Total Upkeep</th>
+                    <th>Remove Ships</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var fleet in Model.UserFleets)
+            {
+                <tr>
+                    <td>@fleet.ShipId</td>
+                    <td>@fleet.TotalShips</td>
+                    <td>@fleet.TotalPowerRating</td>
+                    <td>@fleet.TotalUpkeep</td>
+                    <td>
+                        <input type="number" name="RemoveShips[@fleet.Id]" min="0" max="@fleet.TotalShips" class="form-control" value="0" />
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-danger">Disband Ships</button>
+        @Html.AntiForgeryToken()
+    </form>
+}

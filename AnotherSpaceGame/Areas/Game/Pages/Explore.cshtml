@@ -1,0 +1,84 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ExploreModel
+@{
+    ViewData["Title"] = "Explore";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Explore for New Planets</h2>
+
+@if (!string.IsNullOrEmpty(Model.ExploreMessage))
+{
+    <div class="alert alert-info">@Model.ExploreMessage</div>
+}
+@if (Model.NewPlanet != null)
+{
+    <table>
+        <tr>
+            <th>Planet Name</th>
+            <td>@Model.NewPlanet.Name</td>
+        </tr>
+        <tr>
+            <th>Planet Type</th>
+            <td>@Model.NewPlanet.Type</td>
+        </tr>
+        <tr>
+            <th>Distance from Homeworld</th>
+            <td>@Model.NewPlanet.TotalLand</td>
+        </tr>
+        <tr>
+            <th>Resources Available</th>
+            <td>@Model.NewPlanet.AvailableOre</td>
+        </tr>
+    </table>
+}
+
+@if (Model.UserExploration != null)
+{
+    <table class="table table-bordered">
+        <tr>
+            <th>Exploration Points Needed</th>
+            <td>@Model.UserExploration.ExplorationPointsNeeded</td>
+        </tr>
+        <tr>
+            <th>Exploration Completed</th>
+            <td>@Model.UserExploration.ExplorationCompleted.ToString("0.##")%</td>
+        </tr>
+        <tr>
+            <th>Turns Required (for next planet)</th>
+            <td>@Model.UserExploration.TurnsRequired</td>
+        </tr>
+        <tr>
+            <th>Ships in Fleet</th>
+            <td>@Model.UserExploration.ShipsInFleet</td>
+        </tr>
+        <tr>
+            <th>Total Scanning Power</th>
+            <td>@Model.UserExploration.ScanningPower</td>
+        </tr>
+        <tr>
+            <th>Total Planets</th>
+            <td>@Model.UserExploration.TotalPlanets</td>
+        </tr>
+        <tr>
+            <th>Total Colonies</th>
+            <td>@Model.UserExploration.TotalColonies</td>
+        </tr>
+    </table>
+
+    @if (Model.CanExplore)
+    {
+        <form method="post">
+            <div class="mb-3">
+                <label for="turnsUsed" class="form-label">Turns to use:</label>
+                <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="1" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Explore</button>
+            @Html.AntiForgeryToken()
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-warning">You must have a fleet and be under your colony cap to explore.</div>
+    }
+}

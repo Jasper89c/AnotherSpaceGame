@@ -1,0 +1,69 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationDiscussionModel
+@{
+    ViewData["Title"] = "Federation Discussion";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    // For easier navigation
+    var prevDisabled = Model.PageNumber <= 1 ? "disabled" : "";
+    var nextDisabled = Model.PageNumber >= Model.TotalPages ? "disabled" : "";
+}
+
+<h2>Federation Discussion</h2>
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+@if (Model.Federation == null)
+{
+    <div class="alert alert-danger">You are not a member of any federation.</div>
+}
+else
+{
+    <form method="post">
+        <div class="form-group">
+            <textarea asp-for="NewMessage" class="form-control" rows="3" maxlength="500" placeholder="Enter your message..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Message</button>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <hr />
+
+    <h4>Messages</h4>
+    @if (Model.Messages != null && Model.Messages.Any())
+    {
+        <ul class="list-group">
+            @foreach (var msg in Model.Messages)
+            {
+                <li class="list-group-item">
+                    <strong>@msg.Sender?.UserName</strong>
+                    <span class="text-muted" style="font-size:small;">@msg.SentAt.ToLocalTime().ToString("g")</span>
+                    <div>@msg.MessageText</div>
+                </li>
+            }
+        </ul>
+
+        <nav aria-label="Message pagination" class="mt-3">
+            <ul class="pagination">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber - 1)">Previous</a>
+                </li>
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-route-pageNumber="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @nextDisabled">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber + 1)">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="alert alert-info mt-3">No messages yet.</div>
+    }
+}

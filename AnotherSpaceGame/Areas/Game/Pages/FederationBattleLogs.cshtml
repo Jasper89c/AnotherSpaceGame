@@ -1,0 +1,60 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationBattleLogsModel
+@{
+    ViewData["Title"] = "Federation Battle Logs";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var prevDisabled = Model.PageNumber <= 1 ? "disabled" : "";
+    var nextDisabled = Model.PageNumber >= Model.TotalPages ? "disabled" : "";
+}
+
+<h2>Federation Battle Logs</h2>
+
+@if (Model.BattleLogs != null && Model.BattleLogs.Any())
+{
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Attacker</th>
+                <th>Defender</th>
+                <th>Outcome</th>
+                <th>Fleet Report</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var log in Model.BattleLogs)
+        {
+            <tr>
+                <td>@log.DateAndTime.ToLocalTime().ToString("g")</td>
+                <td>@log.ApplicationUser?.UserName</td>
+                <td>@log.Attacker</td>
+                <td>@log.Defender</td>
+                <td>@log.Outcome</td>
+                <td>@log.FleetReport</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <nav aria-label="Battle log pagination" class="mt-3">
+        <ul class="pagination">
+            <li class="page-item @prevDisabled">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-route-PageNumber="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @nextDisabled">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+else
+{
+    <div class="alert alert-info mt-3">No battle logs found for your federation.</div>
+}

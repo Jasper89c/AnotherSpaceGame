@@ -1,0 +1,57 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ExcavationDigModel
+@{
+    ViewData["Title"] = "Excavation Dig";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Excavation Dig</h2>
+
+@if (TempData["DigMessage"] != null)
+{
+    <div class="alert alert-success">@Html.Raw(TempData["DigMessage"])</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (Model.Planet != null)
+{
+    <div class="mb-3">
+        <strong>Colony:</strong> @Model.Planet.Name<br />
+    </div>
+
+    <div class="mb-3">
+        <strong>Artifact Discovery Times:</strong>
+        <ul class="mb-1">
+            <li><strong>Common:</strong> 12:00-13:00, 3:00-4:00, 6:00-7:00, 9:00-10:00, 12:00-13:00pm, 3:00-4:00pm, 6:00-7:00pm, 9:00-10:00pm</li>
+            <li><strong>Uncommon:</strong> 1:00-1:30, 4:00-4:30, 7:00-7:30, 10:00-10:30, 1:00-1:30pm, 4:00-4:30pm, 7:00-7:30pm, 10:00-10:30pm</li>
+            <li><strong>Rare:</strong> 1:30-1:45, 4:30-4:45, 7:30-7:45, 10:30-10:45, 1:30-1:45pm, 4:30-4:45pm, 7:30-7:45pm, 10:30-10:45pm</li>
+        </ul>
+        <small class="text-muted">Artifact type is determined by the current server time.</small>
+    </div>
+
+    <form method="post">
+        <input type="hidden" name="Id" value="@Model.Planet.Id" />
+        <div class="mb-3">
+            <label for="TurnsToUse" class="form-label">Turns to use (1-9):</label>
+            <input type="number" id="TurnsToUse" name="TurnsToUse" class="form-control" min="1" max="9" value="1" required />
+            <div class="form-text">
+                Each turn has a (@(100 * Model.Planet.ArtifactModifier)%) chance to create 1 artifact, based on the time of day.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Excavate</button>
+        <a asp-page="/ManagePlanet" asp-route-id="@Model.Planet.Id" class="btn btn-secondary ms-2">Cancel</a>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">Planet not found or you do not have access to this planet.</div>
+}

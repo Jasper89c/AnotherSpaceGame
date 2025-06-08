@@ -1,0 +1,67 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ResearchModel
+@{
+    ViewData["Title"] = "Infrastructure Research"; 
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Infrastructure Research</h2>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+
+<p>
+    <strong>Current Level:</strong> @Model.CurrentLevel / @Model.MaxLevel<br />
+    <strong>Unused Levels:</strong> @Model.UnusedLevels<br />
+    <strong>Available Turns:</strong> @Model.AvailableTurns
+</p>
+@if(Model.CurrentLevel < Model.MaxLevel)
+{    
+<form method="post" asp-page-handler="GainLevels" class="mb-4">
+    <div class="mb-2">
+        <label for="TurnsToUse" class="form-label">Turns To Use:</label>
+        <input asp-for="TurnsToUse" class="form-control" min="1" max="45" />
+        <span asp-validation-for="TurnsToUse" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Research</button>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-success">You have reached the maximum level for Infrastructure Research.</div>
+
+}
+
+<form method="post" asp-page-handler="AssignPoints" class="mb-4" onsubmit="return confirmAssignPoints();">
+    <div class="mb-2">
+        <label for="AssignCategory" class="form-label">Assign to:</label>
+        <select asp-for="AssignCategory" class="form-select">
+            <option value="Housing">Housing</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Agriculture">Agriculture</option>
+            <option value="Industry">Industry</option>
+            <option value="Mining">Mining</option>
+        </select>
+    </div>
+    <div class="mb-2">
+        <label for="PointsToAssign" class="form-label">Points to assign:</label>
+        <input asp-for="PointsToAssign" class="form-control" min="1" max="@Model.UnusedLevels" />
+        <span asp-validation-for="PointsToAssign" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Assign Points</button>
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function confirmAssignPoints() {
+            const category = document.getElementById("AssignCategory").value;
+            const points = document.getElementById("PointsToAssign").value;
+            return confirm(`Are you sure you want to assign ${points} point(s) to ${category}? This action cannot be undone.`);
+        }
+    </script>
+}

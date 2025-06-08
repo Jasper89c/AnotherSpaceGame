@@ -1,0 +1,16 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationResignModel
+@{
+    ViewData["Title"] = "Resign from Federation";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+<form method="post" onsubmit="return confirm('Are you sure you want to resign from your federation? This action cannot be undone.');">
+    <button type="submit" class="btn btn-danger">Resign from Federation</button>
+    @Html.AntiForgeryToken()
+</form>

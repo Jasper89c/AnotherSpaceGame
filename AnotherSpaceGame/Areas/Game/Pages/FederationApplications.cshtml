@@ -1,0 +1,49 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationApplicationsModel
+@{
+    ViewData["Title"] = "Federation Applications";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+@if (Model.Applicants != null && Model.Applicants.Any())
+{
+    <h2>Federation Applicants</h2>
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Power Rating</th>
+                <th>Total Planets</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var app in Model.Applicants)
+        {
+            <tr>
+                <td>@app.ApplicationUser.UserName</td>
+                <td>@app.ApplicationUser.PowerRating</td>
+                <td>@app.ApplicationUser.TotalPlanets</td>
+                <td>
+                    <form method="post" asp-page-handler="Approve" asp-route-applicationId="@app.Id" style="display:inline">
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form method="post" asp-page-handler="Deny" asp-route-applicationId="@app.Id" style="display:inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Deny</button>
+                            @Html.AntiForgeryToken()
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">No applicants found for this federation.</div>
+}

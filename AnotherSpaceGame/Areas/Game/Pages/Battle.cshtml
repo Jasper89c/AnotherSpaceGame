@@ -1,0 +1,101 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.BattleModel
+@{
+    ViewData["Title"] = "Battle";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+
+<div>
+    <h2>@Model.CurrentUserName Vs @Model.TargetUserName </h2>
+</div>
+
+<div class="container-fluid">
+	<div class="row">
+        <h1>@Model.CurrentUserName 's Fleet</h1>
+		<div class="col-md-6">
+			<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Ship Name</th>
+            <th>Total Ships</th>
+            <th>Power Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var fleet in Model.CurrentUserFleetsStart)
+    {
+        <tr>
+            <td>@fleet.ShipName</td>
+            <td>@fleet.TotalShips</td>
+            <td>@fleet.TotalPowerRating</td>
+        </tr>
+    }
+    </tbody>
+</table>
+		</div>
+		<div class="col-md-6">
+            <h1>@Model.TargetUserName 's Fleet</h1>
+            <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Ship Name</th>
+            <th>Total Ships</th>
+            <th>Power Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var fleet in Model.TargetUserFleetsStart)
+    {
+        <tr>
+            <td>@fleet.ShipName</td>
+            <td>@fleet.TotalShips</td>
+            <td>@fleet.TotalPowerRating</td>
+        </tr>
+    }
+    </tbody>
+</table>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>The Battle</h2>
+            <h1> Wave 1</h1>
+            @foreach (var battle in Model.BattleResultsWave1)
+            {
+                if(battle.IsAttacker == true)
+                {
+                    <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                    <p>@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                }
+                else
+                {
+                    <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                    <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                }
+            }
+            <h1> Wave 2</h1>
+            @foreach (var battle in Model.BattleResultsWave1)
+            {
+                if (battle.IsAttacker == true)
+                {
+                    <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                    <p>@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                }
+                else
+                {
+                    <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                    <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                }
+            }
+        </div>
+        <div class="col-md-12">
+            <h2>Battle Summary</h2>
+            <p>@Html.Raw(Model.EndFleets)</p>
+        </div>
+    </div>
+</div>

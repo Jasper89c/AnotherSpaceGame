@@ -1,0 +1,73 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ConfirmAttackModel
+@{
+    ViewData["Title"] = "Confirm Attack";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var currentUser = Model.CurrentUser;
+    var targetUser = Model.TargetUser;
+}
+
+@if (!Model.HasEnoughTurns)
+{
+    <div class="alert alert-warning">
+        @Model.NotEnoughTurnsMessage
+    </div>
+}
+else if (!Model.PowerRatingAllowed)
+{
+    <div class="alert alert-warning">
+        @Model.PowerRatingWarning
+    </div>
+}
+else
+{
+    
+<h2>Confirm Attack</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Your Info</h4>
+        <ul>
+            <li><strong>Username:</strong> @currentUser?.UserName</li>
+            <li><strong>Total Colonies:</strong> @currentUser?.TotalColonies</li>
+            <li><strong>Total Planets:</strong> @currentUser?.TotalPlanets</li>
+            <li><strong>Total Power Rating:</strong> @currentUser?.PowerRating</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h4>Target Info</h4>
+        <ul>
+            <li><strong>Username:</strong> @targetUser?.UserName</li>
+            <li><strong>Total Colonies:</strong> @targetUser?.TotalColonies</li>
+            <li><strong>Total Planets:</strong> @targetUser?.TotalPlanets</li>
+            <li><strong>Total Power Rating:</strong> @targetUser?.PowerRating</li>
+        </ul>
+    </div>
+</div>
+
+<hr />
+    <p>
+        <strong>Federation War</strong>
+        @if (Model.IsFederationWar)
+        {
+            <span class="text-danger">Active</span>
+        }
+        else
+        {
+            <span class="text-success">No War</span>
+        }
+    </p>
+<p><strong>Fleet Attitude:</strong> @Model.SelectedAttackType</p>
+<p><strong>Turns Required:</strong> 5</p>
+
+<form method="post" asp-page="Battle">
+    
+    <input type="hidden" name="TargetUser" value="@targetUser" />
+    <input type="hidden" name="TargetUserName" value="@targetUser?.UserName" />
+    <input type="hidden" name="AttackType" value="@Model.SelectedAttackType" />
+
+    <button type="submit" class="btn btn-danger" @(Model.HasEnoughTurns && Model.PowerRatingAllowed ? "" : "disabled")>Confirm Attack</button>
+    <a asp-page="./Attack" class="btn btn-secondary">Cancel</a>
+    <a asp-page="/HowBattlesWork">How battes work</a>
+</form>
+}

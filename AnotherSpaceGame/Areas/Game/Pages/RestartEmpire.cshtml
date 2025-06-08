@@ -1,0 +1,34 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.RestartEmpireModel
+@{
+    ViewData["Title"] = "Restart Empire";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Restart Empire</h2>
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label" for="SelectedFaction">Select your new faction:</label>
+        <select asp-for="SelectedFaction" asp-items="Model.FactionOptions" class="form-select" required>
+            <option value="">-- Select Faction --</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Copy this confirmation string:</label>
+        <div>
+            <strong style="font-family: monospace; font-size: 1.2em;">@Model.ConfirmationString</strong>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="ConfirmationInput">Type the confirmation string here:</label>
+        <input type="text" class="form-control" id="ConfirmationInput" name="ConfirmationInput" required autocomplete="off" />
+    </div>
+    <button type="submit" class="btn btn-danger">Restart Empire</button>
+    @Html.AntiForgeryToken()
+</form>

@@ -1,0 +1,38 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.IncomeModel
+@{
+    ViewData["Title"] = "Income Per Turn";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Income Per Turn</h2>
+<table class="table table-bordered w-auto">
+    <tr>
+        <th>Credits</th>
+        <td>@Model.CreditsPerTurn</td>
+    </tr>
+    <tr>
+        <th>Commercial</th>
+        <td>@Model.CommercialPerTurn</td>
+    </tr>
+    <tr>
+        <th>Agriculture</th>
+        <td>@Model.AgriculturePerTurn</td>
+    </tr>
+    <tr>
+        <th>Industry</th>
+        <td>@Model.IndustryPerTurn</td>
+    </tr>
+    <tr>
+        <th>Mining</th>
+        <td>@Model.MiningPerTurn</td>
+    </tr>
+    <tr>
+        <th>Infrastructure Cost</th>
+        <td>@Model.InfrastructureCostPerTurn</td>
+    </tr>
+    <tr>
+        <th>Fleet Cost</th>
+        <td>@Model.FleetCostPerTurn</td>
+    </tr>
+</table>

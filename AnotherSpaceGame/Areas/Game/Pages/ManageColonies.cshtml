@@ -1,0 +1,91 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ManageColoniesModel
+@{
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    ViewData["Title"] = "Manage Colonies";
+
+    // Calculate totals for the footer
+    var totalCurrentPopulation = Model.UserPlanets?.Sum(p => p.CurrentPopulation) ?? 0;
+    var totalMaxPopulation = Model.UserPlanets?.Sum(p => p.MaxPopulation) ?? 0;
+    var totalLandAvailable = Model.UserPlanets?.Sum(p => p.LandAvailable) ?? 0;
+    var totalTotalLand = Model.UserPlanets?.Sum(p => p.TotalLand) ?? 0;
+    var totalAvailableOre = Model.UserPlanets?.Sum(p => p.AvailableOre) ?? 0;
+}
+
+@if (TempData["PlunderMessage"] != null)
+{
+    <div class="alert alert-success">
+        @Html.Raw(TempData["PlunderMessage"])
+    </div>
+}
+@if (TempData["TurnMessage"] != null)
+{
+    <div class="alert alert-info">
+        @Html.Raw(TempData["TurnMessage"])
+    </div>
+}
+
+<h2>Your Colonies</h2>
+
+@if (Model.UserPlanets != null && Model.UserPlanets.Any())
+{
+    <form method="post" asp-page-handler="BatchPlunder">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Current Population</th>
+                    <th>Max Population</th>
+                    <th>Loyalty</th>
+                    <th>Land Available</th>
+                    <th>Total Land</th>
+                    <th>Available Ore</th>
+                    <th>Mineral Produced</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var planet in Model.UserPlanets)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="PlunderPlanetIds" value="@planet.Id" />
+                    </td>
+                    <td>
+                        <a asp-page="ManagePlanet" asp-route-id="@planet.Id">
+                            @planet.Name
+                        </a>
+                    </td>
+                    <td>@planet.Type</td>
+                    <td>@planet.CurrentPopulation</td>
+                    <td>@planet.MaxPopulation</td>
+                    <td>@planet.Loyalty</td>
+                    <td>@planet.LandAvailable</td>
+                    <td>@planet.TotalLand</td>
+                    <td>@planet.AvailableOre</td>
+                    <td>@planet.MineralProduced</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2" class="text-end">Totals:</th>
+                    <th>@totalCurrentPopulation</th>
+                    <th>@totalMaxPopulation</th>
+                    <th>-</th>
+                    <th>@totalLandAvailable</th>
+                    <th>@totalTotalLand</th>
+                    <th>@totalAvailableOre</th>
+                    <th>-</th>
+                </tr>
+            </tfoot>
+        </table>
+        <button type="submit" class="btn btn-danger">Plunder Selected</button>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-info">You do not have any colonies yet.</div>
+}

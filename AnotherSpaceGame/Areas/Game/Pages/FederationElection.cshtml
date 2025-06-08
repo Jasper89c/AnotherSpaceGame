@@ -1,0 +1,68 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationElectionModel
+@{
+    ViewData["Title"] = "Federation Election"; 
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+@if (Model.Federation != null)
+{
+    <h2>Federation Election for @Model.Federation.FederationName</h2>
+    <p>Total Planets in Federation: <strong>@Model.TotalFederationPlanets</strong></p>
+    <p>Votes Needed to Become Leader: <strong>@Model.VotesNeeded</strong></p>
+
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Total Planets</th>
+                <th>Votes Received</th>
+                <th>Vote</th>
+                <th>Leadership</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var member in Model.Members)
+        {
+            var votesReceived = Model.CandidateVotes.ContainsKey(member.Id) ? Model.CandidateVotes[member.Id] : 0;
+            <tr>
+                <td>@member.UserName @(member.Id == Model.Federation.FederationLeaderId ? "(Leader)" : "")</td>
+                <td>@member.TotalPlanets</td>
+                <td>@votesReceived</td>
+                <td>
+                    @if (userId != member.Id)
+                    {
+                        <form method="post" asp-page-handler="Vote" asp-route-federationId="@Model.Federation.Id" asp-route-candidateId="@member.Id" style="display:inline">
+                            <button type="submit" class="btn btn-primary btn-sm">Vote</button>
+                                @Html.AntiForgeryToken()
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                </td>
+                <td>
+                    @if (userId == member.Id && votesReceived >= Model.VotesNeeded && member.Id != Model.Federation.FederationLeaderId)
+                    {
+                        <form method="post" asp-page-handler="BecomeLeader" asp-route-federationId="@Model.Federation.Id" style="display:inline">
+                            <button type="submit" class="btn btn-success btn-sm">Become Leader</button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">Federation not found.</div>
+}

@@ -1,0 +1,42 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.IntelligenceModel
+@{
+    ViewData["Title"] = "Intelligence";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>User Intelligence Search</h2>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="SearchTerm" class="form-control" placeholder="Search for a username..." value="@Model.SearchTerm" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+@if (Model.SearchResults != null && Model.SearchResults.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model.SearchResults)
+        {
+            <tr>
+                <td>
+                    <a asp-page="/EmpireLookUp" asp-route-id="@user.Id">
+                        @user.UserName
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+{
+    <div class="alert alert-warning">No users found matching "@Model.SearchTerm".</div>
+}

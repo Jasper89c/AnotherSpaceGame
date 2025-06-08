@@ -1,0 +1,26 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.MissionsModel
+@{
+    ViewData["Title"] = "Missions";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+@if (TempData["MissionSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MissionSuccess"]
+    </div>
+}
+<h2>@Model.MissionTitle</h2>
+<p><strong>Objective:</strong> @Model.MissionObjective</p>
+<p><strong>Reward:</strong> @Model.MissionReward</p>
+<p><strong>Status:</strong> @Model.MissionStatus</p>
+<p>@Model.MissionMessage</p>
+
+@if (Model.MissionStatus == "Complete")
+{
+    <form method="post" asp-page-handler="CompleteMission">
+        <input type="hidden" asp-for="MissionNumber" />
+        <button type="submit" class="btn btn-success">Complete Mission</button>
+        @Html.AntiForgeryToken()
+    </form>
+}

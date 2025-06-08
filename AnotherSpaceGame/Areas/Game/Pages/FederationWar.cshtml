@@ -1,0 +1,34 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.FederationWarModel
+@{
+    ViewData["Title"] = "Declare War"; 
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h2>Declare War</h2>
+
+@if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+{
+    <div class="alert alert-info">@Model.FeedbackMessage</div>
+}
+
+@if (Model.AvailableFederations != null && Model.AvailableFederations.Any())
+{
+    <div class="alert alert-secondary">
+        Only federations within 5 ranks above or below your federation are available to declare war on.
+    </div>
+    <form method="post" asp-page-handler="DeclareWar">
+        <div class="form-group">
+            <label for="TargetFederationId">Select Federation to Declare War On:</label>
+            <select asp-for="TargetFederationId" class="form-control" asp-items="@(new SelectList(Model.AvailableFederations, "Id", "FederationName"))">
+                <option value="">-- Select Federation --</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-danger mt-2">Declare War</button>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">No other federations available to declare war on.</div>
+}
