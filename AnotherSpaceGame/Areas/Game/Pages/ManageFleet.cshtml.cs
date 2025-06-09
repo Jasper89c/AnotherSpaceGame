@@ -24,16 +24,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         public List<Fleet> UserFleets { get; set; }
+        public List<ManageFleet> manageFleets { get; set; }
 
         [BindProperty]
         public Dictionary<int, int> RemoveShips { get; set; } = new();
+        public Faction Faction { get; set; } 
 
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
-
+            Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             UserFleets = await _context.Fleets
                 .Where(f => f.ApplicationUserId == user.Id)
                 .OrderByDescending(f => f.TotalPowerRating)
@@ -48,10 +50,26 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
-
+            Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             var fleets = await _context.Fleets
                 .Where(f => f.ApplicationUserId == user.Id)
                 .ToListAsync();
+
+            manageFleets = new List<ManageFleet>();
+
+            foreach (var fleet in fleets)
+            {
+                manageFleets.Add(new ManageFleet
+                {
+                    Id = fleet.Id,
+                    ApplicationUserId = fleet.ApplicationUserId,
+                    ShipId = fleet.ShipId,
+                    TotalShips = fleet.TotalShips,
+                    TotalPowerRating = fleet.TotalPowerRating,
+                    TotalUpkeep = fleet.TotalUpkeep,
+                    Ship = await _context.Ships.FindAsync(fleet.ShipId)
+                });
+            }
 
             foreach (var fleet in fleets)
             {
@@ -72,5 +90,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             await _context.SaveChangesAsync();
             return RedirectToPage();
         }
+    }
+
+    public class ManageFleet
+    {
+        public int Id { get; set; }
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+        public int ShipId { get; set; }
+        public int TotalShips { get; set; }
+        public int TotalPowerRating { get; set; }
+        public int TotalUpkeep { get; set; }
+        public Ships Ship { get; set; } // Navigation property to Ships model
     }
 }

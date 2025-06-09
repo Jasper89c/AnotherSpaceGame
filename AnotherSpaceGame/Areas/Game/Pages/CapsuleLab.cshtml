@@ -1,6 +1,69 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Rendering
 @model AnotherSpaceGame.Areas.Game.Pages.CapsuleLabModel
 @{
     ViewData["Title"] = "Capsule Lab";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
+
+@if (!Model.CanAccessCapsuleLab)
+{
+    <div class="alert alert-warning">
+        You cannot access the Capsule Lab at this time.
+    </div>
+}
+else
+{
+    <h3>Capsule Lab</h3>
+    <form method="post">
+        <div class="mb-3">
+            <label>Select Artifact 1:</label>
+            <select asp-for="SelectedArtifact1" class="form-select"
+                    asp-items="@(new SelectList(Model.ArtifactOptions, "ArtifactId", "DisplayName"))"></select>
+        </div>
+        <div class="mb-3">
+            <label>Select Artifact 2:</label>
+            <select asp-for="SelectedArtifact2" class="form-select"
+                    asp-items="@(new SelectList(Model.ArtifactOptions, "ArtifactId", "DisplayName"))"></select>
+        </div>
+        <div class="mb-3">
+            <label>Select Artifact 3:</label>
+            <select asp-for="SelectedArtifact3" class="form-select"
+                    asp-items="@(new SelectList(Model.ArtifactOptions, "ArtifactId", "DisplayName"))"></select>
+        </div>
+        <div class="mb-3">
+            <label>Select Artifact 4:</label>
+            <select asp-for="SelectedArtifact4" class="form-select"
+                    asp-items="@(new SelectList(Model.ArtifactOptions, "ArtifactId", "DisplayName"))"></select>
+        </div>
+        <button type="submit" class="btn btn-primary">Combine Artifacts</button>
+    </form>
+    @if (!string.IsNullOrEmpty(Model.CreationMessage))
+    {
+        <div class="alert alert-info mt-3">@Html.Raw(Model.CreationMessage)</div>
+    }
+}
+<h4>Artifact Combination Recipes</h4>
+<table class="table table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>Artifact to be created</th>
+            <th>Recipe (Order Matters)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var combo in Model.DisplayCombinations)
+        {
+            <tr>
+                <td>@combo.ResultName</td>
+                <td>
+                    @for (int i = 0; i < combo.RecipeNames.Count; i++)
+                    {
+                        @combo.RecipeNames[i]
+                        @(i < combo.RecipeNames.Count - 1 ? " + " : "")
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

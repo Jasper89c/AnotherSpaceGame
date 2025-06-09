@@ -11,6 +11,7 @@ namespace AnotherSpaceGame.Data
             : base(options)
         {
         }
+        public DbSet<ViralReversedShips> ViralReversedShips { get; set; }
         public DbSet<CounterAttacks> CounterAttacks { get; set; }
         public DbSet<Missions> Missions { get; set; }
         public DbSet<UserProjects> UserProjects { get; set; }
@@ -219,10 +220,10 @@ namespace AnotherSpaceGame.Data
                 .WithMany();
 
             builder.Entity<FederationWar>()
-        .HasOne(fw => fw.AttackerFederation)
-        .WithMany()
-        .HasForeignKey(fw => fw.AttackerFederationId)
-        .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(fw => fw.AttackerFederation)
+                .WithMany()
+                .HasForeignKey(fw => fw.AttackerFederationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<FederationWar>()
                 .HasOne(fw => fw.DefenderFederation)
@@ -257,10 +258,10 @@ namespace AnotherSpaceGame.Data
 
             // FederationMessages Sender (Many-to-One)
             builder.Entity<FederationMessages>()
-        .HasOne(m => m.Federation)
-        .WithMany(f => f.FederationDiscussion)
-        .HasForeignKey(m => m.FederationId)
-        .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(m => m.Federation)
+                .WithMany(f => f.FederationDiscussion)
+                .HasForeignKey(m => m.FederationId)
+                .OnDelete(DeleteBehavior.Cascade);
             // ApplicationUser Federation relationship
             builder.Entity<ApplicationUser>()
                 .HasOne(u => u.Federation)
@@ -274,10 +275,10 @@ namespace AnotherSpaceGame.Data
                 .HasForeignKey(mp => mp.ApplicationUserId);
 
             builder.Entity<PrivateMessage>()
-        .HasOne(pm => pm.Sender)
-        .WithMany()
-        .HasForeignKey(pm => pm.SenderId)
-        .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(pm => pm.Sender)
+                .WithMany()
+                .HasForeignKey(pm => pm.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PrivateMessage>()
                 .HasOne(pm => pm.Receiver)
@@ -289,6 +290,12 @@ namespace AnotherSpaceGame.Data
                 .HasMany(u => u.CounterAttacks)
                 .WithOne(ca => ca.ApplicationUser)
                 .HasForeignKey(ca => ca.ApplicationUserId)
+                .IsRequired();
+            // configure one-to-one relationship for ViralReversedShips
+            builder.Entity<ViralReversedShips>()
+                .HasOne(v => v.ApplicationUser)
+                .WithOne(u => u.ViralReversedShips)
+                .HasForeignKey<ViralReversedShips>(v => v.ApplicationUserId)
                 .IsRequired();
             //// Seed NPCs
 

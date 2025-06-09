@@ -471,6 +471,35 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         _context.ClusterResearches.Add(clusterResearch);
                     }
                     // --- End GuardianResearch logic ---
+                    // --- UserProjects ---
+                    var userProjects = new UserProjects
+                    {
+                        ApplicationUserId = user.Id
+                        // Default values are set in the constructor
+                    };
+                    user.UserProjects = userProjects;
+                    _context.UserProjects.Add(userProjects);
+                    // --- End UserProjects logic ---
+                    // --- Missons ---
+                    var missions = new Missions
+                    {
+                        ApplicationUserId = user.Id
+                        // Default values are set in the constructor
+                    };
+                    user.Missions = missions;
+                    _context.Missions.Add(missions);
+                    // --- End Missons logic ---
+                    // --- viralreversedships ---
+                    if(user.Faction == Faction.Viral)
+                    {
+                        var viralReversedShips = new ViralReversedShips
+                        {
+                            ApplicationUserId = user.Id
+                            // Default values are set in the constructor
+                        };
+                        user.ViralReversedShips = viralReversedShips;
+                        _context.ViralReversedShips.Add(viralReversedShips);
+                    }
 
                     await _context.SaveChangesAsync();
 

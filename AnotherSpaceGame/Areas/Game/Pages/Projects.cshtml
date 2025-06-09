@@ -73,6 +73,11 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
     </form>
     <p>@Model.StatusMessage</p>
 }
+else if (Model.UserProjects.CapsuleLabUnlockTimer > DateTime.Now)
+{
+    <p>Capsule Lab is currently locked. Please wait for the unlock timer to complete.</p>
+    <p>Time remaining: @Model.UserProjects.CapsuleLabUnlockTimer.ToLocalTime().ToString("g")</p>
+}
 else if (Model.UserProjects.CapsuleLab == true)
 {
     <p>
@@ -81,7 +86,6 @@ else if (Model.UserProjects.CapsuleLab == true)
 }
 else
 {
-    <p>No project data found.</p>
 }
 
 @if (Model.UserProjects.Itech != true)
@@ -103,6 +107,11 @@ else
     </form>
     <p>@Model.StatusMessage</p>
 }
+else if (Model.UserProjects.ItechUnlockTimer > DateTime.Now)
+{
+    <p>Itech is currently locked. Please wait for the unlock timer to complete.</p>
+    <p>Time remaining: @Model.UserProjects.ItechUnlockTimer.ToLocalTime().ToString("g")</p>
+}
 else if (Model.UserProjects.Itech == true)
 {
     <p>
@@ -111,7 +120,6 @@ else if (Model.UserProjects.Itech == true)
 }
 else
 {
-    <p>No project data found.</p>
 }
 
 @if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
@@ -132,6 +140,11 @@ else
         @Html.AntiForgeryToken()
     </form>
     <p>@Model.StatusMessage</p>
+}
+else if (Model.UserProjects.UnreverseEngineeringUnlockTimer > DateTime.Now && Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
+{
+    <p>Unreverse Engineering is currently locked. Please wait for the unlock timer to complete.</p>
+    <p>Time remaining: @Model.UserProjects.UnreverseEngineeringUnlockTimer.ToLocalTime().ToString("g")</p>
 }
 else if (Model.UserProjects.UnreverseEngineering == true)
 {

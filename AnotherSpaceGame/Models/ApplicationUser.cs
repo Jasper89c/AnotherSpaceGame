@@ -6,6 +6,8 @@ namespace AnotherSpaceGame.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        // navigation property for ViralReversedShips
+        public ViralReversedShips ViralReversedShips { get; set; }
         // navigation property for counterattacks
         public ICollection<CounterAttacks> CounterAttacks { get; set; }
         // navigation property for missions

@@ -1,4 +1,5 @@
 ﻿@page
+@using AnotherSpaceGame.Models
 @model AnotherSpaceGame.Areas.Game.Pages.ManageFleetModel
 @{
      ViewData["Title"] = "Manage Fleet";
@@ -17,7 +18,7 @@ else
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Ship ID</th>
+                    <th>Ship Name</th>
                     <th>Total Ships</th>
                     <th>Total Power Rating</th>
                     <th>Total Upkeep</th>
@@ -25,10 +26,26 @@ else
                 </tr>
             </thead>
             <tbody>
-            @foreach (var fleet in Model.UserFleets)
+            @foreach (var fleet in Model.manageFleets)
             {
-                <tr>
-                    <td>@fleet.ShipId</td>
+                    <tr>
+                        @if (Model.Faction == Faction.Viral)
+                        {
+                            <td>
+                                @fleet.Ship.ShipName <a asp-area="Game"
+                                                        asp-page="/ViralReverseEngineer"
+                                                        asp-route-shipId="@fleet.ShipId"
+                                                        title="Viral Reverse Engineer">
+                                    <i class="bi bi-wrench-adjustable-circle"></i>
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@fleet.Ship.ShipName</td>
+                        }
+            
+                    <td>@fleet.Ship.ShipName </td>
                     <td>@fleet.TotalShips</td>
                     <td>@fleet.TotalPowerRating</td>
                     <td>@fleet.TotalUpkeep</td>
