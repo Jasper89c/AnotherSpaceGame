@@ -96,6 +96,9 @@
         <div class="col-md-12">
             <h2>Battle Summary</h2>
             <p>@Html.Raw(Model.EndFleets)</p>
+            <form method="get" asp-area="Game" asp-page="/ImportantEvents" class="d-inline">
+                <button type="submit" class="btn btn-info mt-3">Continue...</button>
+            </form>
         </div>
     </div>
 </div>
