@@ -1,0 +1,17 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.UnreverseEngineeringModel
+@{
+    ViewData["Title"] = "Unreverse Engineering";
+}
+
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-success">@Model.StatusMessage</div>
+}
+
+<h3>Unreverse Engineering</h3>
+<p>Unreverse Engineering allows you to reverse engineer previously reverse engineered ships. </p>
+<form method="post" onsubmit="return confirm('Are you sure you want to reset Unreverse Engineering? This action cannot be undone.');">
+    <button type="submit" class="btn btn-warning">Reset reverse engineered ships</button>
+    @Html.AntiForgeryToken()
+</form>

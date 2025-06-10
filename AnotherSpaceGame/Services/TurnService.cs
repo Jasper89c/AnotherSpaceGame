@@ -66,7 +66,7 @@ public class TurnService
 
         foreach (var planet in userPlanets)
         {
-            UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse);
+            UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse,user.Faction);
             UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse);
 
             // Mining
@@ -150,9 +150,13 @@ public class TurnService
 
     // --- Helper methods below ---
 
-    private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse)
+    private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction)
     {
         planet.MaxPopulation = (int)Math.Floor((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)));
+        if (faction == Faction.Collective)
+        {
+            planet.MaxPopulation = (int)Math.Floor(planet.MaxPopulation * 2m);
+        }
         if (planet.CurrentPopulation < planet.MaxPopulation)
         {
             planet.CurrentPopulation += (int)Math.Floor((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse);

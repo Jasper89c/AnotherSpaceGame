@@ -1,0 +1,18 @@
+﻿@page "{shipId:int}"
+@model AnotherSpaceGame.Areas.Game.Pages.ViralReverseEngineerModel
+@{
+    ViewData["Title"] = "Viral Reverse Engineer";
+}
+
+<h2>Viral Reverse Engineer</h2>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-info">@Model.Message</div>
+}
+
+<form method="post">
+    <input type="hidden" asp-for="ShipId" />
+    <button type="submit" class="btn btn-primary">Reverse Engineer</button>
+    @Html.AntiForgeryToken()
+</form>

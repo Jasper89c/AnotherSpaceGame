@@ -49,6 +49,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.TerranResearch)
                 .Include(u => u.ViralResearch)
                 .Include(u => u.AMinerResearch)
+                .Include(u => u.ViralReversedShips)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             var ships = await _context.Ships.ToListAsync();
@@ -62,6 +63,45 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Always available
             AddShipById(323); // LightDrone
+            if (CurrentUser.Faction == Faction.Viral)
+            {
+                        if (user.ViralReversedShips.TerranShip1Id != 0)
+                        {
+                        AddShipById(user.ViralReversedShips.TerranShip1Id);
+                        } // Terran Ship 1
+                        if (user.ViralReversedShips.TerranShip2Id != 0)
+                        {
+                        AddShipById(user.ViralReversedShips.TerranShip2Id);
+                        } // Terran Ship 2
+                        if (user.ViralReversedShips.TerranShip3Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.TerranShip3Id);
+                        } // Terran Ship 3
+                        if (user.ViralReversedShips.AminerShip1Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.AminerShip1Id);
+                        } // AMiner Ship 1
+                        if (user.ViralReversedShips.AminerShip2Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.AminerShip2Id);
+                        } // AMiner Ship 2
+                        if (user.ViralReversedShips.AminerShip3Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.AminerShip3Id);
+                        } // AMiner Ship 3
+                        if (user.ViralReversedShips.MarauderShip1Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.MarauderShip1Id);
+                        } // Marauder Ship 1
+                        if (user.ViralReversedShips.MarauderShip2Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.MarauderShip2Id);
+                        } // Marauder Ship 2
+                        if (user.ViralReversedShips.MarauderShip3Id != 0)
+                        {
+                            AddShipById(user.ViralReversedShips.MarauderShip3Id);
+                        } // Marauder Ship 3
+            } 
 
             // CyrilClassResearch
             if (CurrentUser.CyrilClassResearch is { CyrilCorvette: true, CyrilCorvetteTurnsRequired: 0 }) AddShipById(312);
@@ -191,6 +231,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            var CurrentUser = await _context.Users
+                .Include(u => u.Commodities)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
             if (user == null)
                 return Unauthorized();
 
@@ -201,6 +244,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Calculate total turns required
             int totalTurnsRequired = 0;
             var buildInstructions = new List<(Ships ship, int amount, int turnsNeeded)>();
+            var TerranMetal = 0;
+            var Rutile = 0;
+            var Composite = 0;
+            var RedCyrstal = 0;
+            var WhiteCyrstal = 0;
+            var StrafezOrganism = 0;
+            var Credits = 0;
 
             foreach (var entry in BuildAmounts)
             {
@@ -212,6 +262,67 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 int turnsNeeded = (int)Math.Ceiling((double)amount / buildRate);
                 totalTurnsRequired += turnsNeeded;
                 buildInstructions.Add((ship, amount, turnsNeeded));
+                TerranMetal += (ship.TerranMetal * amount);
+                Rutile += (ship.Rutile * amount);
+                Composite += (ship.Composite * amount);
+                RedCyrstal += (ship.RedCrystal * amount);
+                WhiteCyrstal += (ship.WhiteCrystal * amount);
+                StrafezOrganism += (ship.StrafezOrganism * amount);
+                Credits += (ship.Cost * amount);
+            }
+            if (totalTurnsRequired == 0)
+            {
+                ModelState.AddModelError(string.Empty, "You must specify a valid amount of ships to build.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (totalTurnsRequired > CurrentUser.Turns.CurrentTurns)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough turns to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (TerranMetal > CurrentUser.Commodities.TerranMetal)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Teran Metal to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (Rutile > CurrentUser.Commodities.Rutile)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Rutile to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (Composite > CurrentUser.Commodities.Composite)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Composite to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (RedCyrstal > CurrentUser.Commodities.RedCrystal)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Red Crystal to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (WhiteCyrstal > CurrentUser.Commodities.WhiteCrystal)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough White Crystal to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (StrafezOrganism > CurrentUser.Commodities.StrafezOrganism)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Strafez Organism to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
+            }
+            if (Credits > CurrentUser.Commodities.Credits)
+            {
+                ModelState.AddModelError(string.Empty, "Not enough Credits to build ships.");
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
             }
 
             // Deduct turns
@@ -245,6 +356,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     userFleet.TotalPowerRating += amount * ship.PowerRating;
                     userFleet.TotalUpkeep += amount * ship.Upkeep;
                 }
+                CurrentUser.Commodities.TerranMetal -= ship.TerranMetal * amount;
+                CurrentUser.Commodities.Rutile -= ship.Rutile * amount;
+                CurrentUser.Commodities.Composite -= ship.Composite * amount;
+                CurrentUser.Commodities.RedCrystal -= ship.RedCrystal * amount;
+                CurrentUser.Commodities.WhiteCrystal -= ship.WhiteCrystal * amount;
+                CurrentUser.Commodities.StrafezOrganism -= ship.StrafezOrganism * amount;
+                CurrentUser.Commodities.Credits -= ship.Cost * amount;
             }
 
             await _context.SaveChangesAsync();
