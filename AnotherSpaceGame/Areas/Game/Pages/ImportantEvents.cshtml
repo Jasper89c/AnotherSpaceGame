@@ -1,70 +1,71 @@
-﻿@page
-@model AnotherSpaceGame.Areas.Game.Pages.ImportantEventsModel
-@using AnotherSpaceGame.Models
-@{
-    Layout = "~/Views/Shared/_LayoutGame.cshtml";
-    ViewData["Title"] = "Important Events";
+﻿@page  
+@model AnotherSpaceGame.Areas.Game.Pages.ImportantEventsModel  
+@using AnotherSpaceGame.Models  
+@{  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+    ViewData["Title"] = "Important Events";  
 
-    // Get all event types for the dropdown
-    var eventTypes = Enum.GetValues(typeof(ImportantEventTypes)).Cast<ImportantEventTypes>().ToList();
-    var selectedType = Request.Query["eventType"].FirstOrDefault(); // Fixed 'Context' to 'Request'
+    // Get all event types for the dropdown  
+    var eventTypes = Enum.GetValues(typeof(ImportantEventTypes)).Cast<ImportantEventTypes>().ToList();  
+    var selectedType = Request.Query["eventType"].FirstOrDefault(); // Fixed 'Context' to 'Request'  
 
-    var prevDisabled = Model.PageNumber <= 1 ? "disabled" : "";
-    var nextDisabled = Model.PageNumber >= Model.TotalPages ? "disabled" : "";
-}
+    var prevDisabled = Model.PageNumber <= 1 ? "disabled" : "";  
+    var nextDisabled = Model.PageNumber >= Model.TotalPages ? "disabled" : "";  
+}  
 
-<h2>Important Events</h2>
-<p>Here you can find a list of important events that have occurred in the game.</p>
+<h2>Important Events</h2>  
+<p>Here you can find a list of important events that have occurred in the game.</p>  
 
-<form method="get" class="mb-3">
-    <div class="row g-2 align-items-center">
-        <div class="col-auto">
-            <label for="eventType" class="col-form-label">Filter by Event Type:</label>
-        </div>
-        <div class="col-auto">
-            <select id="eventType" name="eventType" class="form-select" onchange="this.form.submit()">
-                <option value="">All</option>
-                @foreach (var type in eventTypes)
-                {
-                    <option value="@type" @(selectedType == type.ToString() ? "selected" : "")>
-                        @type
-                    </option>
-                }
-            </select>
-        </div>
-    </div>
-</form>
+<form method="get" class="mb-3">  
+    <div class="row g-2 align-items-center">  
+        <div class="col-auto">  
+            <label for="eventType" class="col-form-label">Filter by Event Type:</label>  
+        </div>  
+        <div class="col-auto">  
+            <select id="eventType" name="eventType" class="form-select" onchange="this.form.submit()">  
+                <option value="">All</option>  
+                @foreach (var type in eventTypes)  
+                {  
+                    var isSelected = selectedType == type.ToString() ? "selected" : "";  
+                    <option value="@type" selected="@isSelected">  
+                        @type  
+                    </option>  
+                }  
+            </select>  
+        </div>  
+    </div>  
+</form>  
 
-@if (Model.Events != null && Model.Events.Any())
-{
-    <ul class="list-group">
-        @foreach (var ev in Model.Events)
-        {
-            <li class="list-group-item">
-                <span class="text-muted" style="font-size:small;">@ev.DateAndTime.ToLocalTime().ToString("g")</span>
-                <div>@ev.Text</div>
-            </li>
-        }
-    </ul>
+@if (Model.Events != null && Model.Events.Any())  
+{  
+    <ul class="list-group">  
+        @foreach (var ev in Model.Events)  
+        {  
+            <li class="list-group-item">  
+                <span class="text-muted" style="font-size:small;">@ev.DateAndTime.ToLocalTime().ToString("g")</span>  
+                <div>@ev.Text</div>  
+            </li>  
+        }  
+    </ul>  
 
-    <nav aria-label="Event pagination" class="mt-3">
-        <ul class="pagination">
-            <li class="page-item @prevDisabled">
-                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)">Previous</a>
-            </li>
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" asp-route-PageNumber="@i">@i</a>
-                </li>
-            }
-            <li class="page-item @nextDisabled">
-                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)">Next</a>
-            </li>
-        </ul>
-    </nav>
-}
-else
-{
-    <div class="alert alert-info mt-3">No important events found.</div>
+    <nav aria-label="Event pagination" class="mt-3">  
+        <ul class="pagination">  
+            <li class="page-item @prevDisabled">  
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)">Previous</a>  
+            </li>  
+            @for (int i = 1; i <= Model.TotalPages; i++)  
+            {  
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">  
+                    <a class="page-link" asp-route-PageNumber="@i">@i</a>  
+                </li>  
+            }  
+            <li class="page-item @nextDisabled">  
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)">Next</a>  
+            </li>  
+        </ul>  
+    </nav>  
+}  
+else  
+{  
+    <div class="alert alert-info mt-3">No important events found.</div>  
 }

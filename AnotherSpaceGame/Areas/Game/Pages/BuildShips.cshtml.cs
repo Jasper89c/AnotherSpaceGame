@@ -50,12 +50,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.ViralResearch)
                 .Include(u => u.AMinerResearch)
                 .Include(u => u.ViralReversedShips)
+                .Include(u => u.Turns)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             var ships = await _context.Ships.ToListAsync();
 
             // Helper for adding ships by ID
-            void AddShipById(int id) {
+            void AddShipById(int id)
+            {
                 var ship = ships.FirstOrDefault(s => s.Id == id);
                 if (ship != null && !BuildableShips.Contains(ship))
                     BuildableShips.Add(ship);
@@ -65,43 +67,43 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             AddShipById(323); // LightDrone
             if (CurrentUser.Faction == Faction.Viral)
             {
-                        if (user.ViralReversedShips.TerranShip1Id != 0)
-                        {
-                        AddShipById(user.ViralReversedShips.TerranShip1Id);
-                        } // Terran Ship 1
-                        if (user.ViralReversedShips.TerranShip2Id != 0)
-                        {
-                        AddShipById(user.ViralReversedShips.TerranShip2Id);
-                        } // Terran Ship 2
-                        if (user.ViralReversedShips.TerranShip3Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.TerranShip3Id);
-                        } // Terran Ship 3
-                        if (user.ViralReversedShips.AminerShip1Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.AminerShip1Id);
-                        } // AMiner Ship 1
-                        if (user.ViralReversedShips.AminerShip2Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.AminerShip2Id);
-                        } // AMiner Ship 2
-                        if (user.ViralReversedShips.AminerShip3Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.AminerShip3Id);
-                        } // AMiner Ship 3
-                        if (user.ViralReversedShips.MarauderShip1Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.MarauderShip1Id);
-                        } // Marauder Ship 1
-                        if (user.ViralReversedShips.MarauderShip2Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.MarauderShip2Id);
-                        } // Marauder Ship 2
-                        if (user.ViralReversedShips.MarauderShip3Id != 0)
-                        {
-                            AddShipById(user.ViralReversedShips.MarauderShip3Id);
-                        } // Marauder Ship 3
-            } 
+                if (CurrentUser.ViralReversedShips.TerranShip1Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.TerranShip1Id);
+                } // Terran Ship 1
+                if (CurrentUser.ViralReversedShips.TerranShip2Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.TerranShip2Id);
+                } // Terran Ship 2
+                if (CurrentUser.ViralReversedShips.TerranShip3Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.TerranShip3Id);
+                } // Terran Ship 3
+                if (CurrentUser.ViralReversedShips.AminerShip1Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.AminerShip1Id);
+                } // AMiner Ship 1
+                if (CurrentUser.ViralReversedShips.AminerShip2Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.AminerShip2Id);
+                } // AMiner Ship 2
+                if (CurrentUser.ViralReversedShips.AminerShip3Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.AminerShip3Id);
+                } // AMiner Ship 3
+                if (CurrentUser.ViralReversedShips.MarauderShip1Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.MarauderShip1Id);
+                } // Marauder Ship 1
+                if (CurrentUser.ViralReversedShips.MarauderShip2Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.MarauderShip2Id);
+                } // Marauder Ship 2
+                if (CurrentUser.ViralReversedShips.MarauderShip3Id != 0)
+                {
+                    AddShipById(CurrentUser.ViralReversedShips.MarauderShip3Id);
+                } // Marauder Ship 3
+            }
 
             // CyrilClassResearch
             if (CurrentUser.CyrilClassResearch is { CyrilCorvette: true, CyrilCorvetteTurnsRequired: 0 }) AddShipById(312);
@@ -233,6 +235,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             var CurrentUser = await _context.Users
                 .Include(u => u.Commodities)
+                .Include(u => u.Turns)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
             if (user == null)
                 return Unauthorized();
@@ -364,7 +367,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 CurrentUser.Commodities.StrafezOrganism -= ship.StrafezOrganism * amount;
                 CurrentUser.Commodities.Credits -= ship.Cost * amount;
             }
-
+            user.DamageProtection = DateTime.Now;
             await _context.SaveChangesAsync();
             TempData["BuildMessage"] = $"Successfully built ships! Used {totalTurnsRequired} turns.<hr>{turnResult.Message}";
             return RedirectToPage();

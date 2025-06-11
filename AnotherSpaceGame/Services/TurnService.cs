@@ -9,26 +9,29 @@ public class TurnService
     public async Task<int> GetTurnsAsync(string userId)
     {
         var user = await _context.Users.FindAsync(userId);
-        return user?.Turns?.CurrentTurns ?? 0;
+        var currentUser = _context.Users.FirstOrDefault(x => x.Id == user.Id);
+        var turns = _context.Turns.FirstOrDefault(x => x.ApplicationUserId == currentUser.Id);
+        return turns.CurrentTurns;
     }
 
     public async Task<TurnResult> TryUseTurnsAsync(string userId, int turnsToUse)
-    {
+    {   
         // Eager-load user and related data
         var user = await _context.Users
             .Include(u => u.Commodities)
             .Include(u => u.Turns)
             .FirstOrDefaultAsync(u => u.Id == userId);
-
+        var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
         if (user == null)
             return new TurnResult { Success = false, Message = "User not found." };
         if (user.Turns.CurrentTurns < turnsToUse)
             return new TurnResult { Success = false, Message = "Not enough turns." };
 
         // Batch load related entities
-        var userPlanets = await _context.Planets.Where(p => p.ApplicationUserId == userId).ToListAsync();
-        var userInfrastructer = await _context.Infrastructers.FirstOrDefaultAsync(i => i.ApplicationUserId == userId);
-        var userFleet = await _context.Fleets.Where(f => f.ApplicationUserId == userId).ToListAsync();
+        var userPlanets = await _context.Planets.Where(p => p.ApplicationUserId == currentUser.Id).ToListAsync();
+        var userInfrastructer = await _context.Infrastructers.FirstOrDefaultAsync(i => i.ApplicationUserId == currentUser.Id);
+        var userFleet = await _context.Fleets.Where(f => f.ApplicationUserId == currentUser.Id).ToListAsync();
 
         var mods = GetFactionModifiers(user.Faction);
 
@@ -62,7 +65,8 @@ public class TurnService
                 not PlanetType.AssimilatedC2 and
                 not PlanetType.AssimilatedC3);
         }
-
+        // Fix for CS0131: The left-hand side of an assignment must be a variable, property or indexer
+        decimal creditIncome = 0;
 
         foreach (var planet in userPlanets)
         {
@@ -73,7 +77,7 @@ public class TurnService
             MineOre(planet, userInfrastructer, user, turnsToUse);
 
             // Power rating
-            planet.PowerRating = CalculatePowerRating(planet, turnsToUse);
+            planet.PowerRating = CalculatePowerRating(planet);
 
             // Incomes
             taxIncome += CalculateTaxIncome(planet, mods, turnsToUse);
@@ -105,12 +109,15 @@ public class TurnService
             }
 
             // Goods and food logic
-            goodsIncome += HandleGoodsIncome(planet, user, ref industryIncome, turnsToUse);
+            var goodsIncomeResult = HandleGoodsIncome(planet, user, ref industryIncome, creditIncome, turnsToUse);
+            goodsIncome += goodsIncomeResult.Item1;
+            creditIncome += goodsIncomeResult.Item2;
+
             HandleFoodLogic(planet, user, ref agricultureIncome, turnsToUse);
         }
 
         // Combine incomes
-        decimal creditIncome = commercialIncome + taxIncome + goodsIncome;
+        creditIncome = commercialIncome + taxIncome + goodsIncome;
 
         // Power rating
         user.PowerRating = userPlanets.Sum(p => p.PowerRating) + userFleet.Sum(v => v.TotalPowerRating);
@@ -138,12 +145,12 @@ public class TurnService
         await _context.SaveChangesAsync();
 
         // Fix for CS1002 and CS0201 errors in the problematic line
-        var message = "Turns Used: " + turnsToUse.ToString() +
-                      " Credits: " + creditIncome.ToString("C") +
-                      " Food: " + agricultureIncome.ToString() +
-                      " Consumer Goods: " + goodsIncome.ToString();
+        var message = "Turns Used: (" + turnsToUse.ToString() +
+                      ") Credits: " + creditIncome.ToString("C0") +
+                      " Food: " + agricultureIncome.ToString("N0") +
+                      " Consumer Goods: " + goodsIncome.ToString("N0");
         if (outOfDamageProtectionBonus > 0)
-            message += $" Bonus: {outOfDamageProtectionBonus.ToString("C")}";
+            message += $" Bonus: {outOfDamageProtectionBonus.ToString("C0")}";
 
         return new TurnResult { Success = true, Message = message };
     }
@@ -185,9 +192,9 @@ public class TurnService
         }
     }
 
-    private int CalculatePowerRating(Planets planet, int turnsToUse)
+    private int CalculatePowerRating(Planets planet)
     {
-        return (planet.CurrentPopulation / 10) + planet.Housing + planet.Commercial + planet.Agriculture + planet.Industry + planet.Mining + (planet.TotalPlanets * 1000) * turnsToUse;
+        return (planet.CurrentPopulation / 10) + planet.Housing + planet.Commercial + planet.Agriculture + planet.Industry + planet.Mining + (planet.TotalPlanets * 1000);
     }
 
     private decimal CalculateTaxIncome(Planets planet, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods, int turnsToUse)
@@ -230,15 +237,22 @@ public class TurnService
         return Math.Floor((planet.TotalPlanets * ((0.13m * infra.Mining) + 1)) * mods.FactionMiningModifier) * turnsToUse;
     }
 
-    private decimal HandleGoodsIncome(Planets planet, ApplicationUser user, ref decimal industryIncome, int turnsToUse)
+     private (decimal,decimal) HandleGoodsIncome(Planets planet, ApplicationUser user, ref decimal industryIncome, decimal taxIncome, int turnsToUse)
     {
         var goodsNeeded = planet.GoodsRequired * turnsToUse;
         if ((user.Commodities.ConsumerGoods + industryIncome) >= goodsNeeded)
         {
             industryIncome -= goodsNeeded;
-            return Math.Floor(planet.GoodsRequired * 5.5m);
+            taxIncome += Math.Floor(goodsNeeded * 5.5m) * turnsToUse;
+            return (industryIncome, taxIncome);
         }
-        return 0;
+        else if ((user.Commodities.ConsumerGoods + industryIncome) < goodsNeeded)
+        {
+            goodsNeeded = (int)(user.Commodities.ConsumerGoods + industryIncome);
+            taxIncome += Math.Floor(goodsNeeded * 5.5m) * turnsToUse;
+            return (industryIncome, taxIncome);
+        }
+            return (0, 0);
     }
 
     private void HandleFoodLogic(Planets planet, ApplicationUser user, ref decimal agricultureIncome, int turnsToUse)

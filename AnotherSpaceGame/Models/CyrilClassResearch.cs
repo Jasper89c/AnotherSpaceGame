@@ -61,6 +61,8 @@ namespace AnotherSpaceGame.Models
         public CyrilClassResearch()
         {
             // Initialize default values
+            CyrilAlloy = false;
+            CyrilAlloyTurnsRequired = 20;
             SmallCyrilHull = false;
             SmallCyrilHullTurnsRequired = 40;
             MediumCyrilHull = false;

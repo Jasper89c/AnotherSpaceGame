@@ -28,23 +28,27 @@
 <div class="mb-4">
     <h4>Your Commodities</h4>
     <ul>
-        <li>Credits: @Model.UserCommodities?.Credits ?? 0</li>
-        <li>Food: @Model.UserCommodities?.Food ?? 0</li>
-        <li>Ore: @Model.UserCommodities?.Ore ?? 0</li>
-        <li>Raw Material: @Model.UserCommodities?.RawMaterial ?? 0</li>
-        <li>Consumer Goods: @Model.UserCommodities?.ConsumerGoods ?? 0</li>
-        <li>Terran Metal: @Model.UserCommodities?.TerranMetal ?? 0</li>
-        <li>Red Crystal: @Model.UserCommodities?.RedCrystal ?? 0</li>
-        <li>White Crystal: @Model.UserCommodities?.WhiteCrystal ?? 0</li>
-        <li>Rutile: @Model.UserCommodities?.Rutile ?? 0</li>
-        <li>Composite: @Model.UserCommodities?.Composite ?? 0</li>
-        <li>Strafez Organism: @Model.UserCommodities?.StrafezOrganism ?? 0</li>
+        <li>Credits: @Model.UserCommodities?.Credits</li>
+        <li>Food: @Model.UserCommodities?.Food</li>
+        <li>Ore: @Model.UserCommodities?.Ore</li>
+        <li>Raw Material: @Model.UserCommodities?.RawMaterial</li>
+        <li>Consumer Goods: @Model.UserCommodities?.ConsumerGoods</li>
+        <li>Terran Metal: @Model.UserCommodities?.TerranMetal</li>
+        <li>Red Crystal: @Model.UserCommodities?.RedCrystal</li>
+        <li>White Crystal: @Model.UserCommodities?.WhiteCrystal</li>
+        <li>Rutile: @Model.UserCommodities?.Rutile</li>
+        <li>Composite: @Model.UserCommodities?.Composite</li>
+        <li>Strafez Organism: @Model.UserCommodities?.StrafezOrganism</li>
     </ul>
     <a asp-area="Game" asp-page="/MarketWithdraw" class="btn btn-secondary btn-sm mt-2">Withdraw from Market</a>
 </div>
-
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
 @foreach (var marketType in Enum.GetValues(typeof(AnotherSpaceGame.Models.MarketType)).Cast<AnotherSpaceGame.Models.MarketType>())
 {
+                    <div class="col-md-6">
     <div class="mb-5">
         <h4>@marketType.ToString() Market</h4>
 
@@ -116,4 +120,9 @@
             </tbody>
         </table>
     </div>
+                    </div>
 }
+            </div>
+        </div>
+    </div>
+</div>

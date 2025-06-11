@@ -9,11 +9,11 @@
 
 @if (!string.IsNullOrEmpty(Model.ExploreMessage))
 {
-    <div class="alert alert-info">@Model.ExploreMessage</div>
+    <div class="alert alert-info">@Html.Raw(Model.ExploreMessage)</div>
 }
 @if (Model.NewPlanet != null)
 {
-    <table>
+    <table class ="table table-bordered">
         <tr>
             <th>Planet Name</th>
             <td>@Model.NewPlanet.Name</td>
@@ -23,11 +23,11 @@
             <td>@Model.NewPlanet.Type</td>
         </tr>
         <tr>
-            <th>Distance from Homeworld</th>
+            <th>Total Land</th>
             <td>@Model.NewPlanet.TotalLand</td>
         </tr>
         <tr>
-            <th>Resources Available</th>
+            <th>Ore Available</th>
             <td>@Model.NewPlanet.AvailableOre</td>
         </tr>
     </table>
@@ -45,7 +45,7 @@
             <td>@Model.UserExploration.ExplorationCompleted.ToString("0.##")%</td>
         </tr>
         <tr>
-            <th>Turns Required (for next planet)</th>
+            <th>Estimated Turns Required (for next planet) </th>
             <td>@Model.UserExploration.TurnsRequired</td>
         </tr>
         <tr>
@@ -79,6 +79,6 @@
     }
     else
     {
-        <div class="alert alert-warning">You must have a fleet and be under your colony cap to explore.</div>
+        <div class="alert alert-warning">Reasons to not be able to explore, lack of turns,fleet or maxium colonies</div>
     }
 }

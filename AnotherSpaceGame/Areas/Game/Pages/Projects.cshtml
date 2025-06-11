@@ -5,7 +5,6 @@
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
 
-<h2>Capsule Lab Project</h2>
 
 @if (Model.Faction == AnotherSpaceGame.Models.Faction.Terran || Model.Faction == AnotherSpaceGame.Models.Faction.AMiner || Model.Faction == AnotherSpaceGame.Models.Faction.Marauder || Model.Faction == AnotherSpaceGame.Models.Faction.Guardian)
 {    
@@ -54,7 +53,7 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
     }
 }
 
-@if (Model.UserProjects.CapsuleLab != true)
+@if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true)
 {
     <div>
         <p>Turns Required: @Model.UserProjects.CapsuleLabTurnsRequired</p>
@@ -88,7 +87,7 @@ else
 {
 }
 
-@if (Model.UserProjects.Itech != true)
+@if (Model.UserProjects.Itech != true && Model.ProjectsResearch.ITechLaboratory == true)
 {
     <div>
         <p>Turns Required: @Model.UserProjects.ItechTurnsRequired</p>
@@ -122,7 +121,7 @@ else
 {
 }
 
-@if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
+@if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral && Model.ViralSpecificResearch.UnreverseEngineering == true)
 {
     <div>
         <p>Turns Required: @Model.UserProjects.UnreverseEngineeringTurnsRequired</p>

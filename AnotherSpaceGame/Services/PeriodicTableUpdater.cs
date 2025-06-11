@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,26 +19,38 @@ public class PeriodicTableUpdater : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var logger = _serviceProvider.GetRequiredService<ILogger<PeriodicTableUpdater>>();
         while (!stoppingToken.IsCancellationRequested)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            try
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-                // Only select turns that need updating
-                var turnsToUpdate = await dbContext.Turns
-                    .Where(t => t.CurrentTurns < t.MaxTurns)
-                    .ToListAsync(stoppingToken);
-
-                foreach (var turn in turnsToUpdate)
+                using (var scope = _serviceProvider.CreateScope())
                 {
-                    turn.CurrentTurns++;
-                }
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                if (turnsToUpdate.Count > 0)
-                {
-                    await dbContext.SaveChangesAsync(stoppingToken);
+                    var turnsToUpdate = await dbContext.Turns
+                        .Where(t => t.CurrentTurns < t.MaxTurns)
+                        .ToListAsync(stoppingToken);
+
+                    foreach (var turn in turnsToUpdate)
+                    {
+                        turn.CurrentTurns++;
+                    }
+
+                    if (turnsToUpdate.Count > 0)
+                    {
+                        await dbContext.SaveChangesAsync(stoppingToken);
+                        logger.LogInformation($"Updated {turnsToUpdate.Count} turn(s) at {DateTime.UtcNow}.");
+                    }
+                    else
+                    {
+                        logger.LogInformation("No turns to update.");
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating turns.");
             }
             await Task.Delay(TimeSpan.FromSeconds(8), stoppingToken);
         }

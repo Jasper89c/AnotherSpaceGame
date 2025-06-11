@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{id?}"
 @model AnotherSpaceGame.Areas.Game.Pages.ManagePlanetModel
 @{
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
@@ -95,35 +95,55 @@
                         <form method="post" class="row g-2 align-items-center">
                             <input type="hidden" name="id" value="@Model.Planet.Id" />
                             <div class="col-auto">
-                                <label for="housing" class="form-label mb-0">Housing:</label>
+                                <label for="housing" class="form-label mb-0">Housing:(@Model.Planet.Housing)</label>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-4">
                                 <input type="number" id="housing" name="housing" class="form-control" min="0" value="0" />
                             </div>
+                                <div class="col-auto">
+                                    <label for="housingtotal" class="form-label mb-0">Total:@Model.Planet.Housing</label>
+                                </div>
+                            <hr />
                             <div class="col-auto">
                                 <label for="commercial" class="form-label mb-0">Commercial:</label>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-4">
                                 <input type="number" id="commercial" name="commercial" class="form-control" min="0" value="0" />
-                            </div>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="commercialtotal" class="form-label mb-0">Total:@Model.Planet.Commercial</label>
+                                </div>
+                                <hr />
                             <div class="col-auto">
                                 <label for="agriculture" class="form-label mb-0">Agriculture:</label>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-4">
                                 <input type="number" id="agriculture" name="agriculture" class="form-control" min="0" value="0" />
-                            </div>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="agriculturetotal" class="form-label mb-0">Total:@Model.Planet.Agriculture</label>
+                                </div>
+                                <hr />
                             <div class="col-auto">
                                 <label for="industry" class="form-label mb-0">Industry:</label>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-4">
                                 <input type="number" id="industry" name="industry" class="form-control" min="0" value="0" />
-                            </div>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="industrytotal" class="form-label mb-0">Total:@Model.Planet.Industry</label>
+                                </div>
+                                <hr />
                             <div class="col-auto">
                                 <label for="mining" class="form-label mb-0">Mining:</label>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-4">
                                 <input type="number" id="mining" name="mining" class="form-control" min="0" value="0" />
-                            </div>
+                                </div>
+                                <div class="col-auto">
+                                    <label for="miningtotal" class="form-label mb-0">Total:@Model.Planet.Mining</label>
+                                </div>
+                                <hr />
                             <div class="w-100"></div>
                             <div class="col-auto mt-2">
                                 <button type="submit" name="action" value="build" class="btn btn-primary">Build Selected</button>
@@ -190,7 +210,7 @@
                             </td>
                         </tr>
                     }
-    )
+    
                 </tbody>
             </table>
     </div>

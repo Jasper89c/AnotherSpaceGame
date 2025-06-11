@@ -22,6 +22,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         public UserProjects UserProjects { get; set; }
+        public ProjectsResearch ProjectsResearch { get; set; }
         public ClusterResearch ClusterResearch { get; set; }
         public ViralSpecificResearch ViralSpecificResearch { get; set; }
         public CollectiveSpecificResearch CollectiveSpecificResearch { get; set; }
@@ -40,6 +41,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             UserProjects = _context.UserProjects.FirstOrDefault(p => p.ApplicationUserId == user.Id);
             ClusterResearch = _context.ClusterResearches.FirstOrDefault(p => p.ApplicationUserId == user.Id);
+            ProjectsResearch = _context.ProjectsResearches.FirstOrDefault(p => p.ApplicationUserId == user.Id);
             if (user.Faction == Faction.Viral)
             {
                 ViralSpecificResearch = _context.ViralSpecificResearches.FirstOrDefault(p => p.ApplicationUserId == user.Id);

@@ -9,22 +9,71 @@
 
 @if (!string.IsNullOrEmpty(Model.StatusMessage))
 {
-    <div class="alert alert-info">@Model.StatusMessage</div>
+    <div class="alert alert-info">@Html.Raw(Model.StatusMessage)</div>
 }
-
-<p>
-    <strong>Current Level:</strong> @Model.CurrentLevel / @Model.MaxLevel<br />
-    <strong>Unused Levels:</strong> @Model.UnusedLevels<br />
-    <strong>Available Turns:</strong> @Model.AvailableTurns
-</p>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<th>
+							Information:
+						</th>						
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Current Level:</strong> @Model.CurrentLevel / @Model.MaxLevel</td>
+					</tr>
+					<tr>
+						<td><strong>Unused Levels:</strong> @Model.UnusedLevels</td>
+					</tr>
+					<tr>
+						<td><strong>Turns for next point:</strong> @Model.TurnsRemaining</td>
+					</tr>
+					<tr>
+						<td><strong>Available Turns:</strong> @Model.AvailableTurns</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table table-sm table-bordered">
+				<thead>
+					<tr>
+						<td><strong>Current Levels:</strong></td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Housing:</strong> @Model.Infrastructure.Housing</td>
+					</tr>
+					<tr>
+						<td><strong>Commercial:</strong> @Model.Infrastructure.Commercial</td>
+					</tr>
+					<tr>
+						<td><strong>Agriculture:</strong> @Model.Infrastructure.Agriculture</td>
+					</tr>
+					<tr>
+						<td><strong>Industry:</strong> @Model.Infrastructure.Industry</td>
+					</tr>
+					<tr>
+						<td><strong>Mining:</strong> @Model.Infrastructure.Mining</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 @if(Model.CurrentLevel < Model.MaxLevel)
 {    
 <form method="post" asp-page-handler="GainLevels" class="mb-4">
-    <div class="mb-2">
-        <label for="TurnsToUse" class="form-label">Turns To Use:</label>
-        <input asp-for="TurnsToUse" class="form-control" min="1" max="45" />
-        <span asp-validation-for="TurnsToUse" class="text-danger"></span>
-    </div>
+        <div class="mb-2">
+            <label for="TurnsToUse" class="form-label">Turns To Use:</label>
+            <input asp-for="TurnsToUse" class="form-control" min="1" max="45" />
+            <span asp-validation-for="TurnsToUse" class="text-danger"></span>
+        </div>
     <button type="submit" class="btn btn-primary">Research</button>
         @Html.AntiForgeryToken()
     </form>
@@ -45,6 +94,7 @@ else
             <option value="Industry">Industry</option>
             <option value="Mining">Mining</option>
         </select>
+        <span asp-validation-for="AssignCategory" class="text-danger"></span>
     </div>
     <div class="mb-2">
         <label for="PointsToAssign" class="form-label">Points to assign:</label>

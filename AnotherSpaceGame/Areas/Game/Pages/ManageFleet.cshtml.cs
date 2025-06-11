@@ -23,8 +23,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context = context;
         }
 
-        public List<Fleet> UserFleets { get; set; }
-        public List<ManageFleet> manageFleets { get; set; }
+        public List<Fleet> UserFleets { get; set; } = new();
+        public List<ManageFleet> manageFleets { get; set; } = new();
 
         [BindProperty]
         public Dictionary<int, int> RemoveShips { get; set; } = new();
@@ -35,11 +35,29 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
+            var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
             Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             UserFleets = await _context.Fleets
-                .Where(f => f.ApplicationUserId == user.Id)
+                .Where(f => f.ApplicationUserId == currentUser.Id)
                 .OrderByDescending(f => f.TotalPowerRating)
                 .ToListAsync();
+
+            manageFleets = new List<ManageFleet>();
+
+            foreach (var fleet in UserFleets)
+            {
+                manageFleets.Add(new ManageFleet
+                {
+                    Id = fleet.Id,
+                    ApplicationUserId = fleet.ApplicationUserId,
+                    ShipId = fleet.ShipId,
+                    TotalShips = fleet.TotalShips,
+                    TotalPowerRating = fleet.TotalPowerRating,
+                    TotalUpkeep = fleet.TotalUpkeep,
+                    Ship = await _context.Ships.FindAsync(fleet.ShipId)
+                });
+            }
 
             return Page();
         }
@@ -50,9 +68,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
+            var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
             Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             var fleets = await _context.Fleets
-                .Where(f => f.ApplicationUserId == user.Id)
+                .Where(f => f.ApplicationUserId == currentUser.Id)
                 .ToListAsync();
 
             manageFleets = new List<ManageFleet>();

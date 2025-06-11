@@ -50,8 +50,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             Username = NPC.UserName;
             DamageProtection = NPC.DamageProtection;
             Faction = NPC.Faction;
-            TotalColonies = NPC.TotalColonies;
-            TotalPlanets = NPC.TotalPlanets;
+            TotalColonies = 1;
+            TotalPlanets = 1;
             PowerRating = NPC.PowerRating;
             Federation = NPC.Federation?.FederationName ?? "None";
             PlayingSince = NPC.PlayingSince;

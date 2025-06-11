@@ -20,6 +20,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<TurnService>();
 builder.Services.AddScoped<IUserStatusService, UserStatusService>();
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<PeriodicTableUpdater>();
 
 var app = builder.Build();
 
@@ -51,8 +53,6 @@ app.MapRazorPages();
 app.MapHub<ChatHub>("/chathub");
 
 app.Run();
-
-builder.Services.AddHostedService<PeriodicTableUpdater>();
 
 // In Program.cs or Startup.cs
 builder.Services.AddSession();

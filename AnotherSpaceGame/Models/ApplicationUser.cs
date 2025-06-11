@@ -6,6 +6,10 @@ namespace AnotherSpaceGame.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        // navigation property for private messages
+        public ICollection<PrivateMessage> PrivateMessagesSent { get; set; }
+        public ICollection<PrivateMessage> PrivateMessagesReceived { get; set; }
+        
         // navigation property for ViralReversedShips
         public ViralReversedShips ViralReversedShips { get; set; }
         // navigation property for counterattacks

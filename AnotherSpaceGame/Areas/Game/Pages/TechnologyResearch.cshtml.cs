@@ -51,20 +51,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login");
-
+            var currentUser = _context.Users.FirstOrDefault(x => x.Id == user.Id);
             if (string.IsNullOrEmpty(SelectedResearchName) || TurnsToInvest <= 0)
             {
-                GetAvailableResearch(user);
+                GetAvailableResearch(currentUser);
                 return Page();
             }
 
-            int availableTurns = await _turnService.GetTurnsAsync(user.Id);
+            int availableTurns = await _turnService.GetTurnsAsync(currentUser.Id);
 
             // Check if user has enough turns
             if (TurnsToInvest > availableTurns)
             {
                 StatusMessage = $"You do not have enough turns. Available: {availableTurns}.";
-                GetAvailableResearch(user);
+                GetAvailableResearch(currentUser);
                 return Page();
             }
 
@@ -78,24 +78,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // List all possible research models for the user
             var researchModels = new object[]
             {
-        _context.TerranResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.EClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.CyrilClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.StrafezResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.FClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.ProjectsResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.AMinerResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.MarauderResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.ViralResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.ViralSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.CollectiveResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.CollectiveSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.GuardianResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id),
-        _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id)
+        _context.TerranResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.EClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.CyrilClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.StrafezResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.FClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.ProjectsResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.AMinerResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.MarauderResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.ViralResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.ViralSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.CollectiveResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.CollectiveSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.GuardianResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id),
+        _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id)
             };
 
             // Property name pattern: e.g., "SmallTerranHullTurnsRequired"
-            string turnsRequiredPropName = SelectedResearchName.Replace(" ", "") + "TurnsRequired";
+            string turnsRequiredPropName = SelectedResearchName
+            .Replace(" ", "")
+            .Replace("-", "")
+            .Replace("'", "") + "TurnsRequired";
 
             foreach (var model in researchModels)
             {
@@ -111,7 +114,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (researchModel == null || turnsRequiredProp == null)
             {
                 ModelState.AddModelError("", "Research not found.");
-                GetAvailableResearch(user);
+                GetAvailableResearch(currentUser);
                 return Page();
             }
 
@@ -132,23 +135,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
 
             // Deduct the turns from the user's available turns
-            var turnMessage = await _turnService.TryUseTurnsAsync(user.Id, TurnsToInvest);
+            var turnMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToInvest);
             StatusMessage = $"{turnMessage.Message}";
             await _context.SaveChangesAsync();
 
-            GetAvailableResearch(user);
+            GetAvailableResearch(currentUser);
             return Page();
         }
 
 
         public void GetAvailableResearch(ApplicationUser user)
         {
+            var currentUser = _context.Users.FirstOrDefault(x => x.Id == user.Id);
             // Get the user's research data
-            var EClassData = _context.EClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-            var CClassData = _context.CyrilClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-            var SClassData = _context.StrafezResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-            var FClassData = _context.FClassResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-            var PClassData = _context.ProjectsResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+            var EClassData = _context.EClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+            var CClassData = _context.CyrilClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+            var SClassData = _context.StrafezResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+            var FClassData = _context.FClassResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+            var PClassData = _context.ProjectsResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
             ClusterResearch ClusterData = null;
             TerranResearch TerranData = null;
             AMinerResearch AMinerData = null;
@@ -158,12 +162,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             CollectiveResearch CollectiveData = null;
             CollectiveSpecificResearch CollectiveSpecificData = null;
             GuardianResearch GuardianData = null;
-
+            ListOfAvailableResearch = new List<AvailableResearch>();
             switch (user.Faction)
             {
                 case Faction.Terran:
-                    TerranData = _context.TerranResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+                    TerranData = _context.TerranResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
                     // Check if the user has completed the prerequisite research
                     // Terran research is dependent on the Terran hulls and ships
                     if (TerranData.SmallTerranHull != true)
@@ -653,8 +657,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                     break;
                 case Faction.AMiner:
-                    AMinerData = _context.AMinerResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+                    AMinerData = _context.AMinerResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
                     // AMiner Data
                     if (AMinerData.StarshipEngineering != true)
                     {
@@ -1573,8 +1577,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     }
                     break;
                 case Faction.Viral:
-                    ViralData = _context.ViralResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-                    ViralSpecificData = _context.ViralSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+                    ViralData = _context.ViralResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+                    ViralSpecificData = _context.ViralSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
                     // viral Data
                     if (ViralData.Class1ViralHull != true)
                     {
@@ -1942,8 +1946,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                     break;
                 case Faction.Collective:
-                    CollectiveData = _context.CollectiveResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-                    CollectiveSpecificData = _context.CollectiveSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+                    CollectiveData = _context.CollectiveResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+                    CollectiveSpecificData = _context.CollectiveSpecificResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
                     // collective Data
                     if (CollectiveData.FighterClass != true)
                     {
@@ -2371,8 +2375,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                     break;
                 case Faction.Guardian:
-                    GuardianData = _context.GuardianResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
-                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
+                    GuardianData = _context.GuardianResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
+                    ClusterData = _context.ClusterResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
                     // Guardian Data
                     if (GuardianData.FighterClass != true)
                     {

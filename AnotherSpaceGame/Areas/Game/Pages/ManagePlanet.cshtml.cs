@@ -33,6 +33,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            TurnMessage = TempData["TurnMessage"] as string;
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
@@ -235,7 +236,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
 
             await _context.SaveChangesAsync();
-            Turns = await _turnService.GetTurnsAsync(user.Id);
+            var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
+            TempData["TurnMessage"] = turnsMessage.Message;
             return RedirectToPage(new { id = Planet.Id });
         }
     }

@@ -67,7 +67,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
-
+            Turns turns = await _context.Turns.FirstOrDefaultAsync(t => t.ApplicationUserId == user.Id);
             // Block exploration for Collective or Marauder factions
             if (user.Faction == Faction.Collective || user.Faction == Faction.Marauder)
             {
@@ -76,13 +76,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
 
-            var exploration = await _context.Explorations
+            UserExploration = await _context.Explorations
                 .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
 
-            if (exploration == null)
+            if (UserExploration == null)
                 return RedirectToPage();
 
-            await UpdateExplorationStats(user, exploration);
+            await UpdateExplorationStats(user, UserExploration);
 
             if (!await UserHasFleet(user))
             {
@@ -95,7 +95,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ExploreMessage = "You are at your maximum colony cap and cannot explore more planets.";
                 return Page();
             }
-
+            if (turnsUsed > turns.CurrentTurns)
+            {
+                ExploreMessage = "You do not have enough turns available.";
+                return Page();
+            }
             if (turnsUsed <= 0)
             {
                 ExploreMessage = "You must use at least 1 turn.";
@@ -111,9 +115,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
 
             // Calculate progress
-            decimal percentPerTurn = 100m / exploration.TurnsRequired;
+            decimal percentPerTurn = 100m / UserExploration.TurnsRequired;
             decimal progress = percentPerTurn * turnsUsed;
-            exploration.ExplorationCompleted += progress;
+            UserExploration.ExplorationCompleted += progress;
             var allowedTypes = new[]
             {
                 PlanetType.Barren,
@@ -134,11 +138,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             };
             var random = new System.Random();
             var chosenType = allowedTypes[random.Next(allowedTypes.Length)];
-            if (exploration.ExplorationCompleted >= 100m)
+            if (UserExploration.ExplorationCompleted >= 100m)
             {
                 // Found a new planet
-                exploration.ExplorationCompleted = 0;
-                exploration.ExplorationPointsNeeded = (int)(exploration.ExplorationPointsNeeded * 1.2);
+                UserExploration.ExplorationCompleted = 0;
+                UserExploration.ExplorationPointsNeeded = (int)(UserExploration.ExplorationPointsNeeded * 1.2);
                 user.TotalPlanets += 1;
                 user.TotalColonies += 1;
                 NewPlanet = new Planets
@@ -295,7 +299,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 // Calculate LandAvailable
                 NewPlanet.LandAvailable = NewPlanet.TotalLand - (NewPlanet.Housing + NewPlanet.Commercial + NewPlanet.Industry + NewPlanet.Agriculture + NewPlanet.Mining);
                 _context.Planets.Add(NewPlanet);
-                ExploreMessage = $"Congratulations! You have discovered a new planet.<hr>{turnResult.Message}";
+                ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";
             }
             else
             {
@@ -306,11 +310,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     ModelState.AddModelError(string.Empty, turnResult.Message);
                     return Page();
                 }
-                ExploreMessage = $"Exploration progress: {exploration.ExplorationCompleted:0.##}% complete for the next planet.<hr>{turnResultb.Message}";
+                ExploreMessage = $"Exploration progress: {UserExploration.ExplorationCompleted:0.##}% complete for the next planet. <br> {turnResultb.Message}";
             }
 
             await _context.SaveChangesAsync();
-            await UpdateExplorationStats(user, exploration);
+            await UpdateExplorationStats(user, UserExploration);
+            CanExplore = await UserHasFleet(user) && !IsAtColonyCap(user);
             return Page();
         }
 
@@ -340,9 +345,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Calculate turns required
             if (totalScanningPower + totalShips > 0)
-                exploration.TurnsRequired = (int)System.Math.Ceiling((double)exploration.ExplorationPointsNeeded / (totalScanningPower + totalShips));
+            {
+                // Convert 'exploration.ExplorationPointsNeeded' to double to match the type of the numerator
+                exploration.TurnsRequired = (int)System.Math.Ceiling((double)(exploration.ExplorationPointsNeeded * (1 - (UserExploration.ExplorationCompleted / 100))) / (totalScanningPower + totalShips));
+            }
             else
+            {
                 exploration.TurnsRequired = 0;
+            }
         }
 
         private async Task<bool> UserHasFleet(ApplicationUser user)

@@ -23,7 +23,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int PowerRating { get; set; }
         public string Federation { get; set; }
         public DateTime PlayingSince { get; set; }
-        public double EmpireAge { get; set; }
+        public int EmpireAge { get; set; }
         public int BattlesWon { get; set; }
         public int BattlesLost { get; set; }
         public int ColoniesWon { get; set; }
@@ -43,8 +43,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 TotalPlanets = user.TotalPlanets;
                 PowerRating = user.PowerRating;
                 Federation = user.Federation?.FederationName ?? "None";
+                EmpireAge = (DateTime.UtcNow - user.PlayingSince).Days;
                 PlayingSince = user.PlayingSince;
-                EmpireAge = user.EmpireAge;
                 BattlesWon = user.BattlesWon;
                 BattlesLost = user.BattlesLost;
                 ColoniesWon = user.ColoniesWon;

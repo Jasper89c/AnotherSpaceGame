@@ -15,37 +15,41 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly TurnService _turnService;
+        private readonly ILogger<ResearchModel> _logger;
 
-        public ResearchModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context, TurnService turnService)
+        public ResearchModel(UserManager<ApplicationUser> userManager, ApplicationDbContext context, TurnService turnService, ILogger<ResearchModel> logger)
         {
             _userManager = userManager;
             _context = context;
             _turnService = turnService;
+            _logger = logger;
         }
 
         public int CurrentLevel { get; set; }
         public int MaxLevel { get; } = 255;
         public int UnusedLevels { get; set; }
         public int AvailableTurns { get; set; }
+        public int TurnsRemaining { get; set; }
         public string StatusMessage { get; set; }
 
         [BindProperty]
-        [Range(1, 255, ErrorMessage = "Turns must be between 1 and 45")]
+        [Range(1, 45, ErrorMessage = "Turns must be between 1 and 45")]
         public int TurnsToUse { get; set; }
-
         [BindProperty]
-        public string AssignCategory { get; set; }
-
+        public string? AssignCategory { get; set; }
         [BindProperty]
         [Range(1, 255, ErrorMessage = "Points must be at least 1.")]
-        public int PointsToAssign { get; set; }
+        public int? PointsToAssign { get; set; }
 
         public Infrastructer Infrastructure { get; set; }
 
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
+            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
+            Turns turns = _context.Turns.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
             if (Infrastructure == null)
             {
                 Infrastructure = new Infrastructer { ApplicationUserId = user.Id };
@@ -54,22 +58,34 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             CurrentLevel = Infrastructure.TotalLevels;
             UnusedLevels = Infrastructure.UnusedLevels;
-            AvailableTurns = user.Turns.CurrentTurns;
+            AvailableTurns = turns.CurrentTurns;
+            TurnsRemaining = Infrastructure.TurnsRemaining;
         }
 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostGainLevelsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
-
+            var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
+            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
+            Turns turns = _context.Turns.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
             if (!ModelState.IsValid)
             {
+                foreach (var key in ModelState.Keys)
+                {
+                    var modelErrors = ModelState[key].Errors;
+                    foreach (var error in modelErrors)
+                    {
+                        // Log or display error.ErrorMessage
+                        _logger.LogError(error.ErrorMessage);
+                    }
+                }
                 await OnGetAsync();
                 StatusMessage = "Invalid input.";
                 return Page();
             }
-
+            AvailableTurns = turns.CurrentTurns;
             if (TurnsToUse < 1 || TurnsToUse > AvailableTurns)
             {
                 await OnGetAsync();
@@ -91,16 +107,16 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Infrastructure.UnusedLevels += 1;
                     Infrastructure.ITechInvestmentTurnsRequired += 200;
                     Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
-                    user.Turns.CurrentTurns -= TurnsToUse;
-                    var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, TurnsToUse);
-                    StatusMessage = $"You gained 1 infrastructure level(s) <hr> {turnsMessage.Message}";
+                    turns.CurrentTurns -= TurnsToUse;
+                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
+                    StatusMessage = $"You gained 1 infrastructure level(s) </br > {turnsMessage.Message}";
                     await _context.SaveChangesAsync();
                     await OnGetAsync();
                     return Page();
                 }
                 else
                 {
-                    var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, TurnsToUse);
+                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
                     StatusMessage = $"{turnsMessage.Message}";
                     await _context.SaveChangesAsync();
                     await OnGetAsync();
@@ -115,8 +131,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostAssignPointsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
-
+            var currentUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
+            Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
+            Turns turns = _context.Turns.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
             if (!ModelState.IsValid)
             {
                 await OnGetAsync();
@@ -130,24 +148,36 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 StatusMessage = "You do not have enough unused levels.";
                 return Page();
             }
+            if (string.IsNullOrEmpty(AssignCategory))
+            {
+                await OnGetAsync();
+                StatusMessage = "Please select a category to assign points.";
+                return Page();
+            }
+            if (PointsToAssign > Infrastructure.UnusedLevels)
+            {
+                await OnGetAsync();
+                StatusMessage = "You cannot assign more points than you have unused levels.";
+                return Page();
+            }
 
             // Assign points to the selected category, only if not previously assigned
             switch (AssignCategory)
             {
                 case "Housing":
-                    Infrastructure.Housing += PointsToAssign;
+                    Infrastructure.Housing += (int)PointsToAssign;
                     break;
                 case "Commercial":
-                    Infrastructure.Commercial += PointsToAssign;
+                    Infrastructure.Commercial += (int)PointsToAssign;
                     break;
                 case "Agriculture":
-                    Infrastructure.Agriculture += PointsToAssign;
+                    Infrastructure.Agriculture += (int)PointsToAssign;
                     break;
                 case "Industry":
-                    Infrastructure.Industry += PointsToAssign;
+                    Infrastructure.Industry += (int)PointsToAssign;
                     break;
                 case "Mining":
-                    Infrastructure.Mining += PointsToAssign;
+                    Infrastructure.Mining += (int)PointsToAssign;
                     break;
                 default:
                     await OnGetAsync();
@@ -155,7 +185,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     return Page();
             }
 
-            Infrastructure.UnusedLevels -= PointsToAssign;
+            Infrastructure.UnusedLevels -= (int)PointsToAssign;
             await _context.SaveChangesAsync();
 
             StatusMessage = $"Assigned {PointsToAssign} point(s) to {AssignCategory}.";

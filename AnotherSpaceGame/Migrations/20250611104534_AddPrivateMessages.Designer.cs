@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AnotherSpaceGame.Data.Migrations
+namespace AnotherSpaceGame.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250529175455_008")]
-    partial class _008
+    [Migration("20250611104534_AddPrivateMessages")]
+    partial class AddPrivateMessages
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,6 +155,9 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("ArtifactShield")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("BattlesLost")
                         .HasColumnType("int");
 
@@ -174,6 +177,9 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("DamageProtection")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -184,8 +190,20 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<double>("EmpireAge")
                         .HasColumnType("float");
 
-                    b.Property<int>("Fraction")
+                    b.Property<int>("Faction")
                         .HasColumnType("int");
+
+                    b.Property<int?>("FederationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ITechCooldown")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsNPC")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastAction")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -237,6 +255,8 @@ namespace AnotherSpaceGame.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FederationId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -280,6 +300,49 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Artifacts");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.BattleLogs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Attacker")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateAndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Defender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FederationsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FleetReport")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("FederationsId");
+
+                    b.ToTable("Battlelogs");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.ClusterResearch", b =>
@@ -344,6 +407,12 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<int>("DestroyerClassTurnsRequired")
                         .HasColumnType("int");
 
+                    b.Property<bool>("FighterClass")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FighterClassTurnsRequired")
+                        .HasColumnType("int");
+
                     b.Property<bool>("FrigateClass")
                         .HasColumnType("bit");
 
@@ -390,6 +459,12 @@ namespace AnotherSpaceGame.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("RClassBattleshipTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RClassCorvette")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RClassCorvetteTurnsRequired")
                         .HasColumnType("int");
 
                     b.Property<bool>("RClassDestroyer")
@@ -501,6 +576,32 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Commodities");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.CounterAttacks", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateGranted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TargetUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("CounterAttacks");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.CyrilClassResearch", b =>
@@ -621,6 +722,47 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.ToTable("EClassResearches");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.Exploration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("ExplorationCompleted")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExplorationPointsNeeded")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScanningPower")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShipsInFleet")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalColonies")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPlanets")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TurnsRequired")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Explorations");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.FClassResearch", b =>
                 {
                     b.Property<int>("Id")
@@ -665,6 +807,133 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.ToTable("FClassResearches");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationApplication", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("AppliedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FederationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.HasIndex("FederationId");
+
+                    b.ToTable("FederationApplications");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationMessages", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FederationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FederationId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("FederationMessages");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationWar", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AttackerFederationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DeclaredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DefenderFederationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttackerFederationId");
+
+                    b.HasIndex("DefenderFederationId");
+
+                    b.ToTable("FederationWars");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.Federations", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FederationDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FederationLeaderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FederationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaximumMembers")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMembers")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPlanets")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPowerating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FederationLeaderId");
+
+                    b.ToTable("Federations");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.Fleet", b =>
                 {
                     b.Property<int>("Id")
@@ -684,6 +953,9 @@ namespace AnotherSpaceGame.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TotalShips")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalUpkeep")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -809,6 +1081,35 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.ToTable("GuardianResearches");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.ImportantEvents", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateAndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImportantEventTypes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("ImportantEvents");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.Infrastructer", b =>
                 {
                     b.Property<int>("Id")
@@ -830,6 +1131,12 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<int>("Housing")
                         .HasColumnType("int");
 
+                    b.Property<int>("ITechInvestmentTurns")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ITechInvestmentTurnsRequired")
+                        .HasColumnType("int");
+
                     b.Property<int>("Industry")
                         .HasColumnType("int");
 
@@ -843,6 +1150,9 @@ namespace AnotherSpaceGame.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnusedLevels")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -957,6 +1267,157 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.ToTable("MarauderResearches");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.MarketPosts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MarketType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("MarketPosts");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.Missions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Mission1")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission10")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission2")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission3")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission4")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission5")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission6")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission7")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission8")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Mission9")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Missions");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.NPCs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("ArtifactShield")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BattlesLost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BattlesWon")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColoniesExplored")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColoniesLost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColoniesWon")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DamageProtection")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("EmpireAge")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Faction")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FederationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsNPC")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastAction")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PlanetsPlundered")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PlayingSince")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PowerRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalColonies")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPlanets")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FederationId");
+
+                    b.ToTable("NPCs");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.Planets", b =>
                 {
                     b.Property<int>("Id")
@@ -968,12 +1429,15 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<int>("Agriculture")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("AgricultureModifier")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ArtifactModifier")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ArtifactModifier")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("AvailableLabour")
                         .HasColumnType("int");
@@ -986,6 +1450,9 @@ namespace AnotherSpaceGame.Data.Migrations
 
                     b.Property<int>("CurrentPopulation")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("DateTimeAcquired")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("FoodRequired")
                         .HasColumnType("int");
@@ -1018,10 +1485,22 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("OreModifier")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("PlanetId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("PopulationModifier")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PowerRating")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalLand")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPlanets")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
@@ -1032,6 +1511,52 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Planets");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.PrivateMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ApplicationUserId1")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ApplicationUserId1");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("PrivateMessages");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.ProjectsResearch", b =>
@@ -1086,6 +1611,12 @@ namespace AnotherSpaceGame.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BuildRate")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("CanCapture")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("CapChance")
                         .HasColumnType("decimal(18,2)");
 
@@ -1101,6 +1632,9 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<int>("Cost")
                         .HasColumnType("int");
 
+                    b.Property<int>("CostToBuild")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("EnergyShield")
                         .HasColumnType("decimal(18,2)");
 
@@ -1109,6 +1643,9 @@ namespace AnotherSpaceGame.Data.Migrations
 
                     b.Property<int>("Hull")
                         .HasColumnType("int");
+
+                    b.Property<bool>("ImmuneToCapture")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("KineticShield")
                         .HasColumnType("decimal(18,2)");
@@ -1138,6 +1675,9 @@ namespace AnotherSpaceGame.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Rutile")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScanningPower")
                         .HasColumnType("int");
 
                     b.Property<string>("ShipName")
@@ -1383,6 +1923,86 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.ToTable("Turns");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.UserProjects", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("CapsuleLab")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("CapsuleLabCreditsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CapsuleLabTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CapsuleLabUnlockTimer")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Itech")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItechCreditsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItechTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ItechUnlockTimer")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("KalZulHektar")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("KalZulHektarCreditsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KalZulHektarTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("KalZulHektarUnlockTimer")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("KalZulLoktar")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("KalZulLoktarCreditsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("KalZulLoktarTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("KalZulLoktarUnlockTimer")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("UnreverseEngineering")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UnreverseEngineeringCreditsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnreverseEngineeringTurnsRequired")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UnreverseEngineeringUnlockTimer")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("UserProjects");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.ViralResearch", b =>
                 {
                     b.Property<int>("Id")
@@ -1434,7 +2054,7 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Property<bool>("VClassCruiser")
                         .HasColumnType("bit");
 
-                    b.Property<int>("VClassCruiser1TurnsRequired")
+                    b.Property<int>("VClassCruiserTurnsRequired")
                         .HasColumnType("int");
 
                     b.Property<bool>("VClassDestroyer")
@@ -1449,6 +2069,65 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ViralResearches");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.ViralReversedShips", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AMinerReversedShipsCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AminerShip1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AminerShip2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AminerShip3Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("MarauderReversedShipsCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MarauderShip1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MarauderShip2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MarauderShip3Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TerranReversedShipsCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TerranShip1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TerranShip2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TerranShip3Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ViralReversedShipsCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("ViralReversedShips");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.ViralSpecificResearch", b =>
@@ -1481,6 +2160,21 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("ViralSpecificResearches");
+                });
+
+            modelBuilder.Entity("FederationsFederations", b =>
+                {
+                    b.Property<int>("FederationWarsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FederationsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FederationWarsId", "FederationsId");
+
+                    b.HasIndex("FederationsId");
+
+                    b.ToTable("FederationsFederations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1631,6 +2325,16 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "Federation")
+                        .WithMany("FederationMembers")
+                        .HasForeignKey("FederationId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Federation");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.Artifacts", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
@@ -1638,6 +2342,22 @@ namespace AnotherSpaceGame.Data.Migrations
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.BattleLogs", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Battlelogs")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.Federations", null)
+                        .WithMany("FederationActivity")
+                        .HasForeignKey("FederationsId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ApplicationUser");
                 });
@@ -1686,6 +2406,17 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.CounterAttacks", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("CounterAttacks")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.CyrilClassResearch", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
@@ -1708,6 +2439,17 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.Exploration", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Exploration")
+                        .HasForeignKey("AnotherSpaceGame.Models.Exploration", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.FClassResearch", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
@@ -1717,6 +2459,74 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationApplication", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("FederationApplication")
+                        .HasForeignKey("AnotherSpaceGame.Models.FederationApplication", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "Federation")
+                        .WithMany("FederationApplicants")
+                        .HasForeignKey("FederationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Federation");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationMessages", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "Federation")
+                        .WithMany("FederationDiscussion")
+                        .HasForeignKey("FederationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Federation");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.FederationWar", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "AttackerFederation")
+                        .WithMany()
+                        .HasForeignKey("AttackerFederationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "DefenderFederation")
+                        .WithMany()
+                        .HasForeignKey("DefenderFederationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AttackerFederation");
+
+                    b.Navigation("DefenderFederation");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.Federations", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "FederationLeader")
+                        .WithMany()
+                        .HasForeignKey("FederationLeaderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FederationLeader");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.Fleet", b =>
@@ -1735,6 +2545,17 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("GuardianResearch")
                         .HasForeignKey("AnotherSpaceGame.Models.GuardianResearch", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.ImportantEvents", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("ImportantEvents")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1763,6 +2584,37 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.MarketPosts", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("MarketPosts")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.Missions", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("Missions")
+                        .HasForeignKey("AnotherSpaceGame.Models.Missions", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.NPCs", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.Federations", "Federation")
+                        .WithMany()
+                        .HasForeignKey("FederationId");
+
+                    b.Navigation("Federation");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.Planets", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
@@ -1772,6 +2624,33 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.PrivateMessage", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", null)
+                        .WithMany("PrivateMessagesReceived")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", null)
+                        .WithMany("PrivateMessagesSent")
+                        .HasForeignKey("ApplicationUserId1");
+
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.ProjectsResearch", b =>
@@ -1818,11 +2697,33 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.UserProjects", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("UserProjects")
+                        .HasForeignKey("AnotherSpaceGame.Models.UserProjects", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.ViralResearch", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("ViralResearch")
                         .HasForeignKey("AnotherSpaceGame.Models.ViralResearch", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.ViralReversedShips", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
+                        .WithOne("ViralReversedShips")
+                        .HasForeignKey("AnotherSpaceGame.Models.ViralReversedShips", "ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1838,6 +2739,21 @@ namespace AnotherSpaceGame.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("FederationsFederations", b =>
+                {
+                    b.HasOne("AnotherSpaceGame.Models.Federations", null)
+                        .WithMany()
+                        .HasForeignKey("FederationWarsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AnotherSpaceGame.Models.Federations", null)
+                        .WithMany()
+                        .HasForeignKey("FederationsId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1898,6 +2814,8 @@ namespace AnotherSpaceGame.Data.Migrations
 
                     b.Navigation("Artifacts");
 
+                    b.Navigation("Battlelogs");
+
                     b.Navigation("ClusterResearch")
                         .IsRequired();
 
@@ -1910,13 +2828,21 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("Commodities")
                         .IsRequired();
 
+                    b.Navigation("CounterAttacks");
+
                     b.Navigation("CyrilClassResearch")
                         .IsRequired();
 
                     b.Navigation("EClassResearch")
                         .IsRequired();
 
+                    b.Navigation("Exploration")
+                        .IsRequired();
+
                     b.Navigation("FClassResearch")
+                        .IsRequired();
+
+                    b.Navigation("FederationApplication")
                         .IsRequired();
 
                     b.Navigation("Fleets");
@@ -1924,13 +2850,24 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("GuardianResearch")
                         .IsRequired();
 
+                    b.Navigation("ImportantEvents");
+
                     b.Navigation("Infrastructer")
                         .IsRequired();
 
                     b.Navigation("MarauderResearch")
                         .IsRequired();
 
+                    b.Navigation("MarketPosts");
+
+                    b.Navigation("Missions")
+                        .IsRequired();
+
                     b.Navigation("Planets");
+
+                    b.Navigation("PrivateMessagesReceived");
+
+                    b.Navigation("PrivateMessagesSent");
 
                     b.Navigation("ProjectsResearch")
                         .IsRequired();
@@ -1944,11 +2881,28 @@ namespace AnotherSpaceGame.Data.Migrations
                     b.Navigation("Turns")
                         .IsRequired();
 
+                    b.Navigation("UserProjects")
+                        .IsRequired();
+
                     b.Navigation("ViralResearch")
+                        .IsRequired();
+
+                    b.Navigation("ViralReversedShips")
                         .IsRequired();
 
                     b.Navigation("ViralSpecificResearch")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.Federations", b =>
+                {
+                    b.Navigation("FederationActivity");
+
+                    b.Navigation("FederationApplicants");
+
+                    b.Navigation("FederationDiscussion");
+
+                    b.Navigation("FederationMembers");
                 });
 #pragma warning restore 612, 618
         }

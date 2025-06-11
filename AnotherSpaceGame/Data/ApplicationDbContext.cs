@@ -46,6 +46,7 @@ namespace AnotherSpaceGame.Data
         public DbSet<FederationApplication> FederationApplications { get; set; }
         public DbSet<FederationWar> FederationWars { get; set; }
         public DbSet<NPCs> NPCs { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -273,6 +274,12 @@ namespace AnotherSpaceGame.Data
                 .HasOne(mp => mp.ApplicationUser)
                 .WithMany(u => u.MarketPosts)
                 .HasForeignKey(mp => mp.ApplicationUserId);
+            // configure one-to-many relationship for private messages
+            builder.Entity<ApplicationUser>()
+                .HasMany(u => u.PrivateMessagesSent)
+                .WithOne(pm => pm.Sender)
+                .HasForeignKey(pm => pm.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PrivateMessage>()
                 .HasOne(pm => pm.Sender)

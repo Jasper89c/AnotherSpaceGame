@@ -97,6 +97,9 @@
                                     <a class="dropdown-item" asp-area="Game" asp-page="/Research">Research</a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/TechnologyResearch">Tech Research</a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/Artifacts">Artifacts</a>
                                 </li>
                                 <!-- Add more dropdown items as needed -->
@@ -219,32 +222,41 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-8">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </div>
+                <div class="col-md-3">
+                    <!-- Chat Toggle Button -->
+                    <button id="chat-toggle-btn" class="btn btn-primary rounded-circle" title="Toggle Chat">
+                        <i class="bi bi-chat-dots"></i>
+                    </button>
 
-    <!-- Chat Toggle Button -->
-    <button id="chat-toggle-btn" class="btn btn-primary rounded-circle" title="Toggle Chat">
-        <i class="bi bi-chat-dots"></i>
-    </button>
-
-    <!-- Chat Panel -->
-    <div id="chat-panel" style="display:none;">
-        <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
-            <span><i class="bi bi-chat-dots"></i> Game Chat</span>
-            <button type="button" class="btn-close" aria-label="Close" id="chat-close-btn"></button>
-        </div>
-        <div id="chat-messages">
-            <!-- Messages will appear here -->
-        </div>
-        <form id="chat-input-area" autocomplete="off">
-            <div class="input-group">
-                <input type="text" class="form-control" id="chat-input" placeholder="Type a message..." />
-                <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+                    <!-- Chat Panel -->
+                    <div id="chat-panel" style="display:none;">
+                        <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
+                            <span><i class="bi bi-chat-dots"></i> Game Chat</span>
+                            <button type="button" class="btn-close" aria-label="Close" id="chat-close-btn"></button>
+                        </div>
+                        <div id="chat-messages">
+                            <!-- Messages will appear here -->
+                        </div>
+                        <form id="chat-input-area" autocomplete="off">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="chat-input" placeholder="Type a message..." />
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>        
+    </div>    
     <!-- Fixed Bottom Bar -->
     <div id="game-status-bar" class="bg-dark text-light d-flex flex-row justify-content-center align-items-center"
          style="position:fixed;bottom:0;left:0;width:100vw;height:48px;z-index:2000;box-shadow:0 -2px 8px rgba(0,0,0,0.1);font-size:1rem;">
@@ -256,17 +268,17 @@
         <div class="mx-3">
             <i class="bi bi-cash-coin"></i>
             <span>Credits:</span>
-            <strong>@status.Credits</strong>
+            <strong>@status.Credits.ToString("C0")</strong>
         </div>
         <div class="mx-3">
             <i class="bi bi-egg-fried"></i>
             <span>Food:</span>
-            <strong>@status.Food</strong>
+            <strong>@status.Food.ToString("N0")</strong>
         </div>
         <div class="mx-3">
             <i class="bi bi-lightning-charge"></i>
             <span>Power Rating:</span>
-            <strong>@status.PowerRating</strong>
+            <strong>@status.PowerRating.ToString("N0")</strong>
         </div>
         <div class="mx-3">
             <i class="bi bi-hourglass-split"></i>
@@ -288,11 +300,6 @@
             </a>
         </div>
     </div>
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - AnotherSpaceGame - <a asp-area="Home" asp-page="/Views/Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -334,5 +341,6 @@
             }
         });
     </script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

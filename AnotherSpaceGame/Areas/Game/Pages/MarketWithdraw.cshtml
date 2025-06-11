@@ -19,6 +19,9 @@
 @if (Model.UserMarketPosts == null || !Model.UserMarketPosts.Any())
 {
     <div class="alert alert-info">You have no active market posts.</div>
+    <a asp-area="Game" asp-page="/Market" class="btn btn-secondary mb-3">
+        &larr; Back to Market
+    </a>
 }
 else
 {
@@ -53,6 +56,9 @@ else
         <button type="submit" class="btn btn-danger btn-sm">Withdraw Selected</button>
         @Html.AntiForgeryToken()
     </form>
+    <a asp-area="Game" asp-page="/Market" class="btn btn-secondary mb-3">
+        &larr; Back to Market
+    </a>
     <script>
         function toggleAll(source) {
             checkboxes = document.getElementsByName('WithdrawPostIds');

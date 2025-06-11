@@ -1,4 +1,4 @@
-﻿@page
+﻿@page 
 @model AnotherSpaceGame.Areas.Game.Pages.ManageColoniesModel
 @{
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
@@ -53,9 +53,7 @@
                         <input type="checkbox" name="PlunderPlanetIds" value="@planet.Id" />
                     </td>
                     <td>
-                        <a asp-page="ManagePlanet" asp-route-id="@planet.Id">
-                            @planet.Name
-                        </a>
+                            <a asp-page="ManagePlanet" asp-route-id="@planet.Id">@planet.Name</a>
                     </td>
                     <td>@planet.Type</td>
                     <td>@planet.CurrentPopulation</td>
