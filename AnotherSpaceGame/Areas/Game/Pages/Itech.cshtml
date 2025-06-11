@@ -1,4 +1,70 @@
 ﻿@page
 @model AnotherSpaceGame.Areas.Game.Pages.ItechModel
 @{
+    ViewData["Title"] = "Itech Management";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info mt-2">@Model.StatusMessage</div>
+}
+<h2>Itech</h2>
+@if (Model.Infrastructer.ITechInvestmentTurns < Model.Infrastructer.ITechInvestmentTurnsRequired && Model.CooldownTimer < DateTime.Now)
+{
+    <p>Invest turns to unlock the itech so you can redistribute your infrastructure levels.</p>
+    <p>Turns Required: @Model.TurnsRequired</p>
+    <p>Turns Remaining: @Model.Infrastructer.ITechInvestmentTurns</p>
+    <form method="post" asp-page-handler="Investment">
+        <div class="form-group">
+            <label for="investment">Investment Amount:</label>
+            <input type="number" class="form-control" id="investment" name="investment" min="0" max="45" value="0" required />
+        <button type="submit" class="btn btn-primary">Invest in ITech</button>
+    </form>
+}
+else if (Model.Infrastructer.ITechInvestmentTurns >= Model.Infrastructer.ITechInvestmentTurnsRequired && Model.CooldownTimer < DateTime.Now)
+{
+    <p>ITech is now unlocked. You can redistribute your infrastructure levels.</p>
+    <form method="post" asp-page-handler="Redistribute">
+        <div class="form-group">
+            <label for="housing">Housing:</label>
+            <input type="number" class="form-control" id="housing" name="housing" min="0" max="255" value="0" required />
+            <label for="commercial">Commercial:</label>
+            <input type="number" class="form-control" id="commercial" name="commercial" min="0" max="255" value="0" required />
+            <label for="industry">Industry:</label>
+            <input type="number" class="form-control" id="industry" name="industry" min="0" max="255" value="0" required />
+            <label for="agriculture">Agriculture:</label>
+            <input type="number" class="form-control" id="agriculture" name="agriculture" min="0" max="255" value="0" required />
+            <label for="mining">Mining:</label>
+            <input type="number" class="form-control" id="mining" name="mining" min="0" max="255" value="0" required />
+            <p>Max total levels to redistribute: @Model.TotalLevels</p>
+        </div>
+        <button type="submit" class="btn btn-primary">Redistribute Infrastructure</button>
+    </form>
+}
+else if (Model.CanRedistribute == false && Model.CooldownTimer > DateTime.Now)
+{
+    <p>ITech is on cooldown untill @Model.CooldownTimer.ToLongDateString()</p>
+    
+}
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form[asp-page-handler="Redistribute"]');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                var max = parseInt('@Model.TotalLevels');
+                var total = 0;
+                var fields = ['housing', 'commercial', 'industry', 'agriculture', 'mining'];
+                fields.forEach(function (id) {
+                    var val = parseInt(document.getElementById(id).value) || 0;
+                    total += val;
+                });
+                if (total > max) {
+                    alert('The sum of all levels cannot exceed ' + max + '. Your total: ' + total);
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 }

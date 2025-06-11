@@ -88,5 +88,6 @@ namespace AnotherSpaceGame.Models
         public DateTime LastAction { get; set; }
         public decimal ArtifactShield { get; set; }
         public bool IsNPC { get; set; }
+        public DateTime ITechCooldown { get; set; }
     }
 }

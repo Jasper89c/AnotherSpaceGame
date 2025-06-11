@@ -17,6 +17,8 @@ namespace AnotherSpaceGame.Models
         public int TurnsRemaining { get; set; }
         public int TotalLevels { get; set; }
         public int UnusedLevels { get ; set; }
+        public int ITechInvestmentTurns { get; set; } // Investment turns for ITech
+        public int ITechInvestmentTurnsRequired { get; set; } // Investment turns for ITech
 
 
         public Infrastructer()
@@ -30,7 +32,8 @@ namespace AnotherSpaceGame.Models
             UnusedLevels = 0; // Initialize unused levels to zero
             TurnsRequired = 2; // Default or fallback value
             TurnsRemaining = 2; // Default or fallback value
-            
+            ITechInvestmentTurns = 0; // Initialize ITech investment turns to zero
+
         }
     }
 }

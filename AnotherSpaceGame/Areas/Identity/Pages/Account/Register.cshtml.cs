@@ -500,6 +500,8 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         user.ViralReversedShips = viralReversedShips;
                         _context.ViralReversedShips.Add(viralReversedShips);
                     }
+                    // --- End viralreversedships logic ---
+                    user.ITechCooldown = DateTime.UtcNow.AddDays(2); // Initialize ITechCooldown to current time
 
                     await _context.SaveChangesAsync();
 

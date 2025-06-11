@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,49 +30,40 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public AttackType SelectedAttackType { get; set; } = AttackType.Normal;
         public List<SelectListItem> AttackTypeList { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return;
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             AttackTypeList = Enum.GetValues(typeof(AttackType))
-            .Cast<AttackType>()
-            .Select(a => new SelectListItem
-            {
-            Value = a.ToString(),
-            Text = a.ToString()
-            }).ToList();
-
-            TopFleets = (from fleet in _context.Fleets
-                         join ship in _context.Ships on fleet.ShipId equals ship.Id
-                         where fleet.ApplicationUserId == user.Id
-                               && ship.ShipType != ShipType.Starbase
-                               && ship.ShipType != ShipType.Scout
-                         orderby fleet.TotalPowerRating descending
-                         select fleet)
-                         .Take(10)
-                         .ToList();
-            // Get all relevant ship IDs
-            var shipIds = TopFleets.Select(f => f.ShipId).Distinct().ToList();
-            var ships = _context.Ships
-                .Where(s => shipIds.Contains(s.Id))
-                .ToDictionary(s => s.Id);
-
-            UserShipFleets = TopFleets.Select(fleet =>
-            {
-                ships.TryGetValue(fleet.ShipId, out var ship);
-                return new UserShipFleet
+                .Cast<AttackType>()
+                .Select(a => new SelectListItem
                 {
-                    TotalShips = fleet.TotalShips,
-                    TotalPowerRating = fleet.TotalPowerRating,
-                    TotalUpkeep = fleet.TotalUpkeep,
-                    ShipName = ship?.ShipName ?? "Unknown",
-                    ShipId = fleet.ShipId,
-                    FleetId = fleet.Id,
-                    ShipType = ship?.ShipType ?? ShipType.Fighter // Default to Fighter if null
-                };
-            }).ToList();
+                    Value = a.ToString(),
+                    Text = a.ToString()
+                }).ToList();
+
+            UserShipFleets = await (from fleet in _context.Fleets.AsNoTracking()
+                                    join ship in _context.Ships.AsNoTracking() on fleet.ShipId equals ship.Id
+                                    where fleet.ApplicationUserId == user.Id
+                                          && ship.ShipType != ShipType.Starbase
+                                          && ship.ShipType != ShipType.Scout
+                                    orderby fleet.TotalPowerRating descending
+                                    select new UserShipFleet
+                                    {
+                                        TotalShips = fleet.TotalShips,
+                                        TotalPowerRating = fleet.TotalPowerRating,
+                                        TotalUpkeep = fleet.TotalUpkeep,
+                                        ShipName = ship.ShipName,
+                                        ShipId = fleet.ShipId,
+                                        FleetId = fleet.Id,
+                                        ShipType = ship.ShipType
+                                    })
+                                    .Take(10)
+                                    .ToListAsync();
+
+            return Page();
         }
     }
 }

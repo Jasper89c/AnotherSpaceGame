@@ -89,6 +89,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     Infrastructure.TotalLevels += 1;
                     Infrastructure.UnusedLevels += 1;
+                    Infrastructure.ITechInvestmentTurnsRequired += 200;
                     Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
                     user.Turns.CurrentTurns -= TurnsToUse;
                     var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, TurnsToUse);

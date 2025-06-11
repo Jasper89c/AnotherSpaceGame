@@ -1,11 +1,9 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Identity;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
@@ -28,13 +26,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             UserArtifacts = await _context.Artifacts
-                .Where(a => a.ApplicationUserId == user.Id)
-                .OrderBy(a => a.ArtifactType)
-                .ThenBy(a => a.ArtifactName)
-                .ToListAsync();
+            .Where(a => a.ApplicationUserId == user.Id)
+            .OrderBy(a => a.ArtifactType)
+            .ThenBy(a => a.ArtifactName)
+            .Select(a => new Artifacts
+            {
+                Id = a.Id,
+                ArtifactId = a.ArtifactId,
+                ArtifactName = a.ArtifactName,
+                ArtifactType = a.ArtifactType,
+                Total = a.Total,
+                MaxTotal = a.MaxTotal
+            })
+            .AsNoTracking()
+            .ToListAsync();
 
             return Page();
         }

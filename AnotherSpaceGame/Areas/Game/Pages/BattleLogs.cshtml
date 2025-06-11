@@ -55,24 +55,42 @@ else
             }
         </tbody>
     </table>
+
+    <!-- Paging Controls -->
+    <nav aria-label="Battle log pages">
+        <ul class="pagination">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-route-PageNumber="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-route-PageNumber="@(Model.PageNumber + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
 }
 
 @section Scripts {
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Find all collapse elements for fleet reports
-        document.querySelectorAll('.collapse[id^="fleetReportCollapse_"]').forEach(function (collapseEl) {
-            var btn = document.querySelector('button[data-bs-target="#' + collapseEl.id + '"]');
-            if (!btn) return;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Find all collapse elements for fleet reports
+            document.querySelectorAll('.collapse[id^="fleetReportCollapse_"]').forEach(function (collapseEl) {
+                var btn = document.querySelector('button[data-bs-target="#' + collapseEl.id + '"]');
+                if (!btn) return;
 
-            collapseEl.addEventListener('show.bs.collapse', function () {
-                var toggleText = btn.getAttribute('data-bs-toggle-text') || 'Hide Fleet Report';
-                btn.textContent = toggleText;
-            });
-            collapseEl.addEventListener('hide.bs.collapse', function () {
-                btn.textContent = 'Show Fleet Report';
+                collapseEl.addEventListener('show.bs.collapse', function () {
+                    var toggleText = btn.getAttribute('data-bs-toggle-text') || 'Hide Fleet Report';
+                    btn.textContent = toggleText;
+                });
+                collapseEl.addEventListener('hide.bs.collapse', function () {
+                    btn.textContent = 'Show Fleet Report';
+                });
             });
         });
-    });
-</script>
+    </script>
 }
