@@ -33,9 +33,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int PageSize { get; set; } = 10;
         public int TotalPages { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             if (user != null)
             {
                 var query = _context.ImportantEvents
@@ -57,6 +59,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 Events = new List<ImportantEvents>();
                 TotalPages = 1;
             }
+            return Page();
         }
     }
 }

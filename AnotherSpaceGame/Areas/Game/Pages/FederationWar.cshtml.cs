@@ -1,22 +1,25 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
-using System.Threading.Tasks;
-using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
     public class FederationWarModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FederationWarModel(ApplicationDbContext context)
+        public FederationWarModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -28,7 +31,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _context.Users
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            user = await _context.Users
                 .Include(u => u.Federation)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 

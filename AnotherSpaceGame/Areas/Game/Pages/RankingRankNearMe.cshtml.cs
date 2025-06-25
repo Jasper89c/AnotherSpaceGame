@@ -35,7 +35,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnGetAsync(int? pg)
         {
             PageNumber = (pg.HasValue && pg.Value > 0) ? pg.Value : 1;
+
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var allUsers = _context.Users
                 .AsNoTracking()
                 .OrderByDescending(u => u.PowerRating)

@@ -34,9 +34,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnGetAsync(int id)
         {
             TurnMessage = TempData["TurnMessage"] as string;
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             Faction = user.Faction;
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == user.Id);
             

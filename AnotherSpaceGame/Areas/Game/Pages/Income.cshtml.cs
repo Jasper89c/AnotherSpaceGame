@@ -26,9 +26,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public decimal InfrastructureCostPerTurn { get; set; }
         public decimal FleetCostPerTurn { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             // Example: Replace these with your actual calculation logic
             //CreditsPerTurn = CalculateCreditsPerTurn(user);
@@ -38,6 +40,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             //MiningPerTurn = CalculateMiningPerTurn(user);
             //InfrastructureCostPerTurn = CalculateInfrastructureCostPerTurn(user);
             //FleetCostPerTurn = CalculateFleetCostPerTurn(user);
+
+            return Page();
         }
 
         //        // Example calculation methods (replace with your actual logic)

@@ -54,6 +54,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             // Get the current user
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             CurrentUserName = user.UserName;
             var fleetIdsJson = HttpContext.Session.GetString("SelectedFleetIds");
             List<int> currentUserFleetIds = new List<int>();

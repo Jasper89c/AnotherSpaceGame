@@ -21,8 +21,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [TempData]
         public string StatusMessage { get; set; }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGet()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

@@ -45,7 +45,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Get current user
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             // Get target user by UserName
             ApplicationUser? targetUser = _context.Users.FirstOrDefault(u => u.UserName == UserName);

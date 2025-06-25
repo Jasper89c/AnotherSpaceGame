@@ -1,21 +1,24 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
     public class FederationBattleLogsModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FederationBattleLogsModel(ApplicationDbContext context)
+        public FederationBattleLogsModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IList<BattleLogs> BattleLogs { get; set; } = new List<BattleLogs>();
@@ -27,6 +30,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public async Task<IActionResult> OnGetAsync(int? pageNumber)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
             PageNumber = pageNumber ?? 1;
 
             // Get current user and their federation

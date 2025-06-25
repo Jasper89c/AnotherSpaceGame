@@ -37,7 +37,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             UserProjects = _context.UserProjects.FirstOrDefault(p => p.ApplicationUserId == user.Id);
             ClusterResearch = _context.ClusterResearches.FirstOrDefault(p => p.ApplicationUserId == user.Id);
@@ -69,7 +69,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             UserProjects = _context.UserProjects.FirstOrDefault(p => p.ApplicationUserId == user.Id);
             if (user.Faction == Faction.Viral)

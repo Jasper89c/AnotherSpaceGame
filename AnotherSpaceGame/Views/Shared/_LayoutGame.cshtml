@@ -326,21 +326,26 @@
             $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
         });
 
-        connection.start().catch(function (err) {
-            return console.error(err.toString());
+        connection.on("ReceiveMessageHistory", function(messages) {
+            $('#chat-messages').empty(); // Clear previous messages
+            messages.forEach(function(msg) {
+                addMessageToChat(msg.userName, msg.message, msg.sentAt);
+            });
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
         });
 
-        $('#chat-input-area').on('submit', function (e) {
-            e.preventDefault();
-            var msg = $('#chat-input').val().trim();
-            if (msg) {
-                connection.invoke("SendMessage", msg).catch(function (err) {
-                    return console.error(err.toString());
-                });
-                $('#chat-input').val('');
-            }
-        });
+        // Helper function to render a message
+        function addMessageToChat(user, message, sentAt) {
+            // Format the timestamp (optional: adjust to local time)
+            const date = new Date(sentAt);
+            const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const encodedMsg = `<div class="mb-2">
+                <span class="text-muted small">${timeString}</span>
+                <strong class="ms-2">${$('<div>').text(user).html()}:</strong>
+                <span class="ms-1">${$('<div>').text(message).html()}</span>
+            </div>`;
+            $('#chat-messages').append(encodedMsg);
+        }
     </script>
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

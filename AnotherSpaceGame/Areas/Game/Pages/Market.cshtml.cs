@@ -49,9 +49,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         public int BuyAmount { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             UserCommodities = await _context.Commodities.FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
 
             foreach (MarketType type in Enum.GetValues(typeof(MarketType)))
@@ -65,12 +67,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                 MarketPostsByType[type] = posts;
             }
+            return Page();
         }
 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostSellAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             UserCommodities = await _context.Commodities.FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
 
             if (!MarketLimits.TryGetValue(SellMarketType, out var limits))
@@ -116,6 +121,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostBuyAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             UserCommodities = await _context.Commodities.FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
 
             var post = await _context.MarketPosts.Include(p => p.ApplicationUser).FirstOrDefaultAsync(p => p.Id == PostId);

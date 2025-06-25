@@ -36,7 +36,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Planet = _context.Planets.FirstOrDefault(p => p.Id == id && p.ApplicationUserId == user.Id);
             if (Planet == null)

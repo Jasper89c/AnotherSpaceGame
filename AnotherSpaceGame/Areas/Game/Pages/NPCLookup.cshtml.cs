@@ -37,6 +37,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             if (id == null)
                 return NotFound();
 

@@ -35,6 +35,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            if (user == null)
             {
                 // Handle the case where the user is null (e.g., redirect or show an error)
                 ListOfAvailableResearch = new List<AvailableResearch>();
@@ -50,7 +52,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users.FirstOrDefault(x => x.Id == user.Id);
             if (string.IsNullOrEmpty(SelectedResearchName) || TurnsToInvest <= 0)
             {

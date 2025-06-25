@@ -59,7 +59,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Artifact = await _context.Artifacts
                 .Include(a => a.ApplicationUser)
@@ -77,7 +77,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Artifact = await _context.Artifacts
                 .Include(a => a.ApplicationUser)

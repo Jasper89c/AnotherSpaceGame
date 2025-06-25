@@ -33,7 +33,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == user.Id);
 
@@ -55,9 +55,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-            var userExploration = await _context.Explorations.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            var userExploration = await _context.Explorations.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
             // Include Commodities by explicitly loading them after retrieving the user
             await _context.Entry(user).Reference(u => u.Commodities).LoadAsync();
 

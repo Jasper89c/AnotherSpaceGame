@@ -26,13 +26,16 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         public List<int> WithdrawPostIds { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             UserMarketPosts = await _context.MarketPosts
                 .Where(p => p.ApplicationUserId == user.Id)
                 .OrderBy(p => p.DateTime)
                 .ToListAsync();
+            return Page();
         }
 
         [ValidateAntiForgeryToken]

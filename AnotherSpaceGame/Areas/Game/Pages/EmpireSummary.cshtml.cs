@@ -31,9 +31,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int ColoniesExplored { get; set; }
         public int PlanetsPlundered { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             if (user != null)
             {
                 Username = user.UserName;
@@ -52,6 +54,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ColoniesExplored = user.ColoniesExplored;
                 PlanetsPlundered = user.PlanetsPlundered;
             }
+            return Page();
         }
     }
 }

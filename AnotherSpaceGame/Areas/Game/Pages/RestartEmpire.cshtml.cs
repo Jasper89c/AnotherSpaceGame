@@ -78,10 +78,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
 
             if (user == null)
-            {
-                StatusMessage = "User not found.";
-                return Page();
-            }
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             if (!Enum.TryParse<Faction>(SelectedFaction, out var parsedFaction) ||
                 parsedFaction == Faction.KalZul || parsedFaction == Faction.DarkMarauder)

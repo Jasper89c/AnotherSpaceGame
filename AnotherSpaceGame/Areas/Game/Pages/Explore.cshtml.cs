@@ -35,7 +35,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             // Block exploration for Collective or Marauder factions
             if (user.Faction == Faction.Collective || user.Faction == Faction.Marauder)

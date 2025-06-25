@@ -1,20 +1,23 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
     public class FederationResignModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FederationResignModel(ApplicationDbContext context)
+        public FederationResignModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -23,14 +26,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync()
         {
-            var userName = User.Identity?.Name;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+
+            var userName = user.UserName;
             if (string.IsNullOrEmpty(userName))
             {
                 FeedbackMessage = "You must be logged in to resign from a federation.";
                 return Page();
             }
 
-            var user = await _context.Users
+                user = await _context.Users
                 .Include(u => u.Federation)
                 .FirstOrDefaultAsync(u => u.UserName == userName);
 

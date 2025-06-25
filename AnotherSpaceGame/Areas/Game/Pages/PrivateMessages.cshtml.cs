@@ -39,6 +39,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             Messages = await _context.PrivateMessages
                 .Include(m => m.Sender)
                 .Include(m => m.Receiver)
@@ -60,6 +62,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var receiver = await _userManager.FindByNameAsync(ReceiverUserName);
 
             if (receiver == null)

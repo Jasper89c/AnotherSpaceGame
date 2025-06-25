@@ -45,7 +45,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
-                return NotFound();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Username = user.UserName;
             DamageProtection = user.DamageProtection;

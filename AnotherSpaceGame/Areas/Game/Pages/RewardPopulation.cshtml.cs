@@ -39,7 +39,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == user.Id);
 
@@ -57,7 +57,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == Id && p.ApplicationUserId == user.Id);
             if (Planet == null || Planet.ApplicationUserId != user.Id)

@@ -36,10 +36,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Get the current user
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             // Eagerly load all related data (adjust Include/ThenInclude as needed)
             CurrentUser = await _context.Users

@@ -11,6 +11,7 @@ namespace AnotherSpaceGame.Data
             : base(options)
         {
         }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<ViralReversedShips> ViralReversedShips { get; set; }
         public DbSet<CounterAttacks> CounterAttacks { get; set; }
         public DbSet<Missions> Missions { get; set; }

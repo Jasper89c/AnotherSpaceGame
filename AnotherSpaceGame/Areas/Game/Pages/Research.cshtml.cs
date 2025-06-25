@@ -43,9 +43,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public Infrastructer Infrastructure { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
+
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users
                 .FirstOrDefault(u => u.Id == user.Id);
             Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
@@ -60,12 +63,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             UnusedLevels = Infrastructure.UnusedLevels;
             AvailableTurns = turns.CurrentTurns;
             TurnsRemaining = Infrastructure.TurnsRemaining;
+            return Page();
         }
 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostGainLevelsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users
                 .FirstOrDefault(u => u.Id == user.Id);
             Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);
@@ -131,6 +137,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public async Task<IActionResult> OnPostAssignPointsAsync()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users
                 .FirstOrDefault(u => u.Id == user.Id);
             Infrastructure = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == currentUser.Id);

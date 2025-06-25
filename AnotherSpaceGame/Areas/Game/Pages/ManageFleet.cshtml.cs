@@ -34,7 +34,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-                return Unauthorized();
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users
                 .FirstOrDefault(u => u.Id == user.Id);
             Faction = user.Faction; // Assuming Faction is a property of ApplicationUser

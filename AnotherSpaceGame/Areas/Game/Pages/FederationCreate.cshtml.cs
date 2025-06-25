@@ -1,20 +1,23 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
-using System.Threading.Tasks;
 using System;
+using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
     public class FederationCreateModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FederationCreateModel(ApplicationDbContext context)
+        public FederationCreateModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -32,9 +35,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _context.Users
+            var user = await _userManager.GetUserAsync(User);
+            user = await _context.Users
                 .Include(u => u.Commodities)
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+            if (user == null)
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             if (user == null)
             {

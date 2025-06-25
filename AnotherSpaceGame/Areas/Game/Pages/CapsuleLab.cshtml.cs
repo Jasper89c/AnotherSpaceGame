@@ -90,9 +90,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-            }
 
             var userProjects = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
 
