@@ -1,6 +1,59 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@{  
+    ViewData["Title"] = "Index";  
+    var isLoggedIn = User.Identity.IsAuthenticated;  
+}  
+<style>  
+    body {  
+        background-color: black;  
+    }  
+</style>  
 
-<h1>Index1</h1>
+<div class="container-fluid">  
+    <div class="row">  
+        <div class="col-md-4">  
+        </div>  
+        <div class="col-md-4 text-center">  
+            <div class="page-header">  
+                <img src="/images/Logo1.png" alt="Logo" style="width: 90%;height: 90%;" />  
+            </div>
+
+            <hr style="color: grey" />
+        </div>  
+        <div class="col-md-4">
+        </div>  
+    </div>  
+    <div class="row">  
+        <div class="col-md-4">  
+        </div>  
+        <div class="col-md-4 text-center">  
+            @if (isLoggedIn)  
+            {  
+                <a class="btn btn-warning" asp-area="Game" asp-page="/ImportantEvents">  
+                    Play  
+                </a>  
+            }  
+            else  
+            {  
+                <a class="btn btn-warning" asp-area="Identity" asp-page="/Account/Login">  
+                    Login  
+                </a>  
+                <a class="btn btn-warning" asp-area="Identity" asp-page="/Account/Register">  
+                    Register  
+                </a>  
+            }  
+        </div>  
+        <div class="col-md-4">  
+        </div>  
+    </div>  
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <hr style="color: grey"/>
+            <p class="text-center" style="color: white;">Alpha Phase 1</p>
+            <hr style="color: grey" />
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
+</div>

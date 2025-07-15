@@ -28,7 +28,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public IList<Planets> UserPlanets { get; set; } = new List<Planets>();
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -40,6 +40,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     .OrderByDescending(p => p.DateTimeAcquired) // Order by acquired date descending
                     .ToListAsync();
             }
+            return Page();
         }
 
         [ValidateAntiForgeryToken]

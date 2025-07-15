@@ -74,7 +74,30 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.MarauderResearch)
                 .Include(u => u.Missions)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
-
+            // Null checks and initialization for one-to-one navigation properties
+            if (CurrentUser.Missions == null) CurrentUser.Missions = new Missions();
+            if (CurrentUser.EClassResearch == null) CurrentUser.EClassResearch = new EClassResearch();
+            if (CurrentUser.CyrilClassResearch == null) CurrentUser.CyrilClassResearch = new CyrilClassResearch();
+            if (CurrentUser.StrafezResearch == null) CurrentUser.StrafezResearch = new StrafezResearch();
+            if (CurrentUser.FClassResearch == null) CurrentUser.FClassResearch = new FClassResearch();
+            if (CurrentUser.ProjectsResearch == null) CurrentUser.ProjectsResearch = new ProjectsResearch();
+            if (CurrentUser.ViralSpecificResearch == null) CurrentUser.ViralSpecificResearch = new ViralSpecificResearch();
+            if (CurrentUser.CollectiveSpecificResearch == null) CurrentUser.CollectiveSpecificResearch = new CollectiveSpecificResearch();
+            if (CurrentUser.TerranResearch == null) CurrentUser.TerranResearch = new TerranResearch();
+            if (CurrentUser.AMinerResearch == null) CurrentUser.AMinerResearch = new AMinerResearch();
+            if (CurrentUser.MarauderResearch == null) CurrentUser.MarauderResearch = new MarauderResearch();
+            if (CurrentUser.ViralResearch == null) CurrentUser.ViralResearch = new ViralResearch();
+            if (CurrentUser.CollectiveResearch == null) CurrentUser.CollectiveResearch = new CollectiveResearch();
+            if (CurrentUser.GuardianResearch == null) CurrentUser.GuardianResearch = new GuardianResearch();
+            if (CurrentUser.ClusterResearch == null) CurrentUser.ClusterResearch = new ClusterResearch();
+            if (CurrentUser.Exploration == null) CurrentUser.Exploration = new Exploration();
+            if (CurrentUser.Infrastructer == null) CurrentUser.Infrastructer = new Infrastructer();
+            if (CurrentUser.Commodities == null) CurrentUser.Commodities = new Commodities();
+            if (CurrentUser.UserProjects == null) CurrentUser.UserProjects = new UserProjects();
+            if (CurrentUser.Missions == null)
+            {
+                CurrentUser.Missions = new Missions();
+            }
             if (CurrentUser.Missions.Mission1 == false)
             {
                 MissionTitle = "Mission 1: Welcome to the Game!";
@@ -250,6 +273,31 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.MarauderResearch)
                 .Include(u => u.Missions)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
+            // Null checks and initialization for one-to-one navigation properties
+            if (CurrentUser.Missions == null) CurrentUser.Missions = new Missions();
+            if (CurrentUser.EClassResearch == null) CurrentUser.EClassResearch = new EClassResearch();
+            if (CurrentUser.CyrilClassResearch == null) CurrentUser.CyrilClassResearch = new CyrilClassResearch();
+            if (CurrentUser.StrafezResearch == null) CurrentUser.StrafezResearch = new StrafezResearch();
+            if (CurrentUser.FClassResearch == null) CurrentUser.FClassResearch = new FClassResearch();
+            if (CurrentUser.ProjectsResearch == null) CurrentUser.ProjectsResearch = new ProjectsResearch();
+            if (CurrentUser.ViralSpecificResearch == null) CurrentUser.ViralSpecificResearch = new ViralSpecificResearch();
+            if (CurrentUser.CollectiveSpecificResearch == null) CurrentUser.CollectiveSpecificResearch = new CollectiveSpecificResearch();
+            if (CurrentUser.TerranResearch == null) CurrentUser.TerranResearch = new TerranResearch();
+            if (CurrentUser.AMinerResearch == null) CurrentUser.AMinerResearch = new AMinerResearch();
+            if (CurrentUser.MarauderResearch == null) CurrentUser.MarauderResearch = new MarauderResearch();
+            if (CurrentUser.ViralResearch == null) CurrentUser.ViralResearch = new ViralResearch();
+            if (CurrentUser.CollectiveResearch == null) CurrentUser.CollectiveResearch = new CollectiveResearch();
+            if (CurrentUser.GuardianResearch == null) CurrentUser.GuardianResearch = new GuardianResearch();
+            if (CurrentUser.ClusterResearch == null) CurrentUser.ClusterResearch = new ClusterResearch();
+            if (CurrentUser.Exploration == null) CurrentUser.Exploration = new Exploration();
+            if (CurrentUser.Infrastructer == null) CurrentUser.Infrastructer = new Infrastructer();
+            if (CurrentUser.Commodities == null) CurrentUser.Commodities = new Commodities();
+            if (CurrentUser.UserProjects == null) CurrentUser.UserProjects = new UserProjects();
+
+            if (CurrentUser.Missions == null)
+            {
+                CurrentUser.Missions = new Missions();
+            }
             // Example: Mark the mission as complete (adjust logic as needed)
             int missionNum = int.TryParse(MissionNumber, out var num) ? num : 0;
             if (missionNum > 0)

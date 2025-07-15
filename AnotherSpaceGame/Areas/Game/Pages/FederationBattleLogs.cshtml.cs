@@ -37,7 +37,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             PageNumber = pageNumber ?? 1;
 
             // Get current user and their federation
-            var user = await _context.Users
+            user = await _context.Users
                 .Include(u => u.Federation)
                 .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
 

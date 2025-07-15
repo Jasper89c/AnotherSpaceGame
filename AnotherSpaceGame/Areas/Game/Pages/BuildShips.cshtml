@@ -45,7 +45,8 @@ else
                 <td>@ship.ShipName</td>
                 <td>@totalInFleet</td>
                 <td>
-                    <input type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control" value="0" />
+                    <input type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control"
+                           value="0" data-buildrate="@buildRate" />
                 </td>
                 <td>@totalPower</td>
                 <td>
@@ -105,7 +106,7 @@ else
             input.addEventListener('input', function () {
                 var shipId = this.name.match(/\d+/)[0];
                 var buildAmount = parseInt(this.value) || 0;
-                var buildRate = parseInt(this.getAttribute('max')) / @maxTurns;
+                var buildRate = parseInt(this.getAttribute('data-buildrate')) || 1;
                 var turns = buildRate > 0 ? Math.ceil(buildAmount / buildRate) : 0;
                 document.getElementById('turns-' + shipId).innerText = turns;
             });

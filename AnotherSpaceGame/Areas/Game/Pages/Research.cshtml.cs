@@ -92,19 +92,22 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
             AvailableTurns = turns.CurrentTurns;
-            if (TurnsToUse < 1 || TurnsToUse > AvailableTurns)
+            if (TurnsToUse < 1)
             {
                 await OnGetAsync();
-                StatusMessage = "You do not have enough turns available.";
+                StatusMessage = "You must use atleast 1 turn.";
                 return Page();
             }
-
-            if ( TurnsToUse < AvailableTurns)
+            if (TurnsToUse > AvailableTurns)
             {
+                TurnsToUse = AvailableTurns;
+            }
                 if (TurnsToUse > Infrastructure.TurnsRemaining)
                 {
                     TurnsToUse = Infrastructure.TurnsRemaining;
                 }
+            if ( TurnsToUse <= AvailableTurns)
+            {
 
                 Infrastructure.TurnsRemaining -= TurnsToUse;
                 if (Infrastructure.TurnsRemaining <= 0)

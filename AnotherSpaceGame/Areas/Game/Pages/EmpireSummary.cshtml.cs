@@ -30,6 +30,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int ColoniesLost { get; set; }
         public int ColoniesExplored { get; set; }
         public int PlanetsPlundered { get; set; }
+        public DateTime LastActivity { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -53,6 +54,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ColoniesLost = user.ColoniesLost;
                 ColoniesExplored = user.ColoniesExplored;
                 PlanetsPlundered = user.PlanetsPlundered;
+                LastActivity = user.LastAction; 
             }
             return Page();
         }

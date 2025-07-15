@@ -132,7 +132,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 await OnGetAsync();
                 return Page();
             }
-            if (BuyAmount < 1 || BuyAmount > post.Amount)
+            if (BuyAmount < 1)
             {
                 ModelState.AddModelError(nameof(BuyAmount), $"Amount must be between 1 and {post.Amount}.");
                 await OnGetAsync();
@@ -150,6 +150,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ModelState.AddModelError(nameof(BuyAmount), "Not enough credits.");
                 await OnGetAsync();
                 return Page();
+            }
+            if(BuyAmount > post.Amount)
+            {
+                BuyAmount = post.Amount; // Adjust to available amount
             }
 
             // Add commodity to buyer

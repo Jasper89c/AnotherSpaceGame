@@ -36,7 +36,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public string StatusMessage { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -57,7 +57,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     msg.IsRead = true;
                 await _context.SaveChangesAsync();
             }
+            return Page();
         }
+
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync()
         {
@@ -96,6 +98,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             await OnGetAsync();
             return Page();
         }
+
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostDeleteAsync(int id)
         {

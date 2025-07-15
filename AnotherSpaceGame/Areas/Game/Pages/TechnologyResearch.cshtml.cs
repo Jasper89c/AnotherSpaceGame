@@ -31,20 +31,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         public int TurnsToInvest { get; set; }
         public string StatusMessage { get; set; }
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-            if (user == null)
-            {
-                // Handle the case where the user is null (e.g., redirect or show an error)
-                ListOfAvailableResearch = new List<AvailableResearch>();
-                return;
-            }
 
             ListOfAvailableResearch = new List<AvailableResearch>();
             GetAvailableResearch(user);
+            return Page();
         }
 
         [ValidateAntiForgeryToken]
@@ -65,13 +60,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Check if user has enough turns
             if (TurnsToInvest > availableTurns)
             {
-                StatusMessage = $"You do not have enough turns. Available: {availableTurns}.";
-                GetAvailableResearch(currentUser);
-                return Page();
+                TurnsToInvest = availableTurns;
             }
 
-            if (TurnsToInvest > availableTurns)
-                TurnsToInvest = availableTurns;
 
             // Find the research model and property
             object researchModel = null;

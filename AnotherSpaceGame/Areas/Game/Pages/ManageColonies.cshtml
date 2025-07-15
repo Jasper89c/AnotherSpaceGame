@@ -46,25 +46,30 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach (var planet in Model.UserPlanets)
-            {
-                <tr>
-                    <td>
-                        <input type="checkbox" name="PlunderPlanetIds" value="@planet.Id" />
-                    </td>
-                    <td>
+                @for (int i = 0; i < Model.UserPlanets.Count; i++)
+                {
+                    var planet = Model.UserPlanets[i];
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="PlunderPlanetIds" value="@planet.Id" />
+                        </td>
+                        <td>
                             <a asp-page="ManagePlanet" asp-route-id="@planet.Id">@planet.Name</a>
-                    </td>
-                    <td>@planet.Type</td>
-                    <td>@planet.CurrentPopulation</td>
-                    <td>@planet.MaxPopulation</td>
-                    <td>@planet.Loyalty</td>
-                    <td>@planet.LandAvailable</td>
-                    <td>@planet.TotalLand</td>
-                    <td>@planet.AvailableOre</td>
-                    <td>@planet.MineralProduced</td>
-                </tr>
-            }
+                            @if (i < 3)
+                            {
+                                <i class="bi bi-bootstrap-fill"></i>
+                            }
+                        </td>
+                        <td>@planet.Type</td>
+                        <td>@planet.CurrentPopulation</td>
+                        <td>@planet.MaxPopulation</td>
+                        <td>@planet.Loyalty</td>
+                        <td>@planet.LandAvailable</td>
+                        <td>@planet.TotalLand</td>
+                        <td>@planet.AvailableOre</td>
+                        <td>@planet.MineralProduced</td>
+                    </tr>
+                }
             </tbody>
             <tfoot>
                 <tr>

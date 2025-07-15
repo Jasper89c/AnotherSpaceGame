@@ -43,7 +43,16 @@
                         <i class="bi bi-info-circle"></i>
                     </a>
                 </td>
-                <td>@empire.Username</td>
+                <td>@empire.Username
+                    @if (empire.LastActivity >= DateTime.Now.AddMinutes(-30))
+                    {
+                        <i class="bi bi-fire"></i>
+                    }
+                    @if (empire.DamageProtection > DateTime.Now)
+                    {
+                        <i class="bi bi-shield-check"></i>
+                    }
+                </td>
                 <td>@empire.Faction</td>
                 <td>@empire.TotalPlanets</td>
                 <td>@empire.PowerRating</td>

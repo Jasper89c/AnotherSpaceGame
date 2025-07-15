@@ -145,6 +145,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 UserExploration.ExplorationPointsNeeded = (int)(UserExploration.ExplorationPointsNeeded * 1.2);
                 user.TotalPlanets += 1;
                 user.TotalColonies += 1;
+                user.ColoniesExplored += 1;
                 NewPlanet = new Planets
                 {
                     ApplicationUserId = user.Id,

@@ -883,6 +883,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     ca.TargetUserId == TargetUser.Id
                 );
             }
+            // Set minimum PowerRating = 5000
+            if (targetUser.PowerRating <= 5000)
+            {
+                PowerRatingWarning = "The target's Power Rating is below the minimum allowed (5001). You cannot attack this user.";
+            }
 
             // Set max allowed PowerRating difference
             double maxAllowed;

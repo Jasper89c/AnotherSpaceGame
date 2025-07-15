@@ -50,7 +50,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Faction = u.Faction.ToString(),
                     TotalPlanets = u.TotalPlanets,
                     PowerRating = u.PowerRating,
-                    IsNPC = false
+                    IsNPC = false,
+                    LastActivity = u.LastAction,
+                    DamageProtection = u.DamageProtection
                 })
                 .ToList();
 
@@ -65,7 +67,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Faction = n.Faction.ToString(),
                     TotalPlanets = 1,
                     PowerRating = n.PowerRating,
-                    IsNPC = true
+                    IsNPC = true,
+                    LastActivity = n.LastAction,
+                    DamageProtection = n.DamageProtection
                 })
                 .ToList();
 
@@ -99,6 +103,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             public double PowerRating { get; set; }
             public double PrRatio { get; set; }
             public bool IsNPC { get; set; }
+            public DateTime LastActivity { get; set; }
+            public DateTime DamageProtection { get; set; }
         }
     }
 }

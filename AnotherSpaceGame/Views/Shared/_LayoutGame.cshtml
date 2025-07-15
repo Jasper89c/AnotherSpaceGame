@@ -226,22 +226,25 @@
             <div class="row">
                 <div class="col-md-1">
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <main role="main" class="pb-3">
                         @RenderBody()
                     </main>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-1">
                     <!-- Chat Toggle Button -->
-                    <button id="chat-toggle-btn" class="btn btn-primary rounded-circle" title="Toggle Chat">
+                    @* <button id="chat-toggle-btn" class="btn btn-primary rounded-circle position-relative" title="Toggle Chat">
                         <i class="bi bi-chat-dots"></i>
-                    </button>
+                        <span id="chat-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
+                            New
+                        </span>
+                    </button> *@
 
                     <!-- Chat Panel -->
-                    <div id="chat-panel" style="display:none;">
+                    <div id="chat-panel">
                         <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
                             <span><i class="bi bi-chat-dots"></i> Game Chat</span>
-                            <button type="button" class="btn-close" aria-label="Close" id="chat-close-btn"></button>
+                            <!-- Optionally remove the close button as well -->
                         </div>
                         <div id="chat-messages">
                             <!-- Messages will appear here -->
@@ -304,25 +307,43 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    @RenderSection("Scripts", required: false)
     <script>
         // Chat panel toggle logic
-        $(function () {
-            $('#chat-toggle-btn').on('click', function () {
-                $('#chat-panel').toggle();
-            });
-            $('#chat-close-btn').on('click', function () {
-                $('#chat-panel').hide();
-            });
-        });
+        // $(function () {
+        //     $('#chat-toggle-btn').on('click', function () {
+        //         $('#chat-panel').toggle();
+        //         if ($('#chat-panel').is(':visible')) {
+        //             hideChatNotification();
+        //         }
+        //     });
+        //     $('#chat-close-btn').on('click', function () {
+        //         $('#chat-panel').hide();
+        //         hideChatNotification();
+        //     });
+        // });
 
         // SignalR chat logic
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub")
             .build();
 
+        connection.start().then(function () {
+            // Enable chat input when connected
+            $('#chat-input').prop('disabled', false);
+            $('#chat-input-area button[type="submit"]').prop('disabled', false);
+
+            // Optionally, load message history
+            connection.invoke("GetRecentMessages", 50);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
         connection.on("ReceiveMessage", function (user, message) {
-            const encodedMsg = `<div class="mb-2"><strong>${user}:</strong> ${$('<div>').text(message).html()}</div>`;
-            $('#chat-messages').append(encodedMsg);
+            addMessageToChat(user, message, new Date());
+            if ($('#chat-panel').is(':hidden')) {
+                showChatNotification();
+            }
             $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
         });
 
@@ -346,6 +367,26 @@
             </div>`;
             $('#chat-messages').append(encodedMsg);
         }
+
+        // Helper to show/hide notification badge
+        function showChatNotification() {
+            $('#chat-notification-badge').show();
+        }
+        function hideChatNotification() {
+            $('#chat-notification-badge').hide();
+        }
+
+        // Chat input submission logic
+        $('#chat-input-area').on('submit', function (e) {
+            e.preventDefault();
+            var msg = $('#chat-input').val().trim();
+            if (msg) {
+                connection.invoke("SendMessage", msg).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                $('#chat-input').val('');
+            }
+        });
     </script>
 </body>
 </html>

@@ -209,7 +209,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.GuardianResearches.RemoveRange(_context.GuardianResearches.Where(r => r.ApplicationUserId == userId));
             _context.ClusterResearches.RemoveRange(_context.ClusterResearches.Where(r => r.ApplicationUserId == userId));
             _context.Missions.RemoveRange(_context.Missions.Where(r => r.ApplicationUserId == userId));
-
+            _context.MarketPosts.RemoveRange(_context.MarketPosts.Where(mp => mp.ApplicationUserId == userId));
             // Save removals before adding new ones
             await _context.SaveChangesAsync();
 
@@ -294,6 +294,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         private async Task ResetOtherPropertiesAsync(ApplicationUser user)
         {
             // Turns
+            // Remove existing turns if they exist
+            var existingTurns = _context.Turns.FirstOrDefault(t => t.ApplicationUserId == user.Id);
+            if (existingTurns != null)
+            {
+                _context.Turns.Remove(existingTurns);
+            }
+            // Create a new turns object
             var turns = new Turns { ApplicationUserId = user.Id };
             user.Turns = turns;
             _context.Turns.Add(turns);
@@ -312,17 +319,34 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             user.ArtifactShield = 0m;
 
             // Exploration
+            // Remove existing exploration for this user if it exists
+            var existingExploration = _context.Explorations.FirstOrDefault(e => e.ApplicationUserId == user.Id);
+            if (existingExploration != null)
+            {
+                _context.Explorations.Remove(existingExploration);
+            }
+            // Create a new exploration object
             var exploration = new Exploration { ApplicationUserId = user.Id };
             user.Exploration = exploration;
             _context.Explorations.Add(exploration);
 
             // Infrastructer
+            // Remove existing infrastructer if it exists
+            var existingInfrastructer = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            if (existingInfrastructer != null)
+            {
+                _context.Infrastructers.Remove(existingInfrastructer);
+            }
+            // Create a new infrastructer object
             var infrastructer = new Infrastructer { ApplicationUserId = user.Id };
             user.Infrastructer = infrastructer;
             _context.Infrastructers.Add(infrastructer);
 
+            // Artifacts
+            _context.Artifacts.RemoveRange(_context.Artifacts.Where(a => a.ApplicationUserId == user.Id));
 
             // Add other research resets as needed
+
         }
     }
 }

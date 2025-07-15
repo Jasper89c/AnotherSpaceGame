@@ -58,7 +58,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             PowerRating = NPC.PowerRating;
             Federation = NPC.Federation?.FederationName ?? "None";
             PlayingSince = NPC.PlayingSince;
-            EmpireAge = NPC.EmpireAge;
+            EmpireAge = (DateTime.UtcNow - user.PlayingSince).Days;
             BattlesWon = NPC.BattlesWon;
             BattlesLost = NPC.BattlesLost;
             ColoniesWon = NPC.ColoniesWon;

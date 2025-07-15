@@ -34,6 +34,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int ColoniesLost { get; set; }
         public int ColoniesExplored { get; set; }
         public int PlanetsPlundered { get; set; }
+        public DateTime LastActivity { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
@@ -55,13 +56,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             PowerRating = user.PowerRating;
             Federation = user.Federation?.FederationName ?? "None";
             PlayingSince = user.PlayingSince;
-            EmpireAge = user.EmpireAge;
+            EmpireAge = (DateTime.UtcNow - user.PlayingSince).Days;
             BattlesWon = user.BattlesWon;
             BattlesLost = user.BattlesLost;
             ColoniesWon = user.ColoniesWon;
             ColoniesLost = user.ColoniesLost;
             ColoniesExplored = user.ColoniesExplored;
             PlanetsPlundered = user.PlanetsPlundered;
+            LastActivity = user.LastAction;
 
             return Page();
         }
