@@ -22,6 +22,7 @@ builder.Services.AddScoped<TurnService>();
 builder.Services.AddScoped<IUserStatusService, UserStatusService>();
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<PeriodicTableUpdater>();
+builder.Services.AddHostedService<FederationUpdater>();
 
 var app = builder.Build();
 
@@ -51,6 +52,7 @@ app.MapControllerRoute(
 );
 app.MapRazorPages();
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<TurnHub>("/turnhub");
 
 app.Run();
 

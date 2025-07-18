@@ -26,23 +26,22 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public List<FederationApplication> Applicants { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
-        public int FederationId { get; set; }
+        public int Id { get; set; }
 
         [BindProperty]
         public string FeedbackMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int federationId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            FederationId = federationId;
             Federation = await _context.Federations
                 .Include(f => f.FederationLeader)
                 .Include(f => f.FederationApplicants)
                     .ThenInclude(a => a.ApplicationUser)
-                .FirstOrDefaultAsync(f => f.Id == FederationId);
+                .FirstOrDefaultAsync(f => f.Id == id);
 
             if (Federation == null)
                 return NotFound();
@@ -63,7 +62,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(a => a.Federation)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
 
-            if (application == null)
+            Federation = await _context.Federations.Include(s => s.FederationMembers)
+                .FirstOrDefaultAsync(f => f.Id == application.FederationId);
+
+            if (Federation == null)
                 return NotFound();
 
             // Only leader can approve
@@ -77,7 +79,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.Users.Update(user);
 
             // Optionally add to FederationMembers collection
-            application.Federation.FederationMembers.Add(user);
+            Federation.FederationMembers.Add(user);
 
             // Create important event
             _context.ImportantEvents.Add(new ImportantEvents

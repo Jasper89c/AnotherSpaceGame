@@ -43,7 +43,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Username = u.UserName,
                             Faction = u.Faction.ToString(),
                             TotalPlanets = u.TotalPlanets,
-                            PowerRating = u.PowerRating
+                            PowerRating = u.PowerRating,
+                            LastActivity = u.LastAction
                         })
                         .ToList();
 

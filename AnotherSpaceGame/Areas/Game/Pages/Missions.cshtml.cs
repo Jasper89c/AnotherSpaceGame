@@ -155,7 +155,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 MissionTitle = "Mission 5: Galactic Trade";
                 MissionObjective = "Trade with other players.";
-                MissionMessage = "Your fifth mission is to trade with other players via the market. This will help you gain valuable resources.";
+                MissionMessage = "Your fifth mission is to trade with other players via the market.Post something for other players to buy. This will help you gain valuable resources.";
                 MissionStatus = "Incomplete";
                 MissionNumber = "5";
                 MissionReward = "+$5,000,000 Credits";

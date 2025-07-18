@@ -43,7 +43,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             var user = await _context.Users
                 .Include(u => u.Federation)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.UserName == id);
 
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });

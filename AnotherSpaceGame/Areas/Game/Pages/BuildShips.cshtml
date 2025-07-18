@@ -15,6 +15,12 @@
 }
 else
 {
+    @if (TempData["BuildMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @Html.Raw(TempData["BuildMessage"])
+        </div>
+    }
     <form method="post">
         <table class="table table-bordered table-striped">
             <thead>
@@ -24,6 +30,7 @@ else
                     <th>Build</th>
                     <th>Total Power Rating</th>
                     <th>Turns</th>
+                    <th>1 Turn</th>
                     <th>Range</th>
                     <th>Weapon</th>
                     <th>Hull</th>
@@ -51,6 +58,9 @@ else
                 <td>@totalPower</td>
                 <td>
                     <span id="turns-@ship.Id">0</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-primary add-one-turn" data-shipid="@ship.Id" data-buildrate="@buildRate">+1</button>
                 </td>
                 <td>@ship.Range</td>
                 <td>@ship.Weapon</td>
@@ -120,6 +130,21 @@ else
                 if (collapseEl) {
                     var bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
                     bsCollapse.toggle();
+                }
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.add-one-turn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var shipId = btn.getAttribute('data-shipid');
+                var buildRate = parseInt(btn.getAttribute('data-buildrate')) || 1;
+                var input = document.querySelector('input[name="BuildAmounts[' + shipId + ']"]');
+                if (input) {
+                    var current = parseInt(input.value) || 0;
+                    input.value = current + buildRate;
+                    // Trigger input event to update turns display
+                    input.dispatchEvent(new Event('input'));
                 }
             });
         });

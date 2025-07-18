@@ -20,13 +20,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _userManager = userManager;
             _context = context;
         }
-        public List<Planets> SelectedPlanets { get; set; } = new();
-        public List<Planets> userPlanets { get; set; } = new(); 
-        public List<SelectListItem> MineralTypeSelectList { get; set; } = new();
+        [BindProperty]
+        public List<Planets> SelectedPlanets { get; set; }
+        public List<Planets> userPlanets { get; set; }
+        public List<SelectListItem> MineralTypeSelectList { get; set; }
+        [BindProperty]
         public string? SelectedMineralType { get; set; }
         [BindProperty]
-        public List<int> SelectedPlanetIds { get; set; } = new();
-        public Planets? NewPlanet { get; set; } = new();
+        public List<int> SelectedPlanetIds { get; set; }
+        public Planets? NewPlanet { get; set; } 
+        [BindProperty(SupportsGet = true)]
+        public int id { get; set; }
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             var user = await _userManager.GetUserAsync(User);
@@ -36,16 +40,28 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             switch (id)
             {
                 case 1:
-                    SelectedPlanets = _context.Planets
+                    if(user.Faction != Faction.Guardian && user.Faction != Faction.Marauder) 
+                    { 
+                        SelectedPlanets = _context.Planets
                         .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
                         .Where(p => p.Type == PlanetType.Icy | p.Type == PlanetType.Rocky | p.Type == PlanetType.Oceanic | p.Type == PlanetType.Balanced | p.Type == PlanetType.Barren | p.Type == PlanetType.Gas | p.Type == PlanetType.Forest | p.Type == PlanetType.Desert | p.Type == PlanetType.Marshy)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(5)
                         .ToList();
-                    break;
+                    }
+                    else
+                    {
+                        SelectedPlanets = _context.Planets
+                        .Where(p => p.ApplicationUserId == user.Id)
+                        .Where(p => p.Type == PlanetType.Icy | p.Type == PlanetType.Rocky | p.Type == PlanetType.Oceanic | p.Type == PlanetType.Balanced | p.Type == PlanetType.Barren | p.Type == PlanetType.Gas | p.Type == PlanetType.Forest | p.Type == PlanetType.Desert | p.Type == PlanetType.Marshy)
+                        .OrderBy(p => p.DateTimeAcquired)
+                        .Take(5)
+                        .ToList();
+                    }
+                        break;
                 case 2:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.ClusterLevel1)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(5)
@@ -53,7 +69,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 3:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.ClusterLevel2)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(5)
@@ -61,7 +77,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 4:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.TaintedC1)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -69,7 +85,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 5:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.TaintedC2)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -77,7 +93,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 6:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.TaintedC3)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -85,7 +101,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 7:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.InfectedC1)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(5)
@@ -93,7 +109,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 8:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.InfectedC2)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(5)
@@ -101,7 +117,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 9:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.SimilareC1)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -109,7 +125,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 10:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.SimilareC2)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -117,7 +133,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 11:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.SimilareC3)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -125,7 +141,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 12:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.AssimilatedC1)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -133,7 +149,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                 case 13:
                     SelectedPlanets = _context.Planets
-                        .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                        .Where(p => p.ApplicationUserId == user.Id)
                         .Where(p => p.Type == PlanetType.AssimilatedC2)
                         .OrderBy(p => p.DateTimeAcquired)
                         .Take(4)
@@ -141,7 +157,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                     case 14:
                     SelectedPlanets = _context.Planets
-                    .Where(p => p.ApplicationUserId == user.Id && !p.Name.Contains("H."))
+                    .Where(p => p.ApplicationUserId == user.Id)
                     .Where(p => p.Type == PlanetType.SimilareC4)
                     .OrderBy(p => p.DateTimeAcquired)
                     .Take(4)
@@ -169,7 +185,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             var user = await _userManager.GetUserAsync(User);
             PopulateMineralTypeSelectList();
@@ -188,6 +204,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .ToList();
 
             // ... your logic using selectedPlanets and SelectedMineralType ...
+            if(selectedPlanets.Count == 5)
+            {
+            
             switch (id)
             {
                 case 1:
@@ -224,6 +243,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster);
                     NewPlanet = newCluster;
+                    user.TotalColonies -= 4;
                     break;
 
                 case 2:
@@ -265,6 +285,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster2);
                     NewPlanet = newCluster2;
+                    user.TotalColonies -= 4;
                     break;
                 case 3:
                     // Handle Cluster Level 3 creation logic
@@ -305,6 +326,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster3);
                     NewPlanet = newCluster3;
+                    user.TotalColonies -= 4;
                     break;
                 case 4:
                     // Handle Tainted C.2 creation logic
@@ -345,6 +367,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster4);
                     NewPlanet = newCluster4;
+                    user.TotalColonies -= 3;
                     break;
                 case 5:
                     // Handle Tainted C.3 creation logic
@@ -385,6 +408,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster5);
                     NewPlanet = newCluster5;
+                    user.TotalColonies -= 3;
                     break;
                 case 6:
                     // Handle Tainted C.4 creation logic
@@ -425,6 +449,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster6);
                     NewPlanet = newCluster6;
+                    user.TotalColonies -= 3;
                     break;
                 case 7:
                     // Handle Infected C.2 creation logic
@@ -465,6 +490,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster7);
                     NewPlanet = newCluster7;
+                    user.TotalColonies -= 3;
                     break;
                 case 8:
                     // Handle Infected C.3 creation logic
@@ -505,6 +531,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster8);
                     NewPlanet = newCluster8;
+                    user.TotalColonies -= 3;
                     break;
                 case 9:
                     // Handle Similare C.2 creation logic
@@ -545,6 +572,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster9);
                     NewPlanet = newCluster9;
+                    user.TotalColonies -= 3;
                     break;
                 case 10:
                     // Handle Similare C.3 creation logic
@@ -585,6 +613,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster10);
                     NewPlanet = newCluster10;
+                    user.TotalColonies -= 3;
                     break;
                 case 11:
                     // Handle Similare C.4 creation logic
@@ -625,6 +654,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster11);
                     NewPlanet = newCluster11;
+                    user.TotalColonies -= 3;
                     break;
                 case 12:
                     // Handle Assimilated C.2 creation logic
@@ -665,6 +695,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster12);
                     NewPlanet = newCluster12;
+                    user.TotalColonies -= 3;
                     break;
                 case 13:
                     // Handle Assimilated C.3 creation logic
@@ -705,6 +736,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster13);
                     NewPlanet = newCluster13;
+                    user.TotalColonies -= 3;
                     break;
                     case 14:
                     // Handle Assimilated C.5 creation logic
@@ -745,13 +777,16 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _context.Planets.RemoveRange(selectedPlanets);
                     _context.Planets.Add(newCluster14);
                     NewPlanet = newCluster14;
+                    user.TotalColonies -= 3;
                     break;
                 default:
                     ModelState.AddModelError("", "Invalid cluster type selected.");
                     return Page();
             }
-            
-            return RedirectToPage();
+            }
+
+            _context.SaveChanges();
+            return Page();
         }
     }
 }

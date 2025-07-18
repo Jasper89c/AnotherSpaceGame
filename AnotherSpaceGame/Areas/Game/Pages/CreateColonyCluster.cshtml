@@ -1,74 +1,72 @@
-﻿@page
-@model AnotherSpaceGame.Areas.Game.Pages.CreateColonyClusterModel
-@{
-    ViewData["Title"] = "Create Colony Cluster";
-    Layout = "~/Views/Shared/_LayoutGame.cshtml";
-}
-@if(Model.NewPlanet == null)
-{
-@if (Model.SelectedPlanets != null && Model.SelectedPlanets.Any())
-{
-    <h3>Selected Planets</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var planet in Model.SelectedPlanets)
-            {
-                <tr>
-                    <td>@planet.Name</td>
-                    <td>@planet.Type</td>
+﻿@page "{id:int}"  
+@model AnotherSpaceGame.Areas.Game.Pages.CreateColonyClusterModel  
+@{  
+    ViewData["Title"] = "Create Colony Cluster";  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+}  
+ 
+@if (Model.SelectedPlanets != null && Model.SelectedPlanets.Any() && Model.NewPlanet == null)  
+{  
+    <form method="post">
+    <h3>Selected Planets</h3>  
+    <table class="table">  
+        <thead>  
+            <tr>  
+                <th>Name</th>  
+                <th>Type</th>  
+            </tr>  
+        </thead>  
+        <tbody>  
+            @foreach (var planet in Model.SelectedPlanets)  
+            {  
+                <tr>  
+                    <td>@planet.Name</td>  
+                    <td>@planet.Type</td>  
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No planets found for this selection.</p>
-}
-
-<form method="post">
-    <label for="SelectedMineralType">Select Mineral Type:</label>
-    <select asp-for="SelectedMineralType" asp-items="Model.MineralTypeSelectList">
-        <option value="">-- Select --</option>
-    </select>
-    <span asp-validation-for="SelectedMineralType" class="text-danger"></span>
-    <br />
-    <button type="submit">Submit</button>
+                <input type="hidden" name="SelectedPlanetIds" value="@planet.Id" />
+            }  
+        </tbody>  
+        </table>
+        <label for="SelectedMineralType">Select Mineral Type:</label>
+        <select asp-for="SelectedMineralType" asp-items="Model.MineralTypeSelectList">
+            <option value="">-- Select --</option>
+        </select>
+        <span asp-validation-for="SelectedMineralType" class="text-danger"></span>
+        <br />
+        <button type="submit">Submit</button>
         @Html.AntiForgeryToken()
     </form>
-}
+}  
+else if (Model.NewPlanet != null) 
+{  
+    <h3>New Planet Created</h3>  
+    <table class="table">  
+        <thead>  
+            <tr>  
+                <th>Name</th>  
+                <th>Type</th>  
+                <th>land</th>  
+                <th>Ore</th>  
+            </tr>  
+        </thead>  
+        <tbody>              
+                <tr>  
+                <td>@Model.NewPlanet.Name</td>  
+                <td>@Model.NewPlanet.Type</td>  
+                <td>@Model.NewPlanet.TotalLand</td>  
+                <td>@Model.NewPlanet.AvailableOre</td>  
+                </tr>              
+        </tbody>  
+    </table>  
+    <p>  
+        <a asp-page="/ManageColonies">Click Here To Continue</a>  
+    </p>  
+}  
 else
-{
-    <h3>New Planet Created</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>land</th>
-                <th>Ore</th>
-            </tr>
-        </thead>
-        <tbody>            
-                <tr>
-                <td>model.NewPlanet.Name</td>
-                <td>model.NewPlanet.Type</td>
-                <td>model.NewPlanet.Land</td>
-                <td>model.NewPlanet.Ore</td>
-                </tr>            
-        </tbody>
-    </table>
-    <p>
-        <a asp-page="/Game/ManageColonies">Click Here To Continue</a>
-    </p>
-}
+{  
+    <p>Not enough planets for this selection. Try exploring for more planets.</p>  
+}  
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section Scripts {  
+    <partial name="_ValidationScriptsPartial" />  
 }

@@ -71,7 +71,7 @@ public class TurnService
         foreach (var planet in userPlanets)
         {
             UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse,user.Faction);
-            UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse);
+            UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse,user);
 
             // Mining
             MineOre(planet, userInfrastructer, user, turnsToUse);
@@ -166,17 +166,21 @@ public class TurnService
         }
         if (planet.CurrentPopulation < planet.MaxPopulation)
         {
-            planet.CurrentPopulation += (int)Math.Floor((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse);
+            planet.CurrentPopulation += (int)Math.Floor(((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse) / 2 );
             if (planet.CurrentPopulation > planet.MaxPopulation)
                 planet.CurrentPopulation = planet.MaxPopulation;
         }
     }
 
-    private void UpdatePlanetResources(Planets planet, Infrastructer infra, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods, int turnsToUse)
+    private void UpdatePlanetResources(Planets planet, Infrastructer infra, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods, int turnsToUse, ApplicationUser user)
     {
         planet.AvailableLabour = (int)Math.Floor((double)(planet.CurrentPopulation - (planet.Housing + planet.Commercial + planet.Industry + planet.Agriculture + planet.Mining)));
         planet.LandAvailable = planet.TotalLand - (planet.Housing + planet.Commercial + planet.Industry + planet.Agriculture + planet.Mining);
         planet.FoodRequired = (int)Math.Floor((double)(planet.CurrentPopulation / 10));
+        if(user.Faction == Faction.Guardian)
+        {
+           planet.FoodRequired = 0; // Guardians do not require food
+        }
         planet.GoodsRequired = (int)Math.Floor((double)((planet.CurrentPopulation / 10) * mods.FactionDemandForGoods));
     }
 
@@ -212,6 +216,11 @@ public class TurnService
         var agri = Math.Floor(((planet.Agriculture * ((infra.Agriculture * 0.1m) + 1)) * mods.FactionAgricultureModifier) * planet.AgricultureModifier) * turnsToUse;
         var RmGenerated = agri * 1.2m;
         user.Commodities.RawMaterial += (int)RmGenerated;
+        if(user.Faction == Faction.Guardian)
+        {
+            agri = 0;
+            RmGenerated = 0;
+        }
         return agri;
     }
 
@@ -258,7 +267,12 @@ public class TurnService
     private void HandleFoodLogic(Planets planet, ApplicationUser user, ref decimal agricultureIncome, int turnsToUse)
     {
         var foodNeeded = planet.FoodRequired * turnsToUse;
-        if ((user.Commodities.Food + agricultureIncome) < foodNeeded)
+        if(user.Faction == Faction.Guardian)
+        {
+            agricultureIncome = 0;
+            foodNeeded = 0;
+        }
+        if ((user.Commodities.Food + agricultureIncome) < foodNeeded && user.Faction != Faction.Guardian)
         {
             planet.Loyalty -= (int)Math.Floor(planet.Loyalty * 0.1m);
             planet.CurrentPopulation -= (int)Math.Floor(planet.CurrentPopulation * 0.1m);
@@ -273,21 +287,9 @@ public class TurnService
 
     private static void UpdateUserCommodities(ApplicationUser user, decimal creditIncome, decimal agricultureIncome, decimal goodsIncome, decimal miningTMIncome, decimal miningRCIncome, decimal miningWCIncome, decimal miningCIncome, decimal miningRIncome, decimal miningSOIncome)
     {
-        if (creditIncome < 0)
-            user.Commodities.Credits -= (int)creditIncome;
-        else
-            user.Commodities.Credits += (int)creditIncome;
-
-        if (agricultureIncome < 0)
-            user.Commodities.Food -= (int)agricultureIncome;
-        else
-            user.Commodities.Food += (int)agricultureIncome;
-
-        if (goodsIncome < 0)
-            user.Commodities.ConsumerGoods -= (int)goodsIncome;
-        else
-            user.Commodities.ConsumerGoods += (int)goodsIncome;
-
+        user.Commodities.Credits += (int)creditIncome;
+        user.Commodities.Food += (int)agricultureIncome;
+        user.Commodities.ConsumerGoods += (int)goodsIncome;
         user.Commodities.TerranMetal += (int)miningTMIncome;
         user.Commodities.RedCrystal += (int)miningRCIncome;
         user.Commodities.WhiteCrystal += (int)miningWCIncome;

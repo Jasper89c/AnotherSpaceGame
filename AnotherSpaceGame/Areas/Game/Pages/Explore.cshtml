@@ -71,7 +71,7 @@
         <form method="post">
             <div class="mb-3">
                 <label for="turnsUsed" class="form-label">Turns to use:</label>
-                <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="1" required />
+                <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="@Model.UserExploration.TurnsRequired" required />
             </div>
             <button type="submit" class="btn btn-primary">Explore</button>
             @Html.AntiForgeryToken()

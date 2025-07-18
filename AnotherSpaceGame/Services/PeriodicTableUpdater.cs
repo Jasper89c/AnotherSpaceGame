@@ -1,20 +1,24 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using AnotherSpaceGame.Data;
 using Microsoft.EntityFrameworkCore;
 using AnotherSpaceGame.Models;
+using AnotherSpaceGame.Services;
 
 public class PeriodicTableUpdater : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IHubContext<TurnHub> _turnHub;
 
-    public PeriodicTableUpdater(IServiceProvider serviceProvider)
+    public PeriodicTableUpdater(IServiceProvider serviceProvider, IHubContext<TurnHub> turnHub)
     {
         _serviceProvider = serviceProvider;
+        _turnHub = turnHub;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -35,6 +39,7 @@ public class PeriodicTableUpdater : BackgroundService
                     foreach (var turn in turnsToUpdate)
                     {
                         turn.CurrentTurns++;
+                        await _turnHub.Clients.User(turn.ApplicationUserId).SendAsync("UpdateTurns", turn.CurrentTurns);
                     }
 
                     if (turnsToUpdate.Count > 0)

@@ -116,7 +116,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (existingApplication != null)
             {
                 existingApplication.FederationId = Id;
-                existingApplication.AppliedAt = DateTime.UtcNow;
+                existingApplication.AppliedAt = DateTime.Now;
                 _context.FederationApplications.Update(existingApplication);
                 FeedbackMessage = "Your previous application has been updated to this federation!";
             }
@@ -126,7 +126,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     FederationId = Id,
                     ApplicationUserId = user.Id,
-                    AppliedAt = DateTime.UtcNow
+                    AppliedAt = DateTime.Now
                 };
                 _context.FederationApplications.Add(application);
                 FeedbackMessage = "Your application has been submitted!";
@@ -137,7 +137,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var importantEvent = new ImportantEvents
             {
                 ApplicationUserId = user.Id,
-                ImportantEventTypes = ImportantEventTypes.Misc
+                ImportantEventTypes = ImportantEventTypes.Misc,
+                DateAndTime = DateTime.Now,
+                Text = eventMessage
             };
             if (importantEvent.GetType().GetProperty("Message") != null)
                 importantEvent.GetType().GetProperty("Message")?.SetValue(importantEvent, eventMessage);

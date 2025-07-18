@@ -99,13 +99,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     ModelState.AddModelError(string.Empty, "Please enter at least one value to build.");
                     return await OnGetAsync(id);
                 }
-
-                var turnResult = await _turnService.TryUseTurnsAsync(user.Id, 1);
-                if (!turnResult.Success)
+                if (Turns == 0)
                 {
-                    ModelState.AddModelError(string.Empty, turnResult.Message);
+                    ModelState.AddModelError(string.Empty, "You need atleast 1 turn to build.");
                     return await OnGetAsync(id);
                 }
+
 
                 int totalLandRequired =
                     housing * landPerHousing +
@@ -138,7 +137,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     ModelState.AddModelError(string.Empty, "Not enough labor available for the requested construction.");
                     return await OnGetAsync(id);
                 }
-                if (Planet.AvailableOre < totalOreRequired)
+                if (Ore < totalOreRequired)
                 {
                     ModelState.AddModelError(string.Empty, "Not enough ore available for the requested construction.");
                     return await OnGetAsync(id);
@@ -152,9 +151,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                 Planet.LandAvailable -= totalLandRequired;
                 Planet.AvailableLabour -= totalLaborRequired;
-                Planet.AvailableOre -= totalOreRequired;
-
-                TurnMessage = $"Build successful! 1 turn used.<hr>{turnResult.Message}";
+                Ore -= totalOreRequired;
+                var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
+                TempData["TurnMessage"] = turnsMessage.Message;
+                TurnMessage = $"Build successful! 1 turn used.<hr>{turnsMessage.Message}";
+                await _context.SaveChangesAsync();
             }
             else if (action == "demolish")
             {
@@ -163,11 +164,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     ModelState.AddModelError(string.Empty, "Please enter at least one value to demolish.");
                     return await OnGetAsync(id);
                 }
-
-                var turnResult = await _turnService.TryUseTurnsAsync(user.Id, 1);
-                if (!turnResult.Success)
+                if (Turns == 0)
                 {
-                    ModelState.AddModelError(string.Empty, turnResult.Message);
+                    ModelState.AddModelError(string.Empty, "You need atleast 1 turn to demolish.");
                     return await OnGetAsync(id);
                 }
 
@@ -231,14 +230,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                 Planet.LandAvailable += totalLandReturned;
                 Planet.AvailableLabour += totalLaborReturned;
-                Planet.AvailableOre += totalOreReturned;
+                var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
+                TempData["TurnMessage"] = turnsMessage.Message;
+                TurnMessage = $"Demolish successful! 1 turn used.<hr> {turnsMessage.Message}";
+                await _context.SaveChangesAsync();
 
-                TurnMessage = $"Demolish successful! 1 turn used.<hr> {turnResult.Message}";
-            }
-
-            await _context.SaveChangesAsync();
-            var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
-            TempData["TurnMessage"] = turnsMessage.Message;
+            }            
             return RedirectToPage(new { id = Planet.Id });
         }
     }

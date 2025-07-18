@@ -73,10 +73,10 @@
                 <td>@user.Faction</td>  
                 <td>@user.TotalPlanets</td>  
                 <td>@user.PowerRating</td>  
-                <td>  
-                    <a asp-area="Game" asp-page="/Attack" asp-route-id="@user.UserName" class="btn btn-sm btn-danger">  
-                        Attack  
-                    </a>  
+                <td>
+                    <a asp-area="Game" asp-page="/Attack" asp-route-UserName="@user.UserName" class="btn btn-sm btn-danger">
+                        Attack
+                    </a>
                 </td>  
                 <td>@user.PrRatio.ToString("0.##")%</td>  
             </tr>  

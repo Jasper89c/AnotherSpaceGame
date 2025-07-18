@@ -78,7 +78,16 @@
             @foreach (var member in Model.Federation.FederationMembers)
             {
                 <tr>
-                    <td>@member.UserName</td>
+                    <td>@member.UserName
+                        @if (member.LastAction >= DateTime.Now.AddMinutes(-30))
+                        {
+                            <i class="bi bi-fire"></i>
+                        }
+                        @if (member.DamageProtection > DateTime.Now)
+                        {
+                            <i class="bi bi-shield-check"></i>
+                        }
+                    </td>
                     <td>@member.PowerRating</td>
                     <td>@member.TotalPlanets</td>
                     <td>@member.Faction</td>

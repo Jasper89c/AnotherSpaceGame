@@ -124,6 +124,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (boolProp != null && boolProp.PropertyType == typeof(bool))
                 {
                     boolProp.SetValue(researchModel, true);
+                    StatusMessage = $"Research '{boolPropName}' completed!";
                 }
             }
 

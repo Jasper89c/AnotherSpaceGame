@@ -3,6 +3,7 @@ using AnotherSpaceGame.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-
+            // Load user with all research navigation properties
+            CurrentUser = await _context.Users
+                .Include(u => u.Turns)
+                .FirstOrDefaultAsync(u => u.Id == currentUser.Id);
             // Get target user by UserName
             ApplicationUser? targetUser = _context.Users.FirstOrDefault(u => u.UserName == UserName);
             if (targetUser == null)
@@ -107,7 +111,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 TargetUserFleets = (from fleet in _context.Fleets
                                     join ship in _context.Ships on fleet.ShipId equals ship.Id
-                                    where fleet.ApplicationUserId == currentUser.Id
+                                    where fleet.ApplicationUserId == targetUser.Id
                                           && ship.ShipType != ShipType.Starbase
                                           && ship.ShipType != ShipType.Scout
                                     orderby fleet.TotalPowerRating descending
@@ -842,13 +846,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     }
                 }
 
-            CurrentUser = currentUser;
-            TargetUser = targetUser;
             // Default: not at war
             IsFederationWar = false;
 
             // Check if the user has at least 5 turns
-            HasEnoughTurns = currentUser?.Turns?.CurrentTurns >= 5;
+            HasEnoughTurns = CurrentUser.Turns.CurrentTurns >= 5;
             if (!HasEnoughTurns)
             {
                 NotEnoughTurnsMessage = "You do not have enough turns to attack. (5 required)";
@@ -876,7 +878,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Check for active counterattack
             bool HasCounterAttack = false;
-            if (CurrentUser != null && TargetUser != null)
+            if (CurrentUser != null && targetUser != null)
             {
                 HasCounterAttack = _context.CounterAttacks.Any(ca =>
                     ca.ApplicationUserId == CurrentUser.Id &&
@@ -893,11 +895,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             double maxAllowed;
             if (HasCounterAttack)
             {
-                maxAllowed = TargetUser.PowerRating * 2.0;
+                maxAllowed = targetUser.PowerRating * 2.0;
             }
             else
             {
-                maxAllowed = TargetUser.PowerRating * (IsFederationWar ? 1.5 : 1.3);
+                maxAllowed = targetUser.PowerRating * (IsFederationWar ? 1.5 : 1.3);
             }
             PowerRatingAllowed = CurrentUser.PowerRating <= maxAllowed;
 
@@ -934,8 +936,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 TargetUserFleetIds.Add(fleet.Id);
             }
-            HttpContext.Session.SetString("SelectedFleetIds", JsonSerializer.Serialize(CurrentUserFleetIds));
-            HttpContext.Session.SetString("SelectedFleetIds2", JsonSerializer.Serialize(TargetUserFleetIds));
             return Page();
         }
 

@@ -328,15 +328,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
 
-            // Deduct turns
-            var turnResult = await _turnService.TryUseTurnsAsync(user.Id, totalTurnsRequired);
-            if (!turnResult.Success)
-            {
-                ModelState.AddModelError(string.Empty, turnResult.Message);
-                await OnGetAsync(); // Reload ships and fleet
-                return Page();
-            }
-
             // Add ships to fleet
             foreach (var (ship, amount, _) in buildInstructions)
             {
@@ -366,6 +357,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 CurrentUser.Commodities.WhiteCrystal -= ship.WhiteCrystal * amount;
                 CurrentUser.Commodities.StrafezOrganism -= ship.StrafezOrganism * amount;
                 CurrentUser.Commodities.Credits -= ship.Cost * amount;
+            }
+            // Deduct turns
+            var turnResult = await _turnService.TryUseTurnsAsync(user.Id, totalTurnsRequired);
+            if (!turnResult.Success)
+            {
+                ModelState.AddModelError(string.Empty, turnResult.Message);
+                await OnGetAsync(); // Reload ships and fleet
+                return Page();
             }
             user.DamageProtection = DateTime.Now;
             await _context.SaveChangesAsync();

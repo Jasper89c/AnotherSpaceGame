@@ -143,8 +143,10 @@
                                 <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/FederationCreate">Create New Federation</a>
                                 </li>
+                                @if (user.FederationId != null)
+                                {                                    
                                 <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationMembers">My Federation</a>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationMembers" asp-route-id="@user.FederationId">My Federation</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/FederationDiscussion">Discussion</a>
@@ -156,11 +158,12 @@
                                     <a class="dropdown-item" asp-area="Game" asp-page="/FederationBattleLogs">Activity</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationElection">Election</a>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationApplications" asp-route-id="@user.FederationId">Applications</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/FederationResign">Resign</a>
                                 </li>
+                                }
                                 <!-- Add more dropdown items as needed -->
                             </ul>
                         </li>
@@ -286,7 +289,7 @@
         <div class="mx-3">
             <i class="bi bi-hourglass-split"></i>
             <span>Turns:</span>
-            <strong>@status.Turns</strong>
+            <strong id="turns-count">@status.Turns</strong>
         </div>
         <div class="mx-3">
             <a asp-area="Game" asp-page="/Income" class="text-light" title="Income">
@@ -386,6 +389,30 @@
                 });
                 $('#chat-input').val('');
             }
+        });
+
+            // Connect to the turn hub
+        const turnConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/turnhub")
+            .build();
+
+        turnConnection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        // Listen for turn updates
+        turnConnection.on("UpdateTurns", function (newTurns) {
+            // Update the turns display
+            // document.querySelectorAll("strong")
+            //     .forEach(function(el) {
+            //         if (el.textContent == "@status.Turns") {
+            //             el.textContent = newTurns;
+            //         }
+            //     });
+            // Or, more specifically, give your turns <strong> an id:
+            // <strong id="turns-count">@status.Turns</strong>
+            // and then:
+            document.getElementById("turns-count").textContent = newTurns;
         });
     </script>
 </body>

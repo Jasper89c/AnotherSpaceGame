@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = "Infrastructure Research"; 
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
+
+    var HousingIncrease = Model.Infrastructure.Housing * 10;
+    var CommercialIncrease = Model.Infrastructure.Commercial * 10;
+    var AgricultureIncrease = Model.Infrastructure.Agriculture * 10;
+    var IndustryIncrease = Model.Infrastructure.Industry * 10;
+    var MiningIncrease = Model.Infrastructure.Mining * 10;
 }
 
 <h2>Infrastructure Research</h2>
@@ -47,19 +53,38 @@
 				</thead>
 				<tbody>
 					<tr>
-						<td><strong>Housing:</strong> @Model.Infrastructure.Housing</td>
+						<td><strong>Housing:</strong> @Model.Infrastructure.Housing
+						<br />
+						<p>Housing increased by @HousingIncrease%</p>
+						</td>
 					</tr>
 					<tr>
-						<td><strong>Commercial:</strong> @Model.Infrastructure.Commercial</td>
+						<td>
+							<strong>Commercial:</strong> @Model.Infrastructure.Commercial
+							<br />
+							<p>Commercial increased by @CommercialIncrease%</p>
+						</td>
 					</tr>
 					<tr>
-						<td><strong>Agriculture:</strong> @Model.Infrastructure.Agriculture</td>
+						<td>
+							<strong>Agriculture:</strong> @Model.Infrastructure.Agriculture
+							<br />
+							<p>Agriculture increased by @AgricultureIncrease%</p>
+						</td>
 					</tr>
 					<tr>
-						<td><strong>Industry:</strong> @Model.Infrastructure.Industry</td>
+						<td>
+							<strong>Industry:</strong> @Model.Infrastructure.Industry
+							<br />
+							<p>Industry increased by @IndustryIncrease%</p>
+						</td>
 					</tr>
 					<tr>
-						<td><strong>Mining:</strong> @Model.Infrastructure.Mining</td>
+						<td>
+							<strong>Mining:</strong> @Model.Infrastructure.Mining
+							<br />
+							<p>Mining increased by @MiningIncrease%</p>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -71,7 +96,7 @@
 <form method="post" asp-page-handler="GainLevels" class="mb-4">
         <div class="mb-2">
             <label for="TurnsToUse" class="form-label">Turns To Use:</label>
-            <input asp-for="TurnsToUse" class="form-control" min="1" max="45" />
+            <input asp-for="TurnsToUse" class="form-control" min="1" max="45" value="45"/>
             <span asp-validation-for="TurnsToUse" class="text-danger"></span>
         </div>
     <button type="submit" class="btn btn-primary">Research</button>

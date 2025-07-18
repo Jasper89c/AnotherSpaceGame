@@ -44,14 +44,14 @@ else
 <form method="get" asp-page="ConfirmAttack">
     <label for="UserName">Target User Name:</label>
     <input type="text" id="UserName" name="UserName" value="@(Model.UserName ?? "")" required />
-
+    <input type="hidden" name="TargetUser" value="@Model.UserName" />
     <label for="SelectedAttackType">Fleet Attitude:</label>
     <select id="SelectedAttackType" name="SelectedAttackType" asp-items="Model.AttackTypeList"></select>
     <p>Careful: Attacker deals 50% less damage, Defender deals 50% less damage.</p>
     <p>Normal: Attacker deals 5% less damage.</p>
     <p>Aggressive: Attacker deals 74% more damage, Defender deals 99% more damage.</p>
     <p>The attacker always decides the attiude of the battle.</p>
-    <a asp-page="/HowBattlesWork">How battes work</a>
+    <a asp-page="/RankingRankNearMe">Search for target</a>
 
     <button type="submit" class="btn btn-primary">Attack</button>
     @Html.AntiForgeryToken()

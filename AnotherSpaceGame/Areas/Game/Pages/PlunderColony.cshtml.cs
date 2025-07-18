@@ -58,6 +58,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             var userExploration = await _context.Explorations.FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
+            var UserCommodities = await _context.Commodities
+                .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
             // Include Commodities by explicitly loading them after retrieving the user
             await _context.Entry(user).Reference(u => u.Commodities).LoadAsync();
 
@@ -74,12 +76,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 Planet = planet; // So the page can re-render with planet info
                 return Page();
             }
-            var totalPlanetInfra = Planet.Housing + Planet.Commercial + Planet.Industry + Planet.Agriculture + Planet.Mining;
+            var totalPlanetInfra = planet.Housing + planet.Commercial + planet.Industry + planet.Agriculture + planet.Mining;
             var mod = GetFactionModifiers(user.Faction);
-            creditsGainedForPlunder = ((int)Math.Floor(((Planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / Planet.TotalLand) + (200000 * Planet.TotalPlanets) / 15) * mod.FactionPlunderModifier)).ToString("C");
-            var creditsGained = (int)Math.Floor(((Planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / Planet.TotalLand) + (200000 * Planet.TotalPlanets) / 15) * mod.FactionPlunderModifier);
-            user.Commodities.Credits += creditsGained;
+            creditsGainedForPlunder = ((int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier)).ToString("C");
+            var creditsGained = (int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier);
+            UserCommodities.Credits += creditsGained;
             userExploration.ExplorationPointsNeeded = (int)Math.Floor(userExploration.ExplorationPointsNeeded / 1.2);
+            user.TotalColonies -= 1;
+            user.TotalPlanets -= planet.TotalPlanets;
             // Delete the planet
             _context.Planets.Remove(planet);
             await _context.SaveChangesAsync();

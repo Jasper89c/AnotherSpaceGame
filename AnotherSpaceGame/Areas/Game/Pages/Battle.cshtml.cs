@@ -57,23 +57,36 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             CurrentUserName = user.UserName;
-            var fleetIdsJson = HttpContext.Session.GetString("SelectedFleetIds");
-            List<int> currentUserFleetIds = new List<int>();
-            if (!string.IsNullOrEmpty(fleetIdsJson))
+
+            // Get target user by UserName
+            ApplicationUser? targetUser = _context.Users.FirstOrDefault(u => u.UserName == TargetUserName);
+            // Get current user's top 10 fleets, ignoring any with ShipType Starbase
+            CurrentUserFleets = (from fleet in _context.Fleets
+                                 join ship in _context.Ships on fleet.ShipId equals ship.Id
+                                 where fleet.ApplicationUserId == user.Id
+                                       && ship.ShipType != ShipType.Starbase
+                                       && ship.ShipType != ShipType.Scout
+                                 orderby fleet.TotalPowerRating descending
+                                 select fleet)
+                             .Take(10)
+                             .ToList();
+
+            // Get target user's top 10 fleets (if not NPC)
+            if (targetUser != null && targetUser.IsNPC != true)
             {
-                currentUserFleetIds = JsonSerializer.Deserialize<List<int>>(fleetIdsJson);
+                TargetUserFleets = (from fleet in _context.Fleets
+                                    join ship in _context.Ships on fleet.ShipId equals ship.Id
+                                    where fleet.ApplicationUserId == targetUser.Id
+                                          && ship.ShipType != ShipType.Starbase
+                                          && ship.ShipType != ShipType.Scout
+                                    orderby fleet.TotalPowerRating descending
+                                    select fleet)
+                             .Take(10)
+                             .ToList();
             }
-            CurrentUserFleetIds = currentUserFleetIds;
-            var fleetIdsJson1 = HttpContext.Session.GetString("SelectedFleetIds2");
-            List<int> targetUserFleetIds = new List<int>();
-            if (!string.IsNullOrEmpty(fleetIdsJson1))
-            {
-                targetUserFleetIds = JsonSerializer.Deserialize<List<int>>(fleetIdsJson1);
-            }
-            TargetUserFleetIds = targetUserFleetIds;
             // Load fleets from DB
-            CurrentUserFleets = _context.Fleets.Where(f => CurrentUserFleetIds.Contains(f.Id)).OrderByDescending(f => f.TotalPowerRating).Take(10).ToList();
-            TargetUserFleets = _context.Fleets.Where(f => TargetUserFleetIds.Contains(f.Id)).OrderByDescending(f => f.TotalPowerRating).Take(10).ToList();
+            CurrentUserFleets = CurrentUserFleets.OrderByDescending(f => f.TotalPowerRating).Take(10).ToList();
+            TargetUserFleets = TargetUserFleets.OrderByDescending(f => f.TotalPowerRating).Take(10).ToList();
             // Merge Fleets with ShipType information
             List<MergedFleet> AttackerFleet = new List<MergedFleet>();
             List<MergedFleet> DefenderFleet = new List<MergedFleet>();

@@ -29,7 +29,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty(SupportsGet = true)]
         public AttackType SelectedAttackType { get; set; } = AttackType.Normal;
         public List<SelectListItem> AttackTypeList { get; set; } = new();
-
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);

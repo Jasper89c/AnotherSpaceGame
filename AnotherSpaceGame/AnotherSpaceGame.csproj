@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Admin\Pages\" />
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
 

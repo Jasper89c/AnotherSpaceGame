@@ -23,6 +23,7 @@ else
                     <th>Total Power Rating</th>
                     <th>Total Upkeep</th>
                     <th>Remove Ships</th>
+                    <th>Disband</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,6 +52,11 @@ else
                     <td>
                         <input type="number" name="RemoveShips[@fleet.Id]" min="0" max="@fleet.TotalShips" class="form-control" value="0" />
                     </td>
+                    <td>
+                        <span class="set-percent" data-fleetid="@fleet.Id" data-totalships="@fleet.TotalShips" data-percent="10" style="cursor:pointer; color:green; text-decoration:underline; margin-right:8px;">10%</span>
+                            <span class="set-percent" data-fleetid="@fleet.Id" data-totalships="@fleet.TotalShips" data-percent="50" style="cursor:pointer; color:orange; text-decoration:underline; margin-right:8px;">50%</span>
+                        <span class="set-max" data-fleetid="@fleet.Id" data-totalships="@fleet.TotalShips" style="cursor:pointer; color:blue; text-decoration:underline;">Max</span>
+                    </td>
                 </tr>
             }
             </tbody>
@@ -59,3 +65,41 @@ else
         @Html.AntiForgeryToken()
     </form>
 }
+
+<script>
+    document.querySelectorAll('.set-max').forEach(function (span) {
+        span.addEventListener('click', function () {
+            var fleetId = span.getAttribute('data-fleetid');
+            var totalShips = span.getAttribute('data-totalships');
+            var input = document.querySelector('input[name="RemoveShips[' + fleetId + ']"]');
+            if (input) {
+                input.value = totalShips;
+            }
+        });
+    });
+</script>
+<script>
+    document.querySelectorAll('.set-max').forEach(function (span) {
+        span.addEventListener('click', function () {
+            var fleetId = span.getAttribute('data-fleetid');
+            var totalShips = span.getAttribute('data-totalships');
+            var input = document.querySelector('input[name="RemoveShips[' + fleetId + ']"]');
+            if (input) {
+                input.value = totalShips;
+            }
+        });
+    });
+
+    document.querySelectorAll('.set-percent').forEach(function (span) {
+        span.addEventListener('click', function () {
+            var fleetId = span.getAttribute('data-fleetid');
+            var totalShips = parseInt(span.getAttribute('data-totalships')) || 0;
+            var percent = parseInt(span.getAttribute('data-percent')) || 0;
+            var input = document.querySelector('input[name="RemoveShips[' + fleetId + ']"]');
+            if (input) {
+                var value = Math.floor(totalShips * percent / 100);
+                input.value = value;
+            }
+        });
+    });
+</script>

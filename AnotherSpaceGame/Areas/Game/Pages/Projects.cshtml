@@ -12,7 +12,7 @@
     <p>
             @if (Model.ClusterResearch.ColonyClusterLevel1 == true)
             {
-                <a asp-page="/Game/CreateColonyCluster" asp-route-id="1">Create Colony Cluster Level 1</a>                  
+                <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="1">Create Colony Cluster Level 1</a>
             }
             @if (Model.ClusterResearch.ColonyClusterLevel2 == true)
             {

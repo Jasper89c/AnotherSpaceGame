@@ -19,7 +19,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context = context;
             _userManager = userManager;
         }
-
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
 
@@ -36,7 +35,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-            Id = id;
+            Id = Id;
             Federation = await _context.Federations
                 .Include(f => f.FederationLeader)
                 .Include(f => f.FederationMembers)

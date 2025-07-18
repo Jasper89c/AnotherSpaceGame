@@ -244,9 +244,6 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                     // --- Planets Plundered ---
                     user.PlanetsPlundered = 0; // Initialize Planets Plundered
                     // --- End Planets Plundered logic ---
-                    // --- Fraction ---
-                    user.Faction = Faction.Terran; // Initialize Fraction
-                    // --- End Fraction logic ---
                     // --- Total Colonies ---
                     user.TotalColonies = 1; // Initialize Total Colonies
                     // --- End Total Colonies logic ---

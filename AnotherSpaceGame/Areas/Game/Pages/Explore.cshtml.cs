@@ -137,7 +137,40 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 PlanetType.Dead
             };
             var random = new System.Random();
-            var chosenType = allowedTypes[random.Next(allowedTypes.Length)];
+            // Define your weighted planet types and their chances (sum should be 100)
+            var weightedTypes = new (PlanetType Type, int Weight)[]
+            {
+                (PlanetType.Barren, 20),
+                (PlanetType.Icy, 20),
+                (PlanetType.Marshy, 20),
+                (PlanetType.Forest, 20),
+                 (PlanetType.Oceanic, 20),
+                (PlanetType.Rocky, 21),
+                (PlanetType.Desert, 21),
+                (PlanetType.Balanced, 21),
+                (PlanetType.Gas, 21),
+                (PlanetType.URich, 1),
+                (PlanetType.UEden, 1),
+                (PlanetType.USpazial, 1),
+                (PlanetType.ULarge, 1),
+                (PlanetType.UFertile, 1),
+                (PlanetType.Dead, 1)
+            };
+
+            int totalWeight = weightedTypes.Sum(wt => wt.Weight);
+            int roll = random.Next(totalWeight);
+            int cumulative = 0;
+            PlanetType chosenType = PlanetType.Barren; // default fallback
+
+            foreach (var (type, weight) in weightedTypes)
+            {
+                cumulative += weight;
+                if (roll < cumulative)
+                {
+                    chosenType = type;
+                    break;
+                }
+            }
             if (UserExploration.ExplorationCompleted >= 100m)
             {
                 // Found a new planet
@@ -296,6 +329,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         NewPlanet.TotalLand = random.Next(2, 4);
                         NewPlanet.AvailableOre = 0;
                         break;
+                }
+                // S Class
+                var Srandom = new System.Random();
+                // 0.1% chance (1 in 1000)
+                if (Srandom.Next(1000) == 0)
+                {
+                    // Your special code here
+                    NewPlanet.Name = "S." + random.Next(1000, 9999).ToString();
+                    NewPlanet.TotalLand = NewPlanet.TotalLand * random.Next(2, 11); // Increase land by a factor of 2 to 4
                 }
                 // Calculate LandAvailable
                 NewPlanet.LandAvailable = NewPlanet.TotalLand - (NewPlanet.Housing + NewPlanet.Commercial + NewPlanet.Industry + NewPlanet.Agriculture + NewPlanet.Mining);
