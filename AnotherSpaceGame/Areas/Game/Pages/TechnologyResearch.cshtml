@@ -8,6 +8,10 @@
 {
     <div class="alert alert-info">@Model.StatusMessage</div>
 }
+@if (!string.IsNullOrEmpty(Model.ResearchMessage))
+{
+    <div class="alert alert-info">@Model.ResearchMessage</div>
+}
 <table>
     <thead>
         <tr>
@@ -21,11 +25,11 @@
         {
             <tr>
                 <td>@research.Name</td>
-                <td>@research.TurnsRequired</td>
+                <td>@research.TurnsRequired.ToString("N0")</td>
                 <td>
                     <form method="post" style="display:inline;">
                         <input type="hidden" name="SelectedResearchName" value="@research.Name" />
-                        <input type="number" name="TurnsToInvest" min="1" max="@research.TurnsRequired" value="1" />
+                        <input type="number" name="TurnsToInvest" min="1" max="@research.TurnsRequired" value="@research.TurnsRequired" />
                         <button type="submit">Research</button>
                         @Html.AntiForgeryToken()
                     </form>

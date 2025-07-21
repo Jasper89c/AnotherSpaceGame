@@ -45,10 +45,10 @@ else
                         {
                             <td>@fleet.Ship.ShipName</td>
                         }
-            
-                    <td>@fleet.TotalShips </td>
-                    <td>@fleet.TotalPowerRating</td>
-                    <td>@fleet.TotalUpkeep</td>
+
+                        <td>@fleet.TotalShips.ToString("N0") </td>
+                        <td>@fleet.TotalPowerRating.ToString("N0")</td>
+                        <td>@fleet.TotalUpkeep.ToString("N0")</td>
                     <td>
                         <input type="number" name="RemoveShips[@fleet.Id]" min="0" max="@fleet.TotalShips" class="form-control" value="0" />
                     </td>

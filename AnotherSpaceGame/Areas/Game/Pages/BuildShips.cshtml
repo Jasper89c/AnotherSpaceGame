@@ -50,12 +50,12 @@ else
                 var collapseId = $"collapse-ship-{ship.Id}";
             <tr>
                 <td>@ship.ShipName</td>
-                <td>@totalInFleet</td>
+                        <td>@totalInFleet.ToString("N0")</td>
                 <td>
                     <input type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control"
                            value="0" data-buildrate="@buildRate" />
                 </td>
-                <td>@totalPower</td>
+                        <td>@totalPower.ToString("N0")</td>
                 <td>
                     <span id="turns-@ship.Id">0</span>
                 </td>

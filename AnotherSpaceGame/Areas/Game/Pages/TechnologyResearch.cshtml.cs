@@ -31,6 +31,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         public int TurnsToInvest { get; set; }
         public string StatusMessage { get; set; }
+        public string ResearchMessage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -124,7 +125,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (boolProp != null && boolProp.PropertyType == typeof(bool))
                 {
                     boolProp.SetValue(researchModel, true);
-                    StatusMessage = $"Research '{boolPropName}' completed!";
+                    ResearchMessage = $"Research '{boolPropName}' completed!";
                 }
             }
 

@@ -24,11 +24,11 @@
         </tr>
         <tr>
             <th>Total Land</th>
-            <td>@Model.NewPlanet.TotalLand</td>
+            <td>@Model.NewPlanet.TotalLand.ToString("N0")</td>
         </tr>
         <tr>
             <th>Ore Available</th>
-            <td>@Model.NewPlanet.AvailableOre</td>
+            <td>@Model.NewPlanet.AvailableOre.ToString("N0")</td>
         </tr>
     </table>
 }
@@ -38,7 +38,7 @@
     <table class="table table-bordered">
         <tr>
             <th>Exploration Points Needed</th>
-            <td>@Model.UserExploration.ExplorationPointsNeeded</td>
+            <td>@Model.UserExploration.ExplorationPointsNeeded.ToString("N0")</td>
         </tr>
         <tr>
             <th>Exploration Completed</th>
@@ -50,19 +50,19 @@
         </tr>
         <tr>
             <th>Ships in Fleet</th>
-            <td>@Model.UserExploration.ShipsInFleet</td>
+            <td>@Model.UserExploration.ShipsInFleet.ToString("N0")</td>
         </tr>
         <tr>
             <th>Total Scanning Power</th>
-            <td>@Model.UserExploration.ScanningPower</td>
+            <td>@Model.UserExploration.ScanningPower.ToString("N0")</td>
         </tr>
         <tr>
             <th>Total Planets</th>
-            <td>@Model.UserExploration.TotalPlanets</td>
+            <td>@Model.UserExploration.TotalPlanets.ToString("N0")</td>
         </tr>
         <tr>
             <th>Total Colonies</th>
-            <td>@Model.UserExploration.TotalColonies</td>
+            <td>@Model.UserExploration.TotalColonies.ToString("N0")</td>
         </tr>
     </table>
 

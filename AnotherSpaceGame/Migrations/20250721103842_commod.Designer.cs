@@ -4,6 +4,7 @@ using AnotherSpaceGame.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AnotherSpaceGame.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250721103842_commod")]
+    partial class commod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -558,38 +561,38 @@ namespace AnotherSpaceGame.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<long>("Composite")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Composite")
+                        .HasColumnType("int");
 
-                    b.Property<long>("ConsumerGoods")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ConsumerGoods")
+                        .HasColumnType("int");
 
                     b.Property<long>("Credits")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("Food")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Food")
+                        .HasColumnType("int");
 
-                    b.Property<long>("Ore")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Ore")
+                        .HasColumnType("int");
 
-                    b.Property<long>("RawMaterial")
-                        .HasColumnType("bigint");
+                    b.Property<int>("RawMaterial")
+                        .HasColumnType("int");
 
-                    b.Property<long>("RedCrystal")
-                        .HasColumnType("bigint");
+                    b.Property<int>("RedCrystal")
+                        .HasColumnType("int");
 
-                    b.Property<long>("Rutile")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Rutile")
+                        .HasColumnType("int");
 
-                    b.Property<long>("StrafezOrganism")
-                        .HasColumnType("bigint");
+                    b.Property<int>("StrafezOrganism")
+                        .HasColumnType("int");
 
-                    b.Property<long>("TerranMetal")
-                        .HasColumnType("bigint");
+                    b.Property<int>("TerranMetal")
+                        .HasColumnType("int");
 
-                    b.Property<long>("WhiteCrystal")
-                        .HasColumnType("bigint");
+                    b.Property<int>("WhiteCrystal")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1296,8 +1299,8 @@ namespace AnotherSpaceGame.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()

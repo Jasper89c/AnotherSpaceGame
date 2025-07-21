@@ -20,6 +20,7 @@ public class TurnService
         var user = await _context.Users
             .Include(u => u.Commodities)
             .Include(u => u.Turns)
+            .Include(u => u.Fleets)
             .FirstOrDefaultAsync(u => u.Id == userId);
         var currentUser = _context.Users
                 .FirstOrDefault(u => u.Id == user.Id);
@@ -67,6 +68,13 @@ public class TurnService
         }
         // Fix for CS0131: The left-hand side of an assignment must be a variable, property or indexer
         decimal creditIncome = 0;
+        // update users fleets
+        foreach (var item in user.Fleets)
+        {
+            var ship = _context.Ships.FirstOrDefault(x => x.Id == item.ShipId);
+            item.TotalUpkeep = item.TotalShips * ship.Upkeep;
+            item.TotalPowerRating = item.TotalShips * ship.PowerRating;
+        }
 
         foreach (var planet in userPlanets)
         {
@@ -108,8 +116,111 @@ public class TurnService
                     break;
             }
 
+            switch (planet.Type)
+                            {
+                case PlanetType.AssimilatedC1:
+                    planet.TotalPlanets = 5;
+                    break;
+                case PlanetType.AssimilatedC2:
+                    planet.TotalPlanets = 25;
+                    break;
+                case PlanetType.AssimilatedC3:
+                    planet.TotalPlanets = 125;
+                    break;
+                case PlanetType.Balanced:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Barren:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.ClusterLevel1:
+                    planet.TotalPlanets = 5;
+                    break;
+                case PlanetType.ClusterLevel2:
+                    planet.TotalPlanets = 25;
+                    break;
+                case PlanetType.ClusterLevel3:
+                    planet.TotalPlanets = 125;
+                    break;
+                case PlanetType.Dead:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Desert:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Forest:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Gas:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.InfectedC1:
+                    planet.TotalPlanets = 5;
+                    break;
+                case PlanetType.InfectedC2:
+                    planet.TotalPlanets = 25;
+                    break;
+                case PlanetType.InfectedC3:
+                    planet.TotalPlanets = 125;
+                    break;
+                case PlanetType.Icy:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Marshy:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Oceanic:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.Rocky:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.SimilareC1:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.SimilareC2:
+                    planet.TotalPlanets = 4;
+                    break;
+                case PlanetType.SimilareC3:
+                    planet.TotalPlanets = 16;
+                    break;
+                case PlanetType.SimilareC4:
+                    planet.TotalPlanets = 64;
+                    break;
+                case PlanetType.SimilareC5:
+                    planet.TotalPlanets = 256;
+                    break;
+                case PlanetType.UEden:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.UFertile:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.ULarge:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.URich:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.USpazial:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.TaintedC1:
+                    planet.TotalPlanets = 1;
+                    break;
+                case PlanetType.TaintedC2:
+                    planet.TotalPlanets = 4;
+                    break;
+                case PlanetType.TaintedC3:
+                    planet.TotalPlanets = 16;
+                    break;
+                case PlanetType.TaintedC4:
+                    planet.TotalPlanets = 64;
+                    break;
+            }
+
             // Goods and food logic
-            var goodsIncomeResult = HandleGoodsIncome(planet, user, ref industryIncome, creditIncome, turnsToUse);
+            var goodsIncomeResult = HandleGoodsIncome(planet, user, industryIncome, creditIncome, turnsToUse);
             goodsIncome += goodsIncomeResult.Item1;
             creditIncome += goodsIncomeResult.Item2;
 
@@ -137,11 +248,16 @@ public class TurnService
 
         // Update user commodities
         UpdateUserCommodities(user, creditIncome, agricultureIncome, goodsIncome, miningTMIncome, miningRCIncome, miningWCIncome, miningCIncome, miningRIncome, miningSOIncome);
+        // update cols + planet counts
+        user.TotalColonies = userPlanets.Count;
+        user.TotalPlanets = userPlanets.Sum(x => x.TotalPlanets);
+
 
         // Update turns and last action
         user.Turns.CurrentTurns -= turnsToUse;
         user.LastAction = DateTime.Now;
-
+        SetMaxCommodities(user);
+        SetMaxPowerRating(user, userPlanets);
         await _context.SaveChangesAsync();
 
         // Fix for CS1002 and CS0201 errors in the problematic line
@@ -156,13 +272,54 @@ public class TurnService
     }
 
     // --- Helper methods below ---
-
+    private void SetMaxPowerRating(ApplicationUser user, List<Planets> userPlanets)
+    {
+        while (user.PowerRating > 1250000000)
+        {
+            foreach (var Ship in user.Fleets)
+            {
+                if(Ship.TotalShips > 1)
+                {
+                    Ships refShip = _context.Ships.FirstOrDefault(x => x.Id == Ship.ShipId);
+                    Ship.TotalShips = (int)Math.Ceiling(Ship.TotalShips * 0.97);
+                    Ship.TotalPowerRating = refShip.PowerRating * Ship.TotalShips;
+                    Ship.TotalUpkeep = refShip.Upkeep * Ship.TotalShips;
+                }
+            }
+            user.PowerRating = user.Fleets.Sum(x => x.TotalPowerRating) + userPlanets.Sum(p => p.PowerRating);
+        }
+    }
+    private void SetMaxCommodities(ApplicationUser user)
+    {
+        if(user.Commodities.Credits > 5000000000000)
+            user.Commodities.Credits = 5000000000000;
+        if(user.Commodities.Food > 25000000000)
+            user.Commodities.Food = 25000000000;
+        if(user.Commodities.ConsumerGoods > 25000000000)
+            user.Commodities.ConsumerGoods = 25000000000;
+        if(user.Commodities.TerranMetal > 2000000000)
+            user.Commodities.TerranMetal = 2000000000;
+        if(user.Commodities.RedCrystal > 2000000000)
+            user.Commodities.RedCrystal = 2000000000;
+        if(user.Commodities.WhiteCrystal > 2000000000)
+            user.Commodities.WhiteCrystal = 2000000000;
+        if(user.Commodities.Rutile > 2000000000)
+            user.Commodities.Rutile = 2000000000;
+        if(user.Commodities.Composite > 2000000000)
+            user.Commodities.Composite = 2000000000;
+        if(user.Commodities.StrafezOrganism > 2000000000)
+            user.Commodities.StrafezOrganism = 2000000000;
+        if(user.Commodities.RawMaterial > 5000000000)
+            user.Commodities.RawMaterial = 5000000000;
+        if(user.Commodities.Ore > 5000000000)
+            user.Commodities.Ore = 5000000000;
+    }
     private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction)
     {
-        planet.MaxPopulation = (int)Math.Floor((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)));
+        planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)));
         if (faction == Faction.Collective)
         {
-            planet.MaxPopulation = (int)Math.Floor(planet.MaxPopulation * 2m);
+            planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)) * 2);
         }
         if (planet.CurrentPopulation < planet.MaxPopulation)
         {
@@ -246,13 +403,13 @@ public class TurnService
         return Math.Floor((planet.TotalPlanets * ((0.13m * infra.Mining) + 1)) * mods.FactionMiningModifier) * turnsToUse;
     }
 
-     private (decimal,decimal) HandleGoodsIncome(Planets planet, ApplicationUser user, ref decimal industryIncome, decimal taxIncome, int turnsToUse)
+     private (decimal,decimal) HandleGoodsIncome(Planets planet, ApplicationUser user, decimal industryIncome, decimal taxIncome, int turnsToUse)
     {
         var goodsNeeded = planet.GoodsRequired * turnsToUse;
         if ((user.Commodities.ConsumerGoods + industryIncome) >= goodsNeeded)
         {
             industryIncome -= goodsNeeded;
-            taxIncome += Math.Floor(goodsNeeded * 5.5m) * turnsToUse;
+            taxIncome += Math.Floor(goodsNeeded * 5.5m);
             return (industryIncome, taxIncome);
         }
         else if ((user.Commodities.ConsumerGoods + industryIncome) < goodsNeeded)

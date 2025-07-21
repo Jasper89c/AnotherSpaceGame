@@ -8,17 +8,17 @@ namespace AnotherSpaceGame.Models
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
-        public int Credits { get; set; }
-        public int Food { get; set; }
-        public int Ore { get; set; }
-        public int RawMaterial { get; set; }
-        public int ConsumerGoods { get; set; }
-        public int TerranMetal { get; set; }
-        public int RedCrystal { get; set; }
-        public int WhiteCrystal { get; set; }
-        public int Rutile { get; set; }
-        public int Composite { get; set; }
-        public int StrafezOrganism { get; set; }
+        public long Credits { get; set; }
+        public long Food { get; set; }
+        public long Ore { get; set; }
+        public long RawMaterial { get; set; }
+        public long ConsumerGoods { get; set; }
+        public long TerranMetal { get; set; }
+        public long RedCrystal { get; set; }
+        public long WhiteCrystal { get; set; }
+        public long Rutile { get; set; }
+        public long Composite { get; set; }
+        public long StrafezOrganism { get; set; }
 
         public Commodities()
         {

@@ -113,7 +113,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             double currentShield = 0;
             if (artifactShieldProp != null)
             {
-                currentShield = (double)(artifactShieldProp.GetValue(targetUser) ?? 0);
+                var shieldObj = artifactShieldProp.GetValue(targetUser) ?? 0m;
+                currentShield = Convert.ToDouble((decimal)shieldObj);
                 if (currentShield > 0 && shieldValue > 0)
                 {
                     // Reduce shield and do nothing else
@@ -279,6 +280,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     int land = new System.Random().Next(min, max + 1);
                     topPlanet.TotalLand += land;
+                    topPlanet.LandAvailable += land;
                     return $"Gave {land} land to {target}'s top planet.";
                 }
             }
@@ -287,19 +289,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         private static string GiveRandomArtifacts(ApplicationUser user, int min, int max, ApplicationDbContext context, string target)
         {
-            int count = new System.Random().Next(min, max + 1);
             // Pick random artifact IDs (excluding common orbs)
-            var artifactIds = context.Artifacts
-                .Where(a => a.ArtifactType != ArtifactType.Common)
-                .Select(a => a.ArtifactId)
-                .Distinct()
-                .ToList();
 
             var rand = new System.Random();
-            for (int i = 0; i < count && artifactIds.Count > 0; i++)
-            {
-                int idx = rand.Next(artifactIds.Count);
-                int artifactId = artifactIds[idx];
+            var artifactId = rand.Next(1, 65);
+            
                 var artifact = context.Artifacts.FirstOrDefault(a => a.ApplicationUserId == user.Id && a.ArtifactId == artifactId);
                 if (artifact == null)
                 {
@@ -312,15 +306,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     if (artifact.Total > artifact.MaxTotal)
                         artifact.Total = artifact.MaxTotal;
                 }
-            }
-            return $"Gave {count} random artifacts to {target}.";
+            
+            return $"Gave 1 {artifact.ArtifactName} to {target}.";
         }
 
         private static string DecreaseConsumerGoods(ApplicationUser user, string target)
         {
             if (user.Commodities != null)
             {
-                int before = user.Commodities.ConsumerGoods;
+                long before = user.Commodities.ConsumerGoods;
                 int decrease = (int)(before * 0.05); // Example: decrease by 5%
                 user.Commodities.ConsumerGoods = System.Math.Max(0, before - decrease);
                 return $"Decreased {target}'s consumer goods by {decrease}.";
@@ -332,7 +326,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             if (user.Commodities != null)
             {
-                int before = user.Commodities.Credits;
+                long before = user.Commodities.Credits;
                 int change = (int)(before * percent);
                 user.Commodities.Credits += change;
                 return percent < 0

@@ -47,10 +47,10 @@
         <dd class="col-sm-9">@Model.Federation.FederationLeader?.UserName</dd>
 
         <dt class="col-sm-3">Total Power Rating</dt>
-        <dd class="col-sm-9">@Model.Federation.TotalPowerating</dd>
+        <dd class="col-sm-9">@Model.Federation.TotalPowerating.ToString("N0")</dd>
 
         <dt class="col-sm-3">Total Planets</dt>
-        <dd class="col-sm-9">@Model.Federation.TotalPlanets</dd>
+        <dd class="col-sm-9">@Model.Federation.TotalPlanets.ToString("N0")</dd>
 
         <dt class="col-sm-3">Total Members</dt>
         <dd class="col-sm-9">@Model.Federation.TotalMembers</dd>
@@ -88,8 +88,8 @@
                             <i class="bi bi-shield-check"></i>
                         }
                     </td>
-                    <td>@member.PowerRating</td>
-                    <td>@member.TotalPlanets</td>
+                    <td>@member.PowerRating.ToString("N0")</td>
+                    <td>@member.TotalPlanets.ToString("N0")</td>
                     <td>@member.Faction</td>
                     @if (isLeader)
                     {

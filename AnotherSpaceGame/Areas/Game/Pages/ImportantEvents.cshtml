@@ -1,6 +1,7 @@
 ﻿@page  
 @model AnotherSpaceGame.Areas.Game.Pages.ImportantEventsModel  
 @using AnotherSpaceGame.Models  
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{  
     Layout = "~/Views/Shared/_LayoutGame.cshtml";  
     ViewData["Title"] = "Important Events";  
@@ -43,7 +44,7 @@
         {  
             <li class="list-group-item">  
                 <span class="text-muted" style="font-size:small;">@ev.DateAndTime.ToLocalTime().ToString("g")</span>  
-                <div>@ev.Text</div>  
+                <div>@Html.Raw(ev.Text)</div>  
             </li>  
         }  
     </ul>  

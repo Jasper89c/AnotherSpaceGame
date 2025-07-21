@@ -141,7 +141,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             public int BattlesWon { get; set; }
             public int BattlesLost { get; set; }
             public double BattleRatio => BattlesLost > 0 ? (double)BattlesWon / BattlesLost : BattlesWon;
-            public int Credits { get; set; }
+            public long Credits { get; set; }
             public int ColoniesExplored { get; set; }
             public int PlanetsPlundered { get; set; }
             public int PlanetsWon { get; set; }

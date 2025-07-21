@@ -13,7 +13,7 @@ namespace AnotherSpaceGame.Models
         public MarketType MarketType { get; set; } 
 
         [Required]
-        public int Amount { get; set; }
+        public long Amount { get; set; }
 
         [Required]
         public DateTime DateTime { get; set; }

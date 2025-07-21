@@ -45,11 +45,15 @@ else
                                 data-bs-toggle-text="Hide Fleet Report">
                             Show Fleet Report
                         </button>
-                        <div class="collapse mt-2" id="@collapseId">
-                            <div class="card card-body">
-                                @Html.Raw(log.FleetReport)
-                            </div>
+                    </td>
+                </tr>
+                <tr class ="collapse mt-2" id="@collapseId">
+                    <td colspan="5">                    
+                    <div>
+                        <div class="card card-body">
+                            @Html.Raw(log.FleetReport)
                         </div>
+                    </div>
                     </td>
                 </tr>
             }

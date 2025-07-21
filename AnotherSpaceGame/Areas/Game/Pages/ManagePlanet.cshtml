@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                     <th>Available Ore</th>
-                    <td>@Model.Planet.AvailableOre</td>
+                        <td>@Model.Planet.AvailableOre.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Mineral Produced</th>
@@ -47,15 +47,15 @@
                 </tr>
                 <tr>
                     <th>Total Land</th>
-                    <td>@Model.Planet.TotalLand</td>
+                        <td>@Model.Planet.TotalLand.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Food Required</th>
-                    <td>@Model.Planet.FoodRequired</td>
+                        <td>@Model.Planet.FoodRequired.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Goods Required</th>
-                    <td>@Model.Planet.GoodsRequired</td>
+                        <td>@Model.Planet.GoodsRequired.ToString("N0")</td>
                 </tr>
             </tbody>
         </table>
@@ -64,15 +64,15 @@
                 <tr><th colspan="2">Population</th></tr>
                 <tr>
                     <th>Current Population</th>
-                    <td>@Model.Planet.CurrentPopulation</td>
+                        <td>@Model.Planet.CurrentPopulation.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Max Population</th>
-                    <td>@Model.Planet.MaxPopulation</td>
+                        <td>@Model.Planet.MaxPopulation.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Loyalty</th>
-                    <td>@Model.Planet.Loyalty</td>
+                        <td>@Model.Planet.Loyalty.ToString("N0")</td>
                 </tr>
             </tbody>
         </table>
@@ -81,11 +81,11 @@
                 <tr><th colspan="2">Construction</th></tr>
                 <tr>
                     <th>Available Labor</th>
-                    <td>@Model.Planet.AvailableLabour</td>
+                        <td>@Model.Planet.AvailableLabour.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Land Available</th>
-                    <td>@Model.Planet.LandAvailable</td>
+                        <td>@Model.Planet.LandAvailable.ToString("N0")</td>
                 </tr>
             </tbody>
             <tfoot>
@@ -95,13 +95,13 @@
                         <form method="post" class="row g-2 align-items-center">
                             <input type="hidden" name="id" value="@Model.Planet.Id" />
                             <div class="col-auto">
-                                <label for="housing" class="form-label mb-0">Housing:(@Model.Planet.Housing)</label>
+                                    <label for="housing" class="form-label mb-0">Housing:</label>
                             </div>
                             <div class="col-4">
                                 <input type="number" id="housing" name="housing" class="form-control" min="0" value="0" />
                             </div>
                                 <div class="col-auto">
-                                    <label for="housingtotal" class="form-label mb-0">Total:@Model.Planet.Housing</label>
+                                    <label for="housingtotal" class="form-label mb-0">Total:@Model.Planet.Housing.ToString("N0")</label>
                                 </div>
                             <hr />
                             <div class="col-auto">
@@ -111,7 +111,7 @@
                                 <input type="number" id="commercial" name="commercial" class="form-control" min="0" value="0" />
                                 </div>
                                 <div class="col-auto">
-                                    <label for="commercialtotal" class="form-label mb-0">Total:@Model.Planet.Commercial</label>
+                                    <label for="commercialtotal" class="form-label mb-0">Total:@Model.Planet.Commercial.ToString("N0")</label>
                                 </div>
                                 <hr />
                             <div class="col-auto">
@@ -121,7 +121,7 @@
                                 <input type="number" id="agriculture" name="agriculture" class="form-control" min="0" value="0" />
                                 </div>
                                 <div class="col-auto">
-                                    <label for="agriculturetotal" class="form-label mb-0">Total:@Model.Planet.Agriculture</label>
+                                    <label for="agriculturetotal" class="form-label mb-0">Total:@Model.Planet.Agriculture.ToString("N0")</label>
                                 </div>
                                 <hr />
                             <div class="col-auto">
@@ -131,7 +131,7 @@
                                 <input type="number" id="industry" name="industry" class="form-control" min="0" value="0" />
                                 </div>
                                 <div class="col-auto">
-                                    <label for="industrytotal" class="form-label mb-0">Total:@Model.Planet.Industry</label>
+                                    <label for="industrytotal" class="form-label mb-0">Total:@Model.Planet.Industry.ToString("N0")</label>
                                 </div>
                                 <hr />
                             <div class="col-auto">
@@ -141,7 +141,7 @@
                                 <input type="number" id="mining" name="mining" class="form-control" min="0" value="0" />
                                 </div>
                                 <div class="col-auto">
-                                    <label for="miningtotal" class="form-label mb-0">Total:@Model.Planet.Mining</label>
+                                    <label for="miningtotal" class="form-label mb-0">Total:@Model.Planet.Mining.ToString("N0")</label>
                                 </div>
                                 <hr />
                             <div class="w-100"></div>
@@ -164,15 +164,15 @@
                 <tr><th colspan="2">Empire Information</th></tr>
                 <tr>
                     <th>Raw Material</th>
-                    <td>@Model.RawMaterial</td>
+                        <td>@Model.RawMaterial.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Consumer Goods</th>
-                    <td>@Model.Goods</td>
+                        <td>@Model.Goods.ToString("N0")</td>
                 </tr>
                 <tr>
                     <th>Ore</th>
-                    <td>@Model.Ore</td>
+                        <td>@Model.Ore.ToString("N0")</td>
                 </tr>
             </tbody>
         </table>

@@ -604,9 +604,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     CreationMessage = $"You have successfully created a {match.Result}!";
                 }
                 // Remove the used artifacts
-                foreach (var artifact in selectedArtifacts)
+                // selectedIds: the array of 4 selected artifact IDs, in order
+                foreach (var artifactId in selectedIds)
                 {
-                    _context.Artifacts.Remove(artifact);
+                    var artifact = UserArtifacts.FirstOrDefault(a => a.ArtifactId == artifactId);
+                    if (artifact != null)
+                    {
+                        artifact.Total -= 1;
+                        if (artifact.Total <= 0)
+                        {
+                            _context.Artifacts.Remove(artifact);
+                        }
+                    }
                 }
                 await _context.SaveChangesAsync();
 
@@ -617,6 +626,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 CreationMessage = "No valid combination found for the selected artifacts and order.";
             }
             BuildDisplayCombinations();
+            UserArtifacts = _context.Artifacts
+                .Where(a => a.ApplicationUserId == user.Id)
+                .ToList();
+
+            ArtifactOptions = UserArtifacts
+        .Where(a => a.Total > 0)
+        .OrderBy(a => a.ArtifactType) // Order by type first
+        .ThenBy(a => a.ArtifactName)  // Then by name (optional)
+        .Select(a => new ArtifactSelectOption
+        {
+            ArtifactId = a.ArtifactId,
+            DisplayName = $"{a.ArtifactName} (x{a.Total})"
+        })
+        .ToList();
             return Page();
         }
         private string GetArtifactDisplayName(ArtifactName name)

@@ -14,7 +14,7 @@
     <div class="alert alert-info mt-4">
         <strong>Your Empire Stats:</strong><br />
         <b>Rank:</b> @Model.CurrentUserRank of @Model.TotalEmpires<br />
-        <b>Username:</b> @Model.CurrentUserEmpire.Username<br />
+        <b>Username:</b> @Model.CurrentUserEmpire.UserName<br />
         <b>Faction:</b> @Model.CurrentUserEmpire.Faction<br />
         <b>Total Planets:</b> @Model.CurrentUserEmpire.TotalPlanets<br />
         <b>Power Rating:</b> @Model.CurrentUserEmpire.PowerRating
@@ -39,11 +39,11 @@
             <tr>
                 <td>@(i + 1)</td>
                 <td>
-                    <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@empire.Id" title="View Empire">
+                    <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@empire.UserName" title="View Empire">
                         <i class="bi bi-info-circle"></i>
                     </a>
                 </td>
-                <td>@empire.Username
+                <td>@empire.UserName
                     @if (empire.LastActivity >= DateTime.Now.AddMinutes(-30))
                     {
                         <i class="bi bi-fire"></i>
@@ -54,8 +54,8 @@
                     }
                 </td>
                 <td>@empire.Faction</td>
-                <td>@empire.TotalPlanets</td>
-                <td>@empire.PowerRating</td>
+                <td>@empire.TotalPlanets.ToString("N0")</td>
+                <td>@empire.PowerRating.ToString("N0")</td>
             </tr>
         }
     </tbody>

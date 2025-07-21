@@ -4,7 +4,12 @@
     ViewData["Title"] = "Projects";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
-
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">
+        @Html.Raw(Model.StatusMessage)
+    </div>
+}
 
 @if (Model.Faction == AnotherSpaceGame.Models.Faction.Terran || Model.Faction == AnotherSpaceGame.Models.Faction.AMiner || Model.Faction == AnotherSpaceGame.Models.Faction.Marauder || Model.Faction == AnotherSpaceGame.Models.Faction.Guardian)
 {    
@@ -56,9 +61,10 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
 @if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true)
 {
     <div>
+        <h2>Capsule Laboratory</h2>
         <p>Turns Required: @Model.UserProjects.CapsuleLabTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.CapsuleLabCreditsRequired</p>
-        <p>Status: @(Model.UserProjects.CapsuleLab ? "Locked" : "Unlocked")</p>
+        <p>Status: @(Model.UserProjects.CapsuleLab ? "Unlocked" : "Locked")</p>
     </div>
     <form method="post" asp-page-handler="InvestCapsuleLab">
         <label>Turns to Invest:</label>
@@ -70,17 +76,11 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
         <button type="submit">Invest</button>
         @Html.AntiForgeryToken()
     </form>
-    <p>@Model.StatusMessage</p>
-}
-else if (Model.UserProjects.CapsuleLabUnlockTimer > DateTime.Now)
-{
-    <p>Capsule Lab is currently locked. Please wait for the unlock timer to complete.</p>
-    <p>Time remaining: @Model.UserProjects.CapsuleLabUnlockTimer.ToLocalTime().ToString("g")</p>
 }
 else if (Model.UserProjects.CapsuleLab == true)
 {
     <p>
-        <a asp-page="/Game/CapsuleLab">Go to Capsule Lab</a>
+        <a asp-page="/CapsuleLab">Go to Capsule Lab</a>
     </p>
 }
 else
@@ -90,9 +90,10 @@ else
 @if (Model.UserProjects.Itech != true && Model.ProjectsResearch.ITechLaboratory == true)
 {
     <div>
+        <h2>ITech Laboratory</h2>
         <p>Turns Required: @Model.UserProjects.ItechTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.ItechCreditsRequired</p>
-        <p>Status: @(Model.UserProjects.Itech ? "Locked" : "Unlocked")</p>
+        <p>Status: @(Model.UserProjects.Itech ? "Unlocked" : "Locked")</p>
     </div>
     <form method="post" asp-page-handler="InvestItech">
         <label>Turns to Invest:</label>
@@ -104,12 +105,6 @@ else
         <button type="submit">Invest</button>
         @Html.AntiForgeryToken()
     </form>
-    <p>@Model.StatusMessage</p>
-}
-else if (Model.UserProjects.ItechUnlockTimer > DateTime.Now)
-{
-    <p>Itech is currently locked. Please wait for the unlock timer to complete.</p>
-    <p>Time remaining: @Model.UserProjects.ItechUnlockTimer.ToLocalTime().ToString("g")</p>
 }
 else if (Model.UserProjects.Itech == true)
 {
@@ -124,9 +119,10 @@ else
 @if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral && Model.ViralSpecificResearch.UnreverseEngineering == true)
 {
     <div>
+        <h2>Unreverse Engineering</h2>
         <p>Turns Required: @Model.UserProjects.UnreverseEngineeringTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.UnreverseEngineeringCreditsRequired</p>
-        <p>Status: @(Model.UserProjects.UnreverseEngineering ? "Locked" : "Unlocked")</p>
+        <p>Status: @(Model.UserProjects.UnreverseEngineering ? "Unlocked" : "Locked")</p>
     </div>
     <form method="post" asp-page-handler="InvestUnreverseEngineering">
         <label>Turns to Invest:</label>
@@ -138,12 +134,6 @@ else
         <button type="submit">Invest</button>
         @Html.AntiForgeryToken()
     </form>
-    <p>@Model.StatusMessage</p>
-}
-else if (Model.UserProjects.UnreverseEngineeringUnlockTimer > DateTime.Now && Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
-{
-    <p>Unreverse Engineering is currently locked. Please wait for the unlock timer to complete.</p>
-    <p>Time remaining: @Model.UserProjects.UnreverseEngineeringUnlockTimer.ToLocalTime().ToString("g")</p>
 }
 else if (Model.UserProjects.UnreverseEngineering == true)
 {

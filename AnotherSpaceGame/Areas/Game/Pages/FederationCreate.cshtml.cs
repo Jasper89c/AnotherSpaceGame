@@ -54,20 +54,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
 
-            if (user.PowerRating < 250000)
+            if (user.PowerRating < 250)
             {
-                FeedbackMessage = "You need at least 250,000 Power Rating to create a federation.";
+                FeedbackMessage = "You need at least 250 Power Rating to create a federation.";
                 return Page();
             }
 
-            if (user.Commodities == null || user.Commodities.Credits < 100_000_000)
+            if (user.Commodities == null || user.Commodities.Credits < 100)
             {
-                FeedbackMessage = "You need at least 100,000,000 credits to create a federation.";
+                FeedbackMessage = "You need at least 100 credits to create a federation.";
                 return Page();
             }
 
             // Deduct credits
-            user.Commodities.Credits -= 100_000_000;
+            user.Commodities.Credits -= 100;
 
             // Create federation
             var federation = new Federations

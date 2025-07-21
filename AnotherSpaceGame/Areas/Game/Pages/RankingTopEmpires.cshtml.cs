@@ -40,7 +40,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         .Select(u => new EmpireViewModel
                         {
                             Id = u.Id,
-                            Username = u.UserName,
+                            UserName = u.UserName,
                             Faction = u.Faction.ToString(),
                             TotalPlanets = u.TotalPlanets,
                             PowerRating = u.PowerRating,
@@ -62,7 +62,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Select(u => new EmpireViewModel
                 {
                     Id = u.Id,
-                    Username = u.UserName,
+                    UserName = u.UserName,
                     Faction = u.Faction.ToString(),
                     TotalPlanets = u.TotalPlanets,
                     PowerRating = u.PowerRating,
@@ -87,7 +87,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public class EmpireViewModel
         {
             public string Id { get; set; }
-            public string Username { get; set; }
+            public string UserName { get; set; }
             public string Faction { get; set; }
             public int TotalPlanets { get; set; }
             public double PowerRating { get; set; }

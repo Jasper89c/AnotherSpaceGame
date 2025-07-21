@@ -117,6 +117,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     UserExploration.ExplorationPointsNeeded = (int)Math.Floor(UserExploration.ExplorationPointsNeeded / 1.2);
                     user.TotalColonies -= 1;
                     user.TotalPlanets -= planet.TotalPlanets;
+                    user.PlanetsPlundered += planet.TotalPlanets;
                     _context.Planets.Remove(planet); // Remove the planet from the database
                 }
             }

@@ -77,7 +77,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             return RedirectToPage();
         }
 
-        private void AddCommodity(Commodities c, MarketType type, int value)
+        private void AddCommodity(Commodities c, MarketType type, long value) // Changed 'int value' to 'long value'
         {
             switch (type)
             {

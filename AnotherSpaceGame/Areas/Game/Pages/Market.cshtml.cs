@@ -24,12 +24,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public Commodities UserCommodities { get; set; }
         public Dictionary<MarketType, List<MarketPosts>> MarketPostsByType { get; set; } = new();
-        public Dictionary<MarketType, (int MinPrice, int MaxPrice, int MaxAmount)> MarketLimits { get; } = new()
+        public Dictionary<MarketType, (int MinPrice, int MaxPrice, long MaxAmount)> MarketLimits { get; } = new()
         {
-            { MarketType.Food, (1, 20, 500000000) }, 
-            { MarketType.Ore, (1000, 25000, 1000000) },
-            { MarketType.RawMaterial, (1, 4, 500000000) },
-            { MarketType.ConsumerGoods, (1, 4, 500000000) },
+            { MarketType.Food, (1, 20, 2000000000) }, 
+            { MarketType.Ore, (1000, 25000, 10000000) },
+            { MarketType.RawMaterial, (1, 4, 2000000000) },
+            { MarketType.ConsumerGoods, (1, 4, 2000000000) },
             { MarketType.TerranMetal, (250, 1000, 50000000) },
             { MarketType.RedCrystal, (250, 1000, 50000000) },
             { MarketType.WhiteCrystal, (250, 1000, 50000000) },
@@ -41,13 +41,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         public MarketType SellMarketType { get; set; }
         [BindProperty]
-        public int SellAmount { get; set; }
+        public long SellAmount { get; set; }
         [BindProperty]
         public int SellPrice { get; set; }
         [BindProperty]
         public int PostId { get; set; }
         [BindProperty]
-        public int BuyAmount { get; set; }
+        public long BuyAmount { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -93,7 +93,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
 
             // Check user has enough to sell
-            int userAmount = GetUserCommodityAmount(UserCommodities, SellMarketType);
+            long userAmount = GetUserCommodityAmount(UserCommodities, SellMarketType);
             if (userAmount < SellAmount)
             {
                 ModelState.AddModelError("", $"You do not have enough {SellMarketType} to sell.");
@@ -144,7 +144,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 await OnGetAsync();
                 return Page();
             }
-            int totalPrice = BuyAmount * post.Price;
+            long totalPrice = BuyAmount * post.Price;
             if (UserCommodities.Credits < totalPrice)
             {
                 ModelState.AddModelError(nameof(BuyAmount), "Not enough credits.");
@@ -154,6 +154,70 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if(BuyAmount > post.Amount)
             {
                 BuyAmount = post.Amount; // Adjust to available amount
+            }
+            switch(post.MarketType)
+            {
+                case MarketType.Food:
+                    if ((long)GetUserCommodityAmount(UserCommodities, MarketType.Food) + BuyAmount > 25000000000)
+                    {
+                        BuyAmount = (int)(25000000000 - GetUserCommodityAmount(UserCommodities, MarketType.Food));
+                    }
+                    break;
+                case MarketType.Ore:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.Ore) + BuyAmount > 25000000)
+                    {
+                        BuyAmount = (int)(25000000 - GetUserCommodityAmount(UserCommodities, MarketType.Ore));
+                    }
+                    break;
+                case MarketType.RawMaterial:
+                    if ((long)GetUserCommodityAmount(UserCommodities, MarketType.RawMaterial) + BuyAmount > 25000000000)
+                    {
+                        BuyAmount = (int)(25000000000 - GetUserCommodityAmount(UserCommodities, MarketType.RawMaterial));
+                    }
+                    break;
+                case MarketType.ConsumerGoods:
+                    if ((long)GetUserCommodityAmount(UserCommodities, MarketType.ConsumerGoods) + BuyAmount > 25000000000)
+                    {
+                        BuyAmount = (int)(25000000000 - GetUserCommodityAmount(UserCommodities, MarketType.ConsumerGoods));
+                    }
+                    break;
+                case MarketType.TerranMetal:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.TerranMetal) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.TerranMetal));
+                    }
+                    break;
+                case MarketType.RedCrystal:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.RedCrystal) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.RedCrystal));
+                    }
+                    break;
+                case MarketType.WhiteCrystal:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.WhiteCrystal) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.WhiteCrystal));
+                    }
+                    break;
+                case MarketType.Rutile:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.Rutile) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.Rutile));
+                    }
+                    break;
+                case MarketType.Composite:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.Composite) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.Composite));
+                    }
+                    break;
+                case MarketType.StrafezOrganism:
+                    if (GetUserCommodityAmount(UserCommodities, MarketType.StrafezOrganism) + BuyAmount > 2000000000)
+                    {
+                        BuyAmount = (int)(2000000000 - GetUserCommodityAmount(UserCommodities, MarketType.StrafezOrganism));
+                    }
+                    // No specific limits for these types
+                    break;
             }
 
             // Add commodity to buyer
@@ -180,7 +244,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         // Helper to get commodity amount by type
-        private int GetUserCommodityAmount(Commodities c, MarketType type) => type switch
+        private long GetUserCommodityAmount(Commodities c, MarketType type) => type switch
         {
             MarketType.Food => c.Food,
             MarketType.Ore => c.Ore,
@@ -196,7 +260,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         };
 
         // Helper to set commodity amount by type
-        private void SetUserCommodityAmount(Commodities c, MarketType type, int value)
+        private void SetUserCommodityAmount(Commodities c, MarketType type, long value)
         {
             switch (type)
             {

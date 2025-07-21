@@ -9,8 +9,8 @@ namespace AnotherSpaceGame.Services
     public class UserStatus
     {
         public string Username { get; set; } = "Guest";
-        public int Credits { get; set; }
-        public int Food { get; set; }
+        public long Credits { get; set; }
+        public long Food { get; set; }
         public int PowerRating { get; set; }
         public int Turns { get; set; }
     }
@@ -53,7 +53,7 @@ namespace AnotherSpaceGame.Services
                 return new UserStatus
                 {
                     Username = username,
-                    Credits = commodities?.Credits ?? 0,
+                    Credits = (commodities?.Credits ?? 0),
                     Food = commodities?.Food ?? 0,
                     PowerRating = applicationUser?.PowerRating ?? 0,
                     Turns = turns?.CurrentTurns ?? 0 // Fix: Use null conditional operator to avoid the CS0019 error

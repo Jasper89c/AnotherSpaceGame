@@ -84,6 +84,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             userExploration.ExplorationPointsNeeded = (int)Math.Floor(userExploration.ExplorationPointsNeeded / 1.2);
             user.TotalColonies -= 1;
             user.TotalPlanets -= planet.TotalPlanets;
+            user.PlanetsPlundered += planet.TotalPlanets;
             // Delete the planet
             _context.Planets.Remove(planet);
             await _context.SaveChangesAsync();

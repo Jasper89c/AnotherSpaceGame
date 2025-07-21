@@ -7,17 +7,20 @@
     var targetUser = Model.TargetUser;
 }
 
-@if (!Model.HasEnoughTurns)
+@if (!string.IsNullOrEmpty(Model.NotEnoughTurnsMessage))
 {
     <div class="alert alert-warning">
         @Model.NotEnoughTurnsMessage
     </div>
+
+    <a asp-page="/RankingRankNearMe">Search for new target</a>
 }
 else if (!Model.PowerRatingAllowed)
 {
     <div class="alert alert-warning">
         @Model.PowerRatingWarning
     </div>
+    <a asp-page="/RankingRankNearMe">Search for new target</a>
 }
 else
 {
@@ -37,10 +40,10 @@ else
     <div class="col-md-6">
         <h4>Target Info</h4>
         <ul>
-            <li><strong>Username:</strong> @targetUser?.UserName</li>
-            <li><strong>Total Colonies:</strong> @targetUser?.TotalColonies</li>
-            <li><strong>Total Planets:</strong> @targetUser?.TotalPlanets</li>
-            <li><strong>Total Power Rating:</strong> @targetUser?.PowerRating</li>
+            <li><strong>Username:</strong> @targetUser.UserName</li>
+            <li><strong>Total Colonies:</strong> @targetUser.TotalColonies</li>
+            <li><strong>Total Planets:</strong> @targetUser.TotalPlanets</li>
+            <li><strong>Total Power Rating:</strong> @targetUser.PowerRating</li>
         </ul>
     </div>
 </div>
@@ -57,17 +60,28 @@ else
             <span class="text-success">No War</span>
         }
     </p>
+    <p>
+        <strong>Counter Attack</strong>
+        @if (Model.IsCounterAttack)
+        {
+            <span class="text-danger">Active</span>
+        }
+        else
+        {
+            <span class="text-success">No Counter Attack</span>
+        }
+    </p>
 <p><strong>Fleet Attitude:</strong> @Model.SelectedAttackType</p>
 <p><strong>Turns Required:</strong> 5</p>
 
-<form method="post" asp-page="Battle">
+<form method="get" asp-page="Battle">
     
-    <input type="hidden" name="TargetUser" value="@targetUser" />
-    <input type="hidden" name="TargetUserName" value="@targetUser?.UserName" />
+    <input type="hidden" name="TargetUserId" value="@targetUser.Id" />
+    <input type="hidden" name="TargetUserName" value="@targetUser.UserName" />
     <input type="hidden" name="AttackType" value="@Model.SelectedAttackType" />
 
     <button type="submit" class="btn btn-danger" @(Model.HasEnoughTurns && Model.PowerRatingAllowed ? "" : "disabled")>Confirm Attack</button>
     <a asp-page="./Attack" class="btn btn-secondary">Cancel</a>
-    <a asp-page="/HowBattlesWork">How battes work</a>
+        <a asp-page="/RankingRankNearMe">Search for target</a>
 </form>
 }

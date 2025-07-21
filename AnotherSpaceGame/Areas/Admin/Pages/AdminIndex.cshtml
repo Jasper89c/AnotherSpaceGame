@@ -1,0 +1,129 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Admin.Pages.AdminIndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Admin Panel - Add Planet";
+}
+
+<h2>Add Planet to User</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label>User</label>
+        <select asp-for="SelectedUserId" asp-items="@(new SelectList(Model.Users, "Id", "UserName"))" class="form-control" required>
+            <option value="">-- Select User --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Planet Name</label>
+        <input asp-for="PlanetName" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Planet Type</label>
+        <select asp-for="SelectedPlanetType" asp-items="@(new SelectList(Model.PlanetTypes))" class="form-control" required>
+            <option value="">-- Select Type --</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label>Food Required</label>
+            <input asp-for="FoodRequired" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Goods Required</label>
+            <input asp-for="GoodsRequired" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Current Population</label>
+            <input asp-for="CurrentPopulation" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Max Population</label>
+            <input asp-for="MaxPopulation" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Loyalty</label>
+            <input asp-for="Loyalty" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Available Labour</label>
+            <input asp-for="AvailableLabour" class="form-control" type="number" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label>Housing</label>
+            <input asp-for="Housing" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Commercial</label>
+            <input asp-for="Commercial" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Industry</label>
+            <input asp-for="Industry" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Agriculture</label>
+            <input asp-for="Agriculture" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Mining</label>
+            <input asp-for="Mining" class="form-control" type="number" />
+        </div>
+       
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label>Power Rating</label>
+            <input asp-for="PowerRating" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Land Available</label>
+            <input asp-for="LandAvailable" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Total Land</label>
+            <input asp-for="TotalLand" class="form-control" type="number" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Planet</button>
+</form>
+<hr />
+<h2>Edit User Commodities</h2>
+<form method="post" asp-page-handler="EditCommodities">
+    <div class="form-group">
+        <label>User</label>
+        <select asp-for="CommodityUserId" asp-items="@(new SelectList(Model.Users, "Id", "UserName"))" class="form-control" required>
+            <option value="">-- Select User --</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <label>Food</label>
+            <input asp-for="Food" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Goods</label>
+            <input asp-for="Goods" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Ore</label>
+            <input asp-for="Ore" class="form-control" type="number" />
+        </div>
+        <div class="form-group col-md-2">
+            <label>Credits</label>
+            <input asp-for="Credits" class="form-control" type="number" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-warning">Update Commodities</button>
+</form>
+
+<form method="post" asp-page-handler="CreateArtifacts">
+    <button type="submit" class="btn btn-warning">Create Artifacts</button>
+            </form>

@@ -35,7 +35,7 @@
                 @if (user.IsNPC == false)  
                 {  
                     <td>  
-                        <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@user.Id" title="View Empire">  
+                        <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@user.UserName" title="View Empire">  
                             <i class="bi bi-info-square"></i>  
                         </a>  
                     </td>  
@@ -70,9 +70,9 @@
                         }
                     </td>
                 }
-                <td>@user.Faction</td>  
-                <td>@user.TotalPlanets</td>  
-                <td>@user.PowerRating</td>  
+                <td>@user.Faction</td>
+                <td>@user.TotalPlanets.ToString("N0")</td>
+                <td>@user.PowerRating.ToString("N0")</td>
                 <td>
                     <a asp-area="Game" asp-page="/Attack" asp-route-UserName="@user.UserName" class="btn btn-sm btn-danger">
                         Attack

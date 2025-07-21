@@ -24,9 +24,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         public Planets Planet { get; set; }
-        public int RawMaterial { get; set; }
-        public int Goods { get; set; }
-        public int Ore { get; set; }
+        public long RawMaterial { get; set; }
+        public long Goods { get; set; }
+        public long Ore { get; set; }
         public int Turns { get; set; }
         public string TurnMessage { get; set; }
         public Faction Faction { get; set; }

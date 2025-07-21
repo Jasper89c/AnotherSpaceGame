@@ -1,19 +1,12 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.Rendering
 @model AnotherSpaceGame.Areas.Game.Pages.CapsuleLabModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Capsule Lab";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
 
-@if (!Model.CanAccessCapsuleLab)
-{
-    <div class="alert alert-warning">
-        You cannot access the Capsule Lab at this time.
-    </div>
-}
-else
-{
     <h3>Capsule Lab</h3>
     <form method="post">
         <div class="mb-3">
@@ -42,9 +35,9 @@ else
     {
         <div class="alert alert-info mt-3">@Html.Raw(Model.CreationMessage)</div>
     }
-}
+
 <h4>Artifact Combination Recipes</h4>
-<table class="table table-bordered table-sm">
+<table class="table table-bordered table-sm" id="artifact-combo-table">
     <thead>
         <tr>
             <th>Artifact to be created</th>
@@ -52,14 +45,17 @@ else
         </tr>
     </thead>
     <tbody>
-        @foreach (var combo in Model.DisplayCombinations)
+        @for (int row = 0; row < Model.DisplayCombinations.Count; row++)
         {
+            var combo = Model.DisplayCombinations[row];
             <tr>
-                <td>@combo.ResultName</td>
+                <td>
+                    <a href="javascript:void(0);" class="artifact-result" data-row="@row">@combo.ResultName</a>
+                </td>
                 <td>
                     @for (int i = 0; i < combo.RecipeNames.Count; i++)
                     {
-                        @combo.RecipeNames[i]
+                        <span class="recipe-artifact" data-row="@row" data-index="@i">@combo.RecipeNames[i]</span>
                         @(i < combo.RecipeNames.Count - 1 ? " + " : "")
                     }
                 </td>
@@ -67,3 +63,43 @@ else
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Build a mapping from row index to recipe artifact names
+            var recipeMap = {};
+            document.querySelectorAll('.recipe-artifact').forEach(function (el) {
+                var row = el.getAttribute('data-row');
+                if (!recipeMap[row]) recipeMap[row] = [];
+                recipeMap[row].push(el.textContent.trim());
+            });
+
+            document.querySelectorAll('.artifact-result').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    var row = el.getAttribute('data-row');
+                    var recipe = recipeMap[row] || [];
+                    // Set dropdowns
+                    for (var i = 1; i <= 4; i++) {
+                        var select = document.getElementById('SelectedArtifact' + i)
+                            || document.querySelector('[id$="SelectedArtifact' + i + '"]');
+                        if (select) {
+                            var valueToSelect = recipe[i - 1] || '';
+                            var found = false;
+                            for (var j = 0; j < select.options.length; j++) {
+                                // Normalize both sides: remove spaces and compare lower case
+                                if (select.options[j].text.replace(/\s/g, '').toLowerCase()
+                                    .startsWith(valueToSelect.replace(/\s/g, '').toLowerCase())) {
+                                    select.selectedIndex = j;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) select.selectedIndex = 0; // fallback to first option
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

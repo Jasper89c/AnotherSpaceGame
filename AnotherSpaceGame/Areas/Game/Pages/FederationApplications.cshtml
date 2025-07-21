@@ -26,10 +26,10 @@
         @foreach (var app in Model.Applicants)  
         {  
             <tr>  
-                <td>@app.ApplicationUser.UserName</td>  
-                <td>@app.ApplicationUser.PowerRating</td>  
-                <td>@app.ApplicationUser.TotalPlanets</td>  
-                <td>  
+                <td>@app.ApplicationUser.UserName</td>
+                    <td>@app.ApplicationUser.PowerRating.ToString("N0")</td>
+                    <td>@app.ApplicationUser.TotalPlanets.ToString("N0")</td>
+                    <td>  
                     <form method="post" asp-page-handler="Approve" asp-route-applicationId="@app.Id" style="display:inline">  
                         <button type="submit" class="btn btn-success btn-sm">Approve</button>  
                     </form>  

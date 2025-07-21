@@ -97,8 +97,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             if (turnsUsed > turns.CurrentTurns)
             {
-                ExploreMessage = "You do not have enough turns available.";
-                return Page();
+                turnsUsed = turns.CurrentTurns;
+            }
+            if (turnsUsed > UserExploration.TurnsRequired)
+            {
+                turnsUsed = UserExploration.TurnsRequired;
             }
             if (turnsUsed <= 0)
             {
@@ -390,7 +393,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (totalScanningPower + totalShips > 0)
             {
                 // Convert 'exploration.ExplorationPointsNeeded' to double to match the type of the numerator
-                exploration.TurnsRequired = (int)System.Math.Ceiling((double)(exploration.ExplorationPointsNeeded * (1 - (UserExploration.ExplorationCompleted / 100))) / (totalScanningPower + totalShips));
+                exploration.TurnsRequired = (int)Math.Ceiling((double)(exploration.ExplorationPointsNeeded * (1 - (UserExploration.ExplorationCompleted / 100))) / (totalScanningPower + totalShips));
             }
             else
             {
