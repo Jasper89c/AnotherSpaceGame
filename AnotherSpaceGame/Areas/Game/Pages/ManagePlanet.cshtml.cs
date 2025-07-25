@@ -1,9 +1,10 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Identity;
-using AnotherSpaceGame.Models;
-using AnotherSpaceGame.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
@@ -47,7 +48,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             Goods = commodities?.ConsumerGoods ?? 0;
             Ore = commodities?.Ore ?? 0;
             Turns = await _turnService.GetTurnsAsync(user.Id);
-            // Check if the planet exists and belongs to the current user
+            // Check if the Planet exists and belongs to the current user
             if (Planet == null || Planet.ApplicationUserId != user.Id)
             {
                 // Redirect to ManageColonies if not authorized
@@ -73,8 +74,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             Faction = user.Faction;
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == user.Id);
-            
-            // Check if the planet exists and belongs to the current user
+            var Infra = await _context.Infrastructers.FirstOrDefaultAsync(i => i.ApplicationUserId == user.Id);
+
+            // Check if the Planet exists and belongs to the current user
             if (Planet == null || Planet.ApplicationUserId != user.Id)
             {
                 // Redirect to ManageColonies if not authorized
@@ -177,7 +179,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 if (Planet.Housing - housing < 1)
                 {
-                    ModelState.AddModelError(string.Empty, "You must have at least 1 Housing remaining on the planet.");
+                    ModelState.AddModelError(string.Empty, "You must have at least 1 Housing remaining on the Planet.");
                     return await OnGetAsync(id);
                 }
                 if (commercial > Planet.Commercial)
@@ -227,9 +229,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (agriculture > 0) Planet.Agriculture -= agriculture;
                 if (industry > 0) Planet.Industry -= industry;
                 if (mining > 0) Planet.Mining -= mining;
-
+                Planet.MaxPopulation = (int)Math.Ceiling((double)(Planet.Housing * 10 + (Planet.Housing * Infra.Housing)));
+                if (user.Faction == Faction.Collective)
+                {
+                    Planet.MaxPopulation = (int)Math.Ceiling((double)(Planet.Housing * 10 + (Planet.Housing * Infra.Housing)) * 2);
+                }
+                
+                if (Planet.CurrentPopulation > Planet.MaxPopulation)
+                {
+                    Planet.CurrentPopulation = Planet.MaxPopulation;
+                }
+                
                 Planet.LandAvailable += totalLandReturned;
-                Planet.AvailableLabour += totalLaborReturned;
+                Planet.AvailableLabour = (int)Math.Floor((double)(Planet.CurrentPopulation - (Planet.Housing + Planet.Commercial + Planet.Industry + Planet.Agriculture + Planet.Mining))); ;
                 var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
                 TempData["TurnMessage"] = turnsMessage.Message;
                 TurnMessage = $"Demolish successful! 1 turn used.<hr> {turnsMessage.Message}";

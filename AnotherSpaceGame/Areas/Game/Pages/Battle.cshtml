@@ -40,6 +40,7 @@
         </tr>
     }
     </tbody>
+
 </table>
 		</div>
 		<div class="col-md-6">
@@ -74,7 +75,7 @@
                 if(battle.IsAttacker == true)
                 {
                     <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
-                    <p>@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                    <p class="text-muted">@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
                 }
                 else
                 {
@@ -82,7 +83,10 @@
                     <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
                 }
             }
-            <h1> Wave 2</h1>
+            @if (Model.BattleResultsWave2.Count > 0)
+            {
+                <h1> Wave 2</h1>
+            }
             @foreach (var battle in Model.BattleResultsWave2)
             {
                 if (battle.IsAttacker == true)

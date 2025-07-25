@@ -87,14 +87,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         _logger.LogError(error.ErrorMessage);
                     }
                 }
-                await OnGetAsync();
+                CurrentLevel = Infrastructure.TotalLevels;
+                UnusedLevels = Infrastructure.UnusedLevels;
+                AvailableTurns = turns.CurrentTurns;
+                TurnsRemaining = Infrastructure.TurnsRemaining;
                 StatusMessage = "Invalid input.";
                 return Page();
             }
             AvailableTurns = turns.CurrentTurns;
             if (TurnsToUse < 1)
             {
-                await OnGetAsync();
+                CurrentLevel = Infrastructure.TotalLevels;
+                UnusedLevels = Infrastructure.UnusedLevels;
+                AvailableTurns = turns.CurrentTurns;
+                TurnsRemaining = Infrastructure.TurnsRemaining;
                 StatusMessage = "You must use atleast 1 turn.";
                 return Page();
             }
@@ -108,32 +114,35 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
             if ( TurnsToUse <= AvailableTurns)
             {
-
-                Infrastructure.TurnsRemaining -= TurnsToUse;
-                if (Infrastructure.TurnsRemaining <= 0)
-                {
-                    Infrastructure.TotalLevels += 1;
-                    Infrastructure.UnusedLevels += 1;
-                    Infrastructure.ITechInvestmentTurnsRequired += 200;
-                    Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
-                    turns.CurrentTurns -= TurnsToUse;
-                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
-                    StatusMessage = $"You gained 1 infrastructure level(s) </br > {turnsMessage.Message}";
-                    await _context.SaveChangesAsync();
-                    await OnGetAsync();
-                    return Page();
-                }
-                else
-                {
-                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
-                    StatusMessage = $"{turnsMessage.Message}";
-                    await _context.SaveChangesAsync();
-                    await OnGetAsync();
-                    return Page();
-                }
+                Infrastructure.TurnsRemaining -= TurnsToUse;                
             }
-            await OnGetAsync();
-            return Page();
+            if (Infrastructure.TurnsRemaining <= 0)
+            {
+                Infrastructure.TotalLevels += 1;
+                Infrastructure.UnusedLevels += 1;
+                Infrastructure.ITechInvestmentTurnsRequired += 200;
+                Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
+                turns.CurrentTurns -= TurnsToUse;
+                var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
+                StatusMessage = $"You gained 1 infrastructure level(s) </br > {turnsMessage.Message}";
+                await _context.SaveChangesAsync();
+                CurrentLevel = Infrastructure.TotalLevels;
+                UnusedLevels = Infrastructure.UnusedLevels;
+                AvailableTurns = turns.CurrentTurns;
+                TurnsRemaining = Infrastructure.TurnsRemaining;
+                return Page();
+            }
+            else
+            {
+                var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
+                StatusMessage = $"{turnsMessage.Message}";
+                await _context.SaveChangesAsync();
+                CurrentLevel = Infrastructure.TotalLevels;
+                UnusedLevels = Infrastructure.UnusedLevels;
+                AvailableTurns = turns.CurrentTurns;
+                TurnsRemaining = Infrastructure.TurnsRemaining;
+                return Page();
+            }
         }
 
         [ValidateAntiForgeryToken]

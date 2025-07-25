@@ -1060,6 +1060,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     Id = item.Id,
                     ApplicationUserId = item.ApplicationUserId,
+                    UserName = CurrentUserName,
                     ShipId = item.ShipId,
                     TotalShips = item.TotalShips,
                     PowerRating = Ships.FirstOrDefault(s => s.Id == item.ShipId).PowerRating,
@@ -1105,6 +1106,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     Id = item.Id,
                     ApplicationUserId = item.ApplicationUserId,
+                    UserName = TargetUserName,
                     ShipId = item.ShipId,
                     TotalShips = item.TotalShips,
                     PowerRating = Ships.FirstOrDefault(s => s.Id == item.ShipId).PowerRating,
@@ -1188,7 +1190,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         TotalShipsStart = f.TotalShipsStart
             })
             .ToList(); ;
-            TargetUserFleetsStart = AttackerFleet
+            TargetUserFleetsStart = DefenderFleet
             .Select(f => new MergedFleet
     {
         Id = f.Id,
@@ -1238,17 +1240,49 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 int stacks = Math.Max(AttackerFleet.Count, DefenderFleet.Count);
                 for (int i = 0; i < stacks; i++)
                 {
-                    var attacker = AttackerFleet[i];
-                    var defender = DefenderFleet[i];
+                    MergedFleet attacker;
+                    MergedFleet defender;
+
+                    // Attacker selection
+                    if (i < AttackerFleet.Count)
+                    {
+                        attacker = AttackerFleet[i];
+                        if (attacker.TotalShips <= 0)
+                        {
+                            // Pick a random fleet with TotalShips > 0, or null if none
+                            var available = AttackerFleet.Where(f => f.TotalShips > 0).ToList();
+                            attacker = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                        }
+                    }
+                    else
+                    {
+                        var available = AttackerFleet.Where(f => f.TotalShips > 0).ToList();
+                        attacker = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                    }
+
+                    // Defender selection
+                    if (i < DefenderFleet.Count)
+                    {
+                        defender = DefenderFleet[i];
+                        if (defender.TotalShips <= 0)
+                        {
+                            var available = DefenderFleet.Where(f => f.TotalShips > 0).ToList();
+                            defender = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                        }
+                    }
+                    else
+                    {
+                        var available = DefenderFleet.Where(f => f.TotalShips > 0).ToList();
+                        defender = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                    }
+
+                    // If either side has no valid fleets left, you may want to break or continue
+                    if (attacker == null || defender == null)
+                        continue; // or break;
                     // Defender Attacks First
                     if (defender.Range >= attacker.Range)
                     {
-                        // Check if Attacker has no fleet in this stack
-                        if (attacker == null)
-                        {
-                            var max = AttackerFleet.Count + 1;
-                            attacker = AttackerFleet[Random.Shared.Next(0, max)];
-                        }
+                        
                         // Defender Attacks First
                         // Defender Attacks
                         DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
@@ -1265,7 +1299,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             HowManyDefendersShipsKilled = 0;
                         }
                         // capture chance
-                        if (defender.CanCapture == true && HowManyAttackersShipsKilled > 0 && attacker.ImmuneToCapture == false && attacker.CanCapture == false)
+                        if (defender.CanCapture == true && HowManyAttackersShipsKilled > 0 && attacker.ImmuneToCapture == false && attacker.CanCapture == false && targetUser.IsNPC != true)
                         {
                             // Capture Ships
                             bool willCapture = false;
@@ -1306,7 +1340,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 // Add to Battle Results
                                 BattleResultsWave1.Add(new BattleResultWave1
                                 {
-                                    DefenderCapture = $"{defender.ApplicationUser.UserName} captured {totalCapturedShips} {ShipName} ships from {attacker.ApplicationUser.UserName}."
+                                    DefenderCapture = $"{defender.UserName} captured {totalCapturedShips} {ShipName} ships from {attacker.UserName}."
                                 });
                             }
                         }
@@ -1359,12 +1393,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     // Attacker Attacks First
                     else
                     {
-                        // Check if Defender has no fleet in this stack
-                        if (defender == null)
-                        {
-                            var max = DefenderFleet.Count + 1;
-                            defender = DefenderFleet[Random.Shared.Next(0, max)];
-                        }
+                        
                         // Attacker Attacks First
                         // Attacker Attacks
                         DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
@@ -1450,7 +1479,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 // Add to Battle Results
                                 BattleResultsWave1.Add(new BattleResultWave1
                                 {
-                                    AttackerCapture = $"{attacker.ApplicationUser.UserName} captured {totalCapturedShips} {ShipName} ships from {defender.ApplicationUser.UserName}."
+                                    AttackerCapture = $"{attacker.UserName} captured {totalCapturedShips} {ShipName} ships from {defender.UserName}."
                                 });
                             }
                         }
@@ -1472,6 +1501,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         AttackerTotalPowerRatingLoss += HowManyAttackersShipsKilled * attacker.PowerRating;
                         DefenderTotalPowerRatingLoss += HowManyDefendersShipsKilled * defender.PowerRating;
                     }
+
                     // Alter Fleets based on damage dealt and taken
                     foreach (var item in AttackerFleet)
                     {
@@ -1483,7 +1513,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         item.TotalPowerRating = item.TotalShips * item.PowerRating;
                     }
                     DefenderFleet.OrderByDescending(p => p.TotalPowerRating).ToList();
-
                     // Wave 1 End
                     // check if defender has any fleets left
                     // defender no fleet
@@ -2105,7 +2134,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 _context.Planets.Update(DefenderPlanets[0]);
                                 _context.Planets.Update(DefenderPlanets[1]);
                                 _context.Planets.Update(DefenderPlanets[2]);
-                            }                            
+                            }
                         }
                         // Fleet Report + Important Events for attacker and defender
                         EndFleets = "<h3>Attacker's Fleet</h3>";
@@ -2150,15 +2179,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Text = $"You have won the battle against {TargetUserName}.<br />{EndFleets}<br />",
                             DateAndTime = DateTime.Now
                         };
-                        ImportantEvents DefenderEvent = new ImportantEvents
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            ImportantEventTypes = ImportantEventTypes.Battles,
-                            Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                            DateAndTime = DateTime.Now
-                        };
                         _context.ImportantEvents.Add(attackerEvent);
-                        _context.ImportantEvents.Add(DefenderEvent);
+                        if (targetUser.IsNPC != true)
+                        {
+                            ImportantEvents DefenderEvent = new ImportantEvents
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                ImportantEventTypes = ImportantEventTypes.Battles,
+                                Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                                DateAndTime = DateTime.Now
+                            };
+                            _context.ImportantEvents.Add(DefenderEvent);
+                        }
                         // battle logs
                         BattleLogs AttackerBattleLog = new BattleLogs
                         {
@@ -2169,21 +2201,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Outcome = "Win",
                             FleetReport = EndFleets
                         };
-                        BattleLogs DefenderBattleLog = new BattleLogs
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            Attacker = currentUser.UserName,
-                            Defender = targetUser.UserName,
-                            DateAndTime = DateTime.Now,
-                            Outcome = $"Loss",
-                            FleetReport = EndFleets
-                        };
                         _context.Battlelogs.Add(AttackerBattleLog);
-                        _context.Battlelogs.Add(DefenderBattleLog);
+                        if (targetUser.IsNPC != true)
+                        {
+                            BattleLogs DefenderBattleLog = new BattleLogs
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                Attacker = currentUser.UserName,
+                                Defender = targetUser.UserName,
+                                DateAndTime = DateTime.Now,
+                                Outcome = $"Loss",
+                                FleetReport = EndFleets
+                            };
+                            _context.Battlelogs.Add(DefenderBattleLog);
+                        }
                         // update database for attacker and defenders fleets
                         foreach (var fleet in AttackerFleet)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
+                            var existingFleet = _context.Fleets.FirstOrDefault(f =>f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
                             existingFleet.TotalShips = fleet.TotalShips;
                             existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                             existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -2196,20 +2231,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 _context.Fleets.Update(existingFleet);
                             }
                         }
-                        foreach (var fleet in DefenderFleet)
+                        if (targetUser.IsNPC != true)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
-                            existingFleet.TotalShips = fleet.TotalShips;
-                            existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                            existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                            _context.Fleets.Update(existingFleet);
-                            if (existingFleet.TotalShips <= 0)
+                            foreach (var fleet in DefenderFleet)
                             {
-                                _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                            }
-                            else
-                            {
+                                var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
+                                existingFleet.TotalShips = fleet.TotalShips;
+                                existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                                existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                                 _context.Fleets.Update(existingFleet);
+                                if (existingFleet.TotalShips <= 0)
+                                {
+                                    _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                                }
+                                else
+                                {
+                                    _context.Fleets.Update(existingFleet);
+                                }
                             }
                         }
                         // Update Attackers Stats
@@ -2298,15 +2336,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Text = $"You have Lost the battle against {TargetUserName}.<br />{EndFleets}<br />",
                             DateAndTime = DateTime.Now
                         };
-                        ImportantEvents DefenderEvent = new ImportantEvents
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            ImportantEventTypes = ImportantEventTypes.Battles,
-                            Text = $"You have Won the battle against {user.UserName}.<br />{EndFleets}<br />",
-                            DateAndTime = DateTime.Now
-                        };
                         _context.ImportantEvents.Add(attackerEvent);
-                        _context.ImportantEvents.Add(DefenderEvent);
+                        if (targetUser.IsNPC != true)
+                        {
+                            ImportantEvents DefenderEvent = new ImportantEvents
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                ImportantEventTypes = ImportantEventTypes.Battles,
+                                Text = $"You have Won the battle against {user.UserName}.<br />{EndFleets}<br />",
+                                DateAndTime = DateTime.Now
+                            };
+                            _context.ImportantEvents.Add(DefenderEvent);
+                        }
                         // battle logs
                         BattleLogs AttackerBattleLog = new BattleLogs
                         {
@@ -2317,22 +2358,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Outcome = $"Loss",
                             FleetReport = EndFleets
                         };
-                        BattleLogs DefenderBattleLog = new BattleLogs
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            Attacker = currentUser.UserName,
-                            Defender = targetUser.UserName,
-                            DateAndTime = DateTime.Now,
-                            Outcome = $"Win",
-                            FleetReport = EndFleets
-                        };
                         _context.Battlelogs.Add(AttackerBattleLog);
-                        _context.Battlelogs.Add(DefenderBattleLog);
-                        // update database for attacker and defenders fleets
+                        if (targetUser.IsNPC != true)
+                        {
+                            BattleLogs DefenderBattleLog = new BattleLogs
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                Attacker = currentUser.UserName,
+                                Defender = targetUser.UserName,
+                                DateAndTime = DateTime.Now,
+                                Outcome = $"Win",
+                                FleetReport = EndFleets
+                            };
+                            _context.Battlelogs.Add(DefenderBattleLog);
+                        }
                         // update database for attacker and defenders fleets
                         foreach (var fleet in AttackerFleet)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
+                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
                             existingFleet.TotalShips = fleet.TotalShips;
                             existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                             existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -2345,9 +2388,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 _context.Fleets.Update(existingFleet);
                             }
                         }
-                        foreach (var fleet in DefenderFleet)
+                        if (targetUser.IsNPC != true)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
+                            foreach (var fleet in DefenderFleet)
+                            {
+                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
                             existingFleet.TotalShips = fleet.TotalShips;
                             existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                             existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -2359,6 +2404,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             else
                             {
                                 _context.Fleets.Update(existingFleet);
+                            }
                             }
                         }
                         // Update Attackers Stats
@@ -2382,6 +2428,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         return Page();
                     }
                 }
+                
+
                 // Wave 2 
                 // Reorganize Fleets based on power rating
                 AttackerFleet = AttackerFleet.OrderByDescending(f => f.PowerRating).ToList();
@@ -2390,17 +2438,45 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 stacks = Math.Max(AttackerFleet.Count, DefenderFleet.Count);
                 for (int i = 0; i < stacks; i++)
                 {
-                    var attacker = AttackerFleet[i];
-                    var defender = DefenderFleet[i];
+                    MergedFleet attacker;
+                    MergedFleet defender;
+
+                    // Attacker selection
+                    if (i < AttackerFleet.Count)
+                    {
+                        attacker = AttackerFleet[i];
+                        if (attacker.TotalShips <= 0)
+                        {
+                            // Pick a random fleet with TotalShips > 0, or null if none
+                            var available = AttackerFleet.Where(f => f.TotalShips > 0).ToList();
+                            attacker = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                        }
+                    }
+                    else
+                    {
+                        var available = AttackerFleet.Where(f => f.TotalShips > 0).ToList();
+                        attacker = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                    }
+
+                    // Defender selection
+                    if (i < DefenderFleet.Count)
+                    {
+                        defender = DefenderFleet[i];
+                        if (defender.TotalShips <= 0)
+                        {
+                            var available = DefenderFleet.Where(f => f.TotalShips > 0).ToList();
+                            defender = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                        }
+                    }
+                    else
+                    {
+                        var available = DefenderFleet.Where(f => f.TotalShips > 0).ToList();
+                        defender = available.Any() ? available[Random.Shared.Next(available.Count)] : null;
+                    }
                     // Defender Attacks First
                     if (defender.Range >= attacker.Range)
                     {
-                        // Check if Attacker has no fleet in this stack
-                        if (attacker == null)
-                        {
-                            var max = AttackerFleet.Count + 1;
-                            attacker = AttackerFleet[Random.Shared.Next(0, max)];
-                        }
+                        
                         // Defender Attacks First
                         // Defender Attacks
                         DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
@@ -2445,7 +2521,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             HowManyAttackersShipsKilled = 0;
                         }
                         // capture chance
-                        if (defender.CanCapture == true && HowManyAttackersShipsKilled > 0 && attacker.ImmuneToCapture == false && attacker.CanCapture == false)
+                        if (defender.CanCapture == true && HowManyAttackersShipsKilled > 0 && attacker.ImmuneToCapture == false && attacker.CanCapture == false && targetUser.IsNPC != true)
                         {
                             // Capture Ships
                             bool willCapture = false;
@@ -2486,7 +2562,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 // Add to Battle Results
                                 BattleResultsWave1.Add(new BattleResultWave1
                                 {
-                                    DefenderCapture = $"{defender.ApplicationUser.UserName} captured {totalCapturedShips} {ShipName} ships from {attacker.ApplicationUser.UserName}."
+                                    DefenderCapture = $"{defender.UserName} captured {totalCapturedShips} {ShipName} ships from {attacker.UserName}."
                                 });
                             }
                         }
@@ -2602,7 +2678,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 // Add to Battle Results
                                 BattleResultsWave1.Add(new BattleResultWave1
                                 {
-                                    AttackerCapture = $"{attacker.ApplicationUser.UserName} captured {totalCapturedShips} {ShipName} ships from {defender.ApplicationUser.UserName}."
+                                    AttackerCapture = $"{attacker.UserName} captured {totalCapturedShips} {ShipName} ships from {defender.UserName}."
                                 });
                             }
                         }
@@ -3302,15 +3378,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Text = $"You have won the battle against {TargetUserName}.<br />{EndFleets}<br />",
                             DateAndTime = DateTime.Now
                         };
-                        ImportantEvents DefenderEvent = new ImportantEvents
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            ImportantEventTypes = ImportantEventTypes.Battles,
-                            Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                            DateAndTime = DateTime.Now
-                        };
                         _context.ImportantEvents.Add(attackerEvent);
-                        _context.ImportantEvents.Add(DefenderEvent);
+                        if (targetUser.IsNPC != true)
+                        {
+                            ImportantEvents DefenderEvent = new ImportantEvents
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                ImportantEventTypes = ImportantEventTypes.Battles,
+                                Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                                DateAndTime = DateTime.Now
+                            };
+                            _context.ImportantEvents.Add(DefenderEvent);
+                        }
                         // battle logs
                         BattleLogs AttackerBattleLog = new BattleLogs
                         {
@@ -3321,21 +3400,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Outcome = $"Win",
                             FleetReport = EndFleets
                         };
-                        BattleLogs DefenderBattleLog = new BattleLogs
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            Attacker = currentUser.UserName,
-                            Defender = targetUser.UserName,
-                            DateAndTime = DateTime.Now,
-                            Outcome = $"Loss",
-                            FleetReport = EndFleets
-                        };
                         _context.Battlelogs.Add(AttackerBattleLog);
-                        _context.Battlelogs.Add(DefenderBattleLog);
+                        if (targetUser.IsNPC != true)
+                        {
+                            BattleLogs DefenderBattleLog = new BattleLogs
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                Attacker = currentUser.UserName,
+                                Defender = targetUser.UserName,
+                                DateAndTime = DateTime.Now,
+                                Outcome = $"Loss",
+                                FleetReport = EndFleets
+                            };
+                            _context.Battlelogs.Add(DefenderBattleLog);
+                        }
                         // update database for attacker and defenders fleets
                         foreach (var fleet in AttackerFleet)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
+                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
                             existingFleet.TotalShips = fleet.TotalShips;
                             existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                             existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -3348,24 +3430,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 _context.Fleets.Update(existingFleet);
                             }
                         }
-                        foreach (var fleet in DefenderFleet)
+                        if (targetUser.IsNPC != true)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
-                            existingFleet.TotalShips = fleet.TotalShips;
-                            existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                            existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                            _context.Fleets.Update(existingFleet);
-                            if (existingFleet.TotalShips <= 0)
+                            foreach (var fleet in DefenderFleet)
                             {
-                                _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                            }
-                            else
-                            {
+                                var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
+                                existingFleet.TotalShips = fleet.TotalShips;
+                                existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                                existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                                 _context.Fleets.Update(existingFleet);
+                                if (existingFleet.TotalShips <= 0)
+                                {
+                                    _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                                }
+                                else
+                                {
+                                    _context.Fleets.Update(existingFleet);
+                                }
                             }
                         }
                         // Update Attackers Stats
-                        currentUser.BattlesWon++;                        
+                        currentUser.BattlesWon++;
                         // Update Defenders Stats + Damage Protection
                         targetUser.BattlesLost++;
                         if (DefenderPlanets.Count > 0)
@@ -3374,7 +3459,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
 
                                 targetUser.TotalPlanets -= DefenderPlanets[0].TotalPlanets;
-                                targetUser.TotalColonies -= 1; 
+                                targetUser.TotalColonies -= 1;
                                 targetUser.ColoniesLost += 1;
                                 currentUser.ColoniesWon += 1;
                                 currentUser.TotalColonies += 1;
@@ -3385,7 +3470,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
 
                                 targetUser.TotalPlanets -= DefenderPlanets[0].TotalPlanets + DefenderPlanets[1].TotalPlanets;
-                                targetUser.TotalColonies -= 2; 
+                                targetUser.TotalColonies -= 2;
                                 targetUser.ColoniesLost += 2;
                                 currentUser.ColoniesWon += 2;
                                 currentUser.TotalColonies += 2;
@@ -3395,7 +3480,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
 
                                 targetUser.TotalPlanets -= DefenderPlanets[0].TotalPlanets + DefenderPlanets[1].TotalPlanets + DefenderPlanets[2].TotalPlanets;
-                                targetUser.TotalColonies -= 3; 
+                                targetUser.TotalColonies -= 3;
                                 targetUser.ColoniesLost += 3;
                                 currentUser.ColoniesWon += 3;
                                 currentUser.TotalColonies += 3;
@@ -3450,15 +3535,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Text = $"You have Lost the battle against {TargetUserName}.<br />{EndFleets}<br />",
                             DateAndTime = DateTime.Now
                         };
-                        ImportantEvents DefenderEvent = new ImportantEvents
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            ImportantEventTypes = ImportantEventTypes.Battles,
-                            Text = $"You have Won the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                            DateAndTime = DateTime.Now
-                        };
                         _context.ImportantEvents.Add(attackerEvent);
-                        _context.ImportantEvents.Add(DefenderEvent);
+                        if (targetUser.IsNPC != true)
+                        {
+                            ImportantEvents DefenderEvent = new ImportantEvents
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                ImportantEventTypes = ImportantEventTypes.Battles,
+                                Text = $"You have Won the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                                DateAndTime = DateTime.Now
+                            };
+                            _context.ImportantEvents.Add(DefenderEvent);
+                        }
                         // battle logs
                         BattleLogs AttackerBattleLog = new BattleLogs
                         {
@@ -3469,21 +3557,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Outcome = $"Loss",
                             FleetReport = EndFleets
                         };
-                        BattleLogs DefenderBattleLog = new BattleLogs
-                        {
-                            ApplicationUserId = targetUser.Id,
-                            Attacker = currentUser.UserName,
-                            Defender = targetUser.UserName,
-                            DateAndTime = DateTime.Now,
-                            Outcome = $"Win",
-                            FleetReport = EndFleets
-                        };
                         _context.Battlelogs.Add(AttackerBattleLog);
-                        _context.Battlelogs.Add(DefenderBattleLog);
+                        if (targetUser.IsNPC != true)
+                        {
+                            BattleLogs DefenderBattleLog = new BattleLogs
+                            {
+                                ApplicationUserId = targetUser.Id,
+                                Attacker = currentUser.UserName,
+                                Defender = targetUser.UserName,
+                                DateAndTime = DateTime.Now,
+                                Outcome = $"Win",
+                                FleetReport = EndFleets
+                            };
+                            _context.Battlelogs.Add(DefenderBattleLog);
+                        }
                         // update database for attacker and defenders fleets
                         foreach (var fleet in AttackerFleet)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
+                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == attacker.ApplicationUserId && f.ShipId == attacker.ShipId);
                             existingFleet.TotalShips = fleet.TotalShips;
                             existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                             existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -3496,20 +3587,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 _context.Fleets.Update(existingFleet);
                             }
                         }
-                        foreach (var fleet in DefenderFleet)
+                        if (targetUser.IsNPC != true)
                         {
-                            var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
-                            existingFleet.TotalShips = fleet.TotalShips;
-                            existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                            existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                            _context.Fleets.Update(existingFleet);
-                            if (existingFleet.TotalShips <= 0)
+                            foreach (var fleet in DefenderFleet)
                             {
-                                _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                            }
-                            else
-                            {
+                                var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == defender.ApplicationUserId && f.ShipId == defender.ShipId);
+                                existingFleet.TotalShips = fleet.TotalShips;
+                                existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                                existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                                 _context.Fleets.Update(existingFleet);
+                                if (existingFleet.TotalShips <= 0)
+                                {
+                                    _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                                }
+                                else
+                                {
+                                    _context.Fleets.Update(existingFleet);
+                                }
                             }
                         }
                         // Update Attackers Stats
@@ -3533,6 +3627,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         return Page();
                     }
                 }
+                
             }
             else
             {
@@ -4198,15 +4293,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Text = $"You have won the battle against {TargetUserName}.<br />{EndFleets}<br />",
                     DateAndTime = DateTime.Now
                 };
-                ImportantEvents DefenderEvent = new ImportantEvents
-                {
-                    ApplicationUserId = targetUser.Id,
-                    ImportantEventTypes = ImportantEventTypes.Battles,
-                    Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                    DateAndTime = DateTime.Now
-                };
                 _context.ImportantEvents.Add(attackerEvent);
-                _context.ImportantEvents.Add(DefenderEvent);
+                if (targetUser.IsNPC != true)
+                {
+                    ImportantEvents DefenderEvent = new ImportantEvents
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        ImportantEventTypes = ImportantEventTypes.Battles,
+                        Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(DefenderEvent);
+                }
                 // battle logs
                 BattleLogs AttackerBattleLog = new BattleLogs
                 {
@@ -4217,21 +4315,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Outcome = $"Win",
                     FleetReport = EndFleets
                 };
-                BattleLogs DefenderBattleLog = new BattleLogs
-                {
-                    ApplicationUserId = targetUser.Id,
-                    Attacker = currentUser.UserName,
-                    Defender = targetUser.UserName,
-                    DateAndTime = DateTime.Now,
-                    Outcome = $"Loss",
-                    FleetReport = EndFleets
-                };
                 _context.Battlelogs.Add(AttackerBattleLog);
-                _context.Battlelogs.Add(DefenderBattleLog);
+                if (targetUser.IsNPC != true)
+                {
+                    BattleLogs DefenderBattleLog = new BattleLogs
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        Attacker = currentUser.UserName,
+                        Defender = targetUser.UserName,
+                        DateAndTime = DateTime.Now,
+                        Outcome = $"Loss",
+                        FleetReport = EndFleets
+                    };
+                    _context.Battlelogs.Add(DefenderBattleLog);
+                }
                 // update database for attacker and defenders fleets
                 foreach (var fleet in AttackerFleet)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
+                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
                     existingFleet.TotalShips = fleet.TotalShips;
                     existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                     existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -4244,20 +4345,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         _context.Fleets.Update(existingFleet);
                     }
                 }
-                foreach (var fleet in DefenderFleet)
+                if (targetUser.IsNPC != true)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
-                    existingFleet.TotalShips = fleet.TotalShips;
-                    existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                    existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                    _context.Fleets.Update(existingFleet);
-                    if (existingFleet.TotalShips <= 0)
+                    foreach (var fleet in DefenderFleet)
                     {
-                        _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                    }
-                    else
-                    {
+                        var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
+                        existingFleet.TotalShips = fleet.TotalShips;
+                        existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                        existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                         _context.Fleets.Update(existingFleet);
+                        if (existingFleet.TotalShips <= 0)
+                        {
+                            _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                        }
+                        else
+                        {
+                            _context.Fleets.Update(existingFleet);
+                        }
                     }
                 }
                 // Update Attackers Stats
@@ -4341,15 +4445,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Text = $"You have Lost the battle against {TargetUserName}.<br />{EndFleets}<br />",
                     DateAndTime = DateTime.Now
                 };
-                ImportantEvents DefenderEvent = new ImportantEvents
-                {
-                    ApplicationUserId = targetUser.Id,
-                    ImportantEventTypes = ImportantEventTypes.Battles,
-                    Text = $"You have Won the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                    DateAndTime = DateTime.Now
-                };
                 _context.ImportantEvents.Add(attackerEvent);
-                _context.ImportantEvents.Add(DefenderEvent);
+                if (targetUser.IsNPC != true)
+                {
+                    ImportantEvents DefenderEvent = new ImportantEvents
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        ImportantEventTypes = ImportantEventTypes.Battles,
+                        Text = $"You have Won the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(DefenderEvent);
+                }
                 // battle logs
                 BattleLogs AttackerBattleLog = new BattleLogs
                 {
@@ -4360,21 +4467,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Outcome = $"Loss",
                     FleetReport = EndFleets
                 };
-                BattleLogs DefenderBattleLog = new BattleLogs
-                {
-                    ApplicationUserId = targetUser.Id,
-                    Attacker = currentUser.UserName,
-                    Defender = targetUser.UserName,
-                    DateAndTime = DateTime.Now,
-                    Outcome = $"Win",
-                    FleetReport = EndFleets
-                };
                 _context.Battlelogs.Add(AttackerBattleLog);
-                _context.Battlelogs.Add(DefenderBattleLog);
+                if (targetUser.IsNPC != true)
+                {
+                    BattleLogs DefenderBattleLog = new BattleLogs
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        Attacker = currentUser.UserName,
+                        Defender = targetUser.UserName,
+                        DateAndTime = DateTime.Now,
+                        Outcome = $"Win",
+                        FleetReport = EndFleets
+                    };
+                    _context.Battlelogs.Add(DefenderBattleLog);
+                }
                 // update database for attacker and defenders fleets
                 foreach (var fleet in AttackerFleet)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
+                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
                     existingFleet.TotalShips = fleet.TotalShips;
                     existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                     existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -4387,20 +4497,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         _context.Fleets.Update(existingFleet);
                     }
                 }
-                foreach (var fleet in DefenderFleet)
+                if (targetUser.IsNPC != true)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
-                    existingFleet.TotalShips = fleet.TotalShips;
-                    existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                    existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                    _context.Fleets.Update(existingFleet);
-                    if (existingFleet.TotalShips <= 0)
+                    foreach (var fleet in DefenderFleet)
                     {
-                        _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                    }
-                    else
-                    {
+                        var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
+                        existingFleet.TotalShips = fleet.TotalShips;
+                        existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                        existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                         _context.Fleets.Update(existingFleet);
+                        if (existingFleet.TotalShips <= 0)
+                        {
+                            _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                        }
+                        else
+                        {
+                            _context.Fleets.Update(existingFleet);
+                        }
                     }
                 }
                 // Update Attackers Stats
@@ -5085,15 +5198,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Text = $"You have won the battle against {TargetUserName}.<br />{EndFleets}<br />",
                     DateAndTime = DateTime.Now
                 };
-                ImportantEvents DefenderEvent = new ImportantEvents
-                {
-                    ApplicationUserId = targetUser.Id,
-                    ImportantEventTypes = ImportantEventTypes.Battles,
-                    Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
-                    DateAndTime = DateTime.Now
-                };
                 _context.ImportantEvents.Add(attackerEvent);
-                _context.ImportantEvents.Add(DefenderEvent);
+                if (targetUser.IsNPC != true)
+                {
+                    ImportantEvents DefenderEvent = new ImportantEvents
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        ImportantEventTypes = ImportantEventTypes.Battles,
+                        Text = $"You have lost the battle against {currentUser.UserName}.<br />{EndFleets}<br />",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(DefenderEvent);
+                }
                 // battle logs
                 BattleLogs AttackerBattleLog = new BattleLogs
                 {
@@ -5104,21 +5220,24 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Outcome = $"Win",
                     FleetReport = EndFleets
                 };
-                BattleLogs DefenderBattleLog = new BattleLogs
-                {
-                    ApplicationUserId = targetUser.Id,
-                    Attacker = currentUser.UserName,
-                    Defender = targetUser.UserName,
-                    DateAndTime = DateTime.Now,
-                    Outcome = $"Loss",
-                    FleetReport = EndFleets
-                };
                 _context.Battlelogs.Add(AttackerBattleLog);
-                _context.Battlelogs.Add(DefenderBattleLog);
+                if (targetUser.IsNPC != true)
+                {
+                    BattleLogs DefenderBattleLog = new BattleLogs
+                    {
+                        ApplicationUserId = targetUser.Id,
+                        Attacker = currentUser.UserName,
+                        Defender = targetUser.UserName,
+                        DateAndTime = DateTime.Now,
+                        Outcome = $"Loss",
+                        FleetReport = EndFleets
+                    };
+                    _context.Battlelogs.Add(DefenderBattleLog);
+                }
                 // update database for attacker and defenders fleets
                 foreach (var fleet in AttackerFleet)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
+                    var existingFleet = _context.Fleets.FirstOrDefault(f =>  f.ApplicationUserId == currentUser.Id && f.ShipId == fleet.ShipId);
                     existingFleet.TotalShips = fleet.TotalShips;
                     existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
                     existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
@@ -5131,20 +5250,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         _context.Fleets.Update(existingFleet);
                     }
                 }
-                foreach (var fleet in DefenderFleet)
+                if (targetUser.IsNPC != true)
                 {
-                    var existingFleet = _context.Fleets.FirstOrDefault(f => f.Id == fleet.Id && f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
-                    existingFleet.TotalShips = fleet.TotalShips;
-                    existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
-                    existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
-                    _context.Fleets.Update(existingFleet);
-                    if (existingFleet.TotalShips <= 0)
+                    foreach (var fleet in DefenderFleet)
                     {
-                        _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
-                    }
-                    else
-                    {
+                        var existingFleet = _context.Fleets.FirstOrDefault(f => f.ApplicationUserId == targetUser.Id && f.ShipId == fleet.ShipId);
+                        existingFleet.TotalShips = fleet.TotalShips;
+                        existingFleet.TotalPowerRating = fleet.PowerRating * fleet.TotalShips;
+                        existingFleet.TotalUpkeep = fleet.Upkeep * fleet.TotalShips;
                         _context.Fleets.Update(existingFleet);
+                        if (existingFleet.TotalShips <= 0)
+                        {
+                            _context.Fleets.Remove(existingFleet); // Remove fleet if no ships left
+                        }
+                        else
+                        {
+                            _context.Fleets.Update(existingFleet);
+                        }
                     }
                 }
                 // Update Attackers Stats
@@ -5224,11 +5346,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var shipsKilled = 0;
             if (RetalPhase == true)
             {
-                shipsKilled = (int)Math.Floor((Damage / 2) / Defender.Hull);
+                shipsKilled = (int)Math.Floor((Damage / 2) / Defender.Hull);                
             }
             else
             {
                 shipsKilled = (int)Math.Floor(Damage / Defender.Hull);
+            }
+            if(shipsKilled > Defender.TotalShips)
+            {
+                shipsKilled = Defender.TotalShips;
             }
             return ((int)Math.Floor(Damage), shipsKilled);
         }
@@ -5247,6 +5373,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             else
             {
                 shipsKilled = (int)Math.Floor(Damage / Attacker.Hull);
+            }
+            if (shipsKilled > Attacker.TotalShips)
+            {
+                shipsKilled = Attacker.TotalShips;
             }
             return ((int)Math.Floor(Damage), shipsKilled);
         }
@@ -5315,7 +5445,7 @@ public class MergedFleet
     // Foreign key to ApplicationUser
     public string ApplicationUserId { get; set; }
     public ApplicationUser ApplicationUser { get; set; }
-
+    public string UserName { get; set; } // Username for display
     public int ShipId { get; set; }
     public int TotalShips { get; set; }
     public int TotalPowerRating { get; set; }

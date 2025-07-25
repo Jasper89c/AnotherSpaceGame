@@ -231,14 +231,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         private static string AddTurns(ApplicationUser user, int turns, string target)
-        {
+        { 
             if (user.Turns != null)
             {
-                int maxTurns = user.Turns.MaxTurns; // Example max, adjust as needed
-                int before = user.Turns.CurrentTurns;
-                user.Turns.CurrentTurns = System.Math.Min(user.Turns.CurrentTurns + turns, maxTurns);
-                int added = user.Turns.CurrentTurns - before;
-                return $"Gave {added} turns to {target}.";
+                user.Turns.CurrentTurns += turns;
+                if (user.Turns.CurrentTurns > user.Turns.MaxTurns)
+                {
+                    user.Turns.CurrentTurns = user.Turns.MaxTurns; // Cap at max turns
+                }
+                return $"Gave {turns} turns to {target}.";
             }
             return "Target has no turns.";
         }
@@ -247,10 +248,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             if (user.Turns != null)
             {
-                int before = user.Turns.CurrentTurns;
-                user.Turns.CurrentTurns = System.Math.Max(0, user.Turns.CurrentTurns - turns);
-                int removed = before - user.Turns.CurrentTurns;
-                return $"Removed {removed} turns from {target}.";
+                user.Turns.CurrentTurns -= turns;
+                return $"Removed {turns} turns from {target}.";
             }
             return "Target has no turns.";
         }

@@ -35,6 +35,11 @@ namespace AnotherSpaceGame.Services
                     {
                         federation.TotalPlanets = federation.FederationMembers.Sum(m => m.TotalPlanets);
                         federation.TotalPowerating = federation.FederationMembers.Sum(m => m.PowerRating);
+                        federation.TotalMembers = federation.FederationMembers.Count;
+                        if (federation.TotalMembers <= 0)
+                        {
+                            db.Federations.Remove(federation);
+                        }
                     }
 
                     await db.SaveChangesAsync(stoppingToken);

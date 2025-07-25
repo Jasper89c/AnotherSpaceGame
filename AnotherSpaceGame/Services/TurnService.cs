@@ -78,8 +78,7 @@ public class TurnService
 
         foreach (var planet in userPlanets)
         {
-            UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse,user.Faction);
-            UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse,user);
+            
 
             // Mining
             MineOre(planet, userInfrastructer, user, turnsToUse);
@@ -92,7 +91,8 @@ public class TurnService
             commercialIncome += CalculateCommercialIncome(planet, userInfrastructer, mods, turnsToUse);
             agricultureIncome += CalculateAgricultureIncome(user, planet, userInfrastructer, mods, turnsToUse);
             industryIncome += CalculateIndustryIncome(user,planet, userInfrastructer, mods, turnsToUse);
-
+            UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse, user.Faction, user, agricultureIncome);
+            UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse, user);
             // Mining by mineral type
             switch (planet.MineralProduced)
             {
@@ -224,7 +224,6 @@ public class TurnService
             goodsIncome += goodsIncomeResult.Item1;
             creditIncome += goodsIncomeResult.Item2;
 
-            HandleFoodLogic(planet, user, ref agricultureIncome, turnsToUse);
         }
 
         // Combine incomes
@@ -314,19 +313,37 @@ public class TurnService
         if(user.Commodities.Ore > 5000000000)
             user.Commodities.Ore = 5000000000;
     }
-    private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction)
+    private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction, ApplicationUser user, decimal agricultureIncome)
     {
         planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)));
+        var foodNeeded = planet.FoodRequired * turnsToUse;
         if (faction == Faction.Collective)
         {
             planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)) * 2);
         }
         if (planet.CurrentPopulation < planet.MaxPopulation)
         {
-            planet.CurrentPopulation += (int)Math.Floor(((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse) / 2 );
+            if((user.Commodities.Food + agricultureIncome) > foodNeeded && user.Faction != Faction.Guardian)
+            {
+                planet.CurrentPopulation += (int)Math.Floor(((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse) / 2 );
+            }
+            else
+            {
+                if (user.Faction == Faction.Guardian)
+                {
+                    agricultureIncome = 0;
+                    foodNeeded = 0;
+                }
+                if ((user.Commodities.Food + agricultureIncome) < foodNeeded && user.Faction != Faction.Guardian)
+                {
+                    planet.Loyalty -= (int)Math.Floor(planet.Loyalty * 0.1m);
+                    planet.CurrentPopulation -= (int)Math.Floor(planet.CurrentPopulation * 0.1m);
+                }
+            }
             if (planet.CurrentPopulation > planet.MaxPopulation)
                 planet.CurrentPopulation = planet.MaxPopulation;
         }
+        agricultureIncome -= foodNeeded;
     }
 
     private void UpdatePlanetResources(Planets planet, Infrastructer infra, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods, int turnsToUse, ApplicationUser user)
@@ -343,14 +360,13 @@ public class TurnService
 
     private void MineOre(Planets planet, Infrastructer infra, ApplicationUser user, int turnsToUse)
     {
-        if (planet.AvailableOre > 0 && planet.Mining > 0)
-        {
-            var oreToMine = (int)Math.Floor((double)(planet.Mining * infra.Mining) * turnsToUse);
-            if (oreToMine < 1) oreToMine = 1;
-            if (oreToMine > planet.AvailableOre) oreToMine = planet.AvailableOre;
+            var oreToMine = (int)Math.Floor((double)((planet.Mining * (infra.Mining + 1) * GetFactionModifiers(user.Faction).FactionMiningModifier)) * turnsToUse);
+            if (oreToMine > planet.AvailableOre)
+            {
+                oreToMine = planet.AvailableOre;
+            }
             planet.AvailableOre -= oreToMine;
             user.Commodities.Ore += oreToMine;
-        }
     }
 
     private int CalculatePowerRating(Planets planet)
@@ -419,22 +435,6 @@ public class TurnService
             return (industryIncome, taxIncome);
         }
             return (0, 0);
-    }
-
-    private void HandleFoodLogic(Planets planet, ApplicationUser user, ref decimal agricultureIncome, int turnsToUse)
-    {
-        var foodNeeded = planet.FoodRequired * turnsToUse;
-        if(user.Faction == Faction.Guardian)
-        {
-            agricultureIncome = 0;
-            foodNeeded = 0;
-        }
-        if ((user.Commodities.Food + agricultureIncome) < foodNeeded && user.Faction != Faction.Guardian)
-        {
-            planet.Loyalty -= (int)Math.Floor(planet.Loyalty * 0.1m);
-            planet.CurrentPopulation -= (int)Math.Floor(planet.CurrentPopulation * 0.1m);
-        }
-        agricultureIncome -= foodNeeded;
     }
 
     private decimal CalculateInfraCost(List<Planets> planets, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods)

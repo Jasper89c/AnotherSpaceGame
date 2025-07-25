@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Reward Population";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var increase = (@Model.Planet.CurrentPopulation * 2);
 }
 
 <h2>Reward Population</h2>
@@ -23,10 +24,11 @@
 
 @if (Model.Planet != null)
 {
-    <div class="mb-3">
+    <div class="mb-4">
         <strong>Colony:</strong> @Model.Planet.Name<br />
-        <strong>Current Population:</strong> @Model.Planet.CurrentPopulation<br />
-        <strong>Current Loyalty:</strong> @Model.Planet.Loyalty
+        <strong>Current Population:</strong> @Model.Planet.CurrentPopulation.ToString("N0")<br />
+        <strong>Current Loyalty:</strong> @Model.Planet.Loyalty.ToString("N0")<br />
+        <strong>Cost to increase:</strong> @increase.ToString("C")
     </div>
     <form method="post">
         <input type="hidden" name="Id" value="@Model.Planet.Id" />
@@ -36,6 +38,7 @@
             <div class="form-text">
                 Each turn increases loyalty by 5 and costs (@Model.Planet.CurrentPopulation * 2) credits per turn.
             </div>
+            <div class="form-text">Guardians can have a maxium loyalty of 3000, rewarding population above this will still cost credits but will not increase loyalty.</div>
         </div>
         <button type="submit" class="btn btn-primary">Reward Population</button>
         <a asp-page="/ManagePlanet" asp-route-id="@Model.Planet.Id" class="btn btn-secondary ms-2">Cancel</a>

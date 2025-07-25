@@ -81,7 +81,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             creditsGainedForPlunder = ((int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier)).ToString("C");
             var creditsGained = (int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier);
             UserCommodities.Credits += creditsGained;
-            userExploration.ExplorationPointsNeeded = (int)Math.Floor(userExploration.ExplorationPointsNeeded / 1.2);
+            for (int i = 0; i < planet.TotalPlanets; i++)
+            {
+                userExploration.ExplorationPointsNeeded = (int)Math.Floor(userExploration.ExplorationPointsNeeded / 1.2);
+            }
             user.TotalColonies -= 1;
             user.TotalPlanets -= planet.TotalPlanets;
             user.PlanetsPlundered += planet.TotalPlanets;

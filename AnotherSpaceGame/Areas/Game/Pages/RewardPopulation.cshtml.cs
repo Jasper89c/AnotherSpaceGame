@@ -58,7 +58,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-
+            var commodities = await _context.Commodities.FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == Id && p.ApplicationUserId == user.Id);
             if (Planet == null || Planet.ApplicationUserId != user.Id)
             {
@@ -93,9 +93,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 Planet.Loyalty = newLoyalty;
             }
+            if(Planet.Loyalty > 3000 && user.Faction == Faction.Guardian)
+            {
+                Planet.Loyalty = 3000; // Ensure loyalty does not go below 0
+            }
 
             // Optionally, deduct credits or resources if needed (not specified in your request)
-
+            commodities.Credits -= totalCost;
             await _context.SaveChangesAsync();
 
             RewardMessage = $"Loyalty increased by {5 * TurnsToUse}. Total cost: {totalCost:N0} credits.<hr>{turnResult.Message}";

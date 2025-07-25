@@ -198,7 +198,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Industry = 0,
                     Agriculture = 0,
                     Mining = 1,
-                    MineralProduced = 0,
+                    MineralProduced = (MineralType)random.Next(0, 6),
                     PowerRating = 0
                 };
                 // Set type-specific values

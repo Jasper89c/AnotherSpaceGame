@@ -80,6 +80,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Optionally add to FederationMembers collection
             Federation.FederationMembers.Add(user);
+            Federation.TotalMembers = Federation.FederationMembers.Count;
+            Federation.TotalPlanets = Federation.FederationMembers.Sum(m => m.Planets.Count);
+            Federation.TotalPowerating = Federation.FederationMembers.Sum(m => m.PowerRating);
 
             // Create important event
             _context.ImportantEvents.Add(new ImportantEvents

@@ -173,6 +173,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             TurnsRequired = TerranData.SmallTerranHullTurnsRequired
                         });
                     }
+                    if (TerranData.CrystalLenses != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Crystal Lenses",
+                            TurnsRequired = TerranData.CrystalLensesTurnsRequired
+                        });
+                    }
                     if (TerranData.SmallTerranHull == true)
                     {
                         if (TerranData.MediumTerranHull != true)

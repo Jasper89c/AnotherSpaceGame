@@ -63,6 +63,40 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user.Federation != null && user.Federation.FederationMembers.Contains(user))
             {
                 user.Federation.FederationMembers.Remove(user);
+                if(user.Federation.FederationMembers.Count == 0)
+                {
+                    // If no members left, remove the federation
+                    _context.Federations.Remove(user.Federation);
+                }
+                else
+                {
+                    var federation = await _context.Federations
+                        .Include(f => f.FederationMembers)
+                        .FirstOrDefaultAsync(f => f.Id == user.FederationId);
+                    var federationMembers = federation?.FederationMembers ?? new List<ApplicationUser>();
+                    var federationMembersOrdered = federationMembers.OrderByDescending(m => m.PowerRating).ToList();
+                    // Update the federation with the remaining members
+                    user.Federation.TotalMembers = federationMembersOrdered.Count;
+                    user.Federation.TotalPlanets = federationMembersOrdered.Sum(m => m.Planets.Count);
+                    user.Federation.TotalPowerating = federationMembersOrdered.Sum(m => m.PowerRating);
+                    _context.Federations.Update(user.Federation);
+                }
+                if(user.Federation.FederationLeaderId == user.Id)
+                {
+                    // If the resigning user is the leader, set a new leader if available
+                    var newLeader = user.Federation.FederationMembers.OrderByDescending(m => m.PowerRating).FirstOrDefault();
+                    if (newLeader != null)
+                    {
+                        user.Federation.FederationLeaderId = newLeader.Id;
+                        user.Federation.FederationLeader = newLeader;
+                        _context.Federations.Update(user.Federation);
+                    }
+                    else
+                    {
+                        // If no members left, remove the federation
+                        _context.Federations.Remove(user.Federation);
+                    }
+                }
             }
 
             // Create an important event

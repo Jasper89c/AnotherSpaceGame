@@ -75,6 +75,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.Commodities)
                 .Include(u => u.Planets)
                 .Include(u => u.ImportantEvents)
+                .Include(u => u.Fleets)
                 .FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
 
             if (user == null)
@@ -97,6 +98,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 await ResetPlanetsAsync(user, parsedFaction);
                 await ResetResearchAsync(user, parsedFaction);
                 await ResetOtherPropertiesAsync(user);
+
+                foreach (var fleet in user.Fleets.ToList())
+                {
+                    _context.Fleets.Remove(fleet);
+                }
 
                 user.ImportantEvents.Add(new ImportantEvents
                 {
@@ -345,7 +351,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Artifacts
             _context.Artifacts.RemoveRange(_context.Artifacts.Where(a => a.ApplicationUserId == user.Id));
 
-            // Add other research resets as needed
 
         }
     }
