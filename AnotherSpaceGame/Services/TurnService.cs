@@ -40,10 +40,10 @@ public class TurnService
         decimal taxIncome = 0, commercialIncome = 0, industryIncome = 0, agricultureIncome = 0, goodsIncome = 0;
         decimal miningTMIncome = 0, miningRCIncome = 0, miningWCIncome = 0, miningCIncome = 0, miningRIncome = 0, miningSOIncome = 0;
         decimal outOfDamageProtectionBonus = 0;
+        decimal creditIncome = 0;
 
         // check for viral and collective planets
-        
-            if (user.Faction == Faction.Viral)
+        if (user.Faction == Faction.Viral)
             {
                 userPlanets.RemoveAll(p =>
                     p.Type is not PlanetType.TaintedC1 and
@@ -66,8 +66,7 @@ public class TurnService
                 not PlanetType.AssimilatedC2 and
                 not PlanetType.AssimilatedC3);
         }
-        // Fix for CS0131: The left-hand side of an assignment must be a variable, property or indexer
-        decimal creditIncome = 0;
+        
         // update users fleets
         foreach (var item in user.Fleets)
         {
@@ -78,8 +77,6 @@ public class TurnService
 
         foreach (var planet in userPlanets)
         {
-            
-
             // Mining
             MineOre(planet, userInfrastructer, user, turnsToUse);
 
@@ -91,7 +88,7 @@ public class TurnService
             commercialIncome += CalculateCommercialIncome(planet, userInfrastructer, mods, turnsToUse);
             agricultureIncome += CalculateAgricultureIncome(user, planet, userInfrastructer, mods, turnsToUse);
             industryIncome += CalculateIndustryIncome(user,planet, userInfrastructer, mods, turnsToUse);
-            UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse, user.Faction, user, agricultureIncome);
+            agricultureIncome = UpdatePlanetPopulation(planet, userInfrastructer, turnsToUse, user.Faction, user, agricultureIncome);
             UpdatePlanetResources(planet, userInfrastructer, mods, turnsToUse, user);
             // Mining by mineral type
             switch (planet.MineralProduced)
@@ -115,7 +112,7 @@ public class TurnService
                     miningSOIncome += CalculateMiningIncome(planet, userInfrastructer, mods, turnsToUse);
                     break;
             }
-
+            // set total planets based on type
             switch (planet.Type)
                             {
                 case PlanetType.AssimilatedC1:
@@ -251,6 +248,10 @@ public class TurnService
         user.TotalColonies = userPlanets.Count;
         user.TotalPlanets = userPlanets.Sum(x => x.TotalPlanets);
 
+        if(user.Commodities.Food < 0)
+        {
+            user.Commodities.Food = 0;
+        }
 
         // Update turns and last action
         user.Turns.CurrentTurns -= turnsToUse;
@@ -313,37 +314,42 @@ public class TurnService
         if(user.Commodities.Ore > 5000000000)
             user.Commodities.Ore = 5000000000;
     }
-    private void UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction, ApplicationUser user, decimal agricultureIncome)
+    private decimal UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction, ApplicationUser user, decimal agricultureIncome)
     {
-        planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)));
-        var foodNeeded = planet.FoodRequired * turnsToUse;
+        // set max population
+        planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * (infra.Housing + 1))));
         if (faction == Faction.Collective)
         {
-            planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * infra.Housing)) * 2);
+            planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * (infra.Housing + 1))) * 2);
         }
-        if (planet.CurrentPopulation < planet.MaxPopulation)
+        // Set Food Required
+        var foodNeeded = planet.FoodRequired * turnsToUse;
+        // Set Guardian food requirements
+        if (user.Faction == Faction.Guardian)
         {
-            if((user.Commodities.Food + agricultureIncome) > foodNeeded && user.Faction != Faction.Guardian)
-            {
-                planet.CurrentPopulation += (int)Math.Floor(((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse) / 2 );
-            }
-            else
-            {
-                if (user.Faction == Faction.Guardian)
-                {
-                    agricultureIncome = 0;
-                    foodNeeded = 0;
-                }
-                if ((user.Commodities.Food + agricultureIncome) < foodNeeded && user.Faction != Faction.Guardian)
-                {
-                    planet.Loyalty -= (int)Math.Floor(planet.Loyalty * 0.1m);
-                    planet.CurrentPopulation -= (int)Math.Floor(planet.CurrentPopulation * 0.1m);
-                }
-            }
-            if (planet.CurrentPopulation > planet.MaxPopulation)
-                planet.CurrentPopulation = planet.MaxPopulation;
+            agricultureIncome = 0;
+            foodNeeded = 0;
         }
+        // Check if population can grow
+        if (planet.CurrentPopulation < planet.MaxPopulation && (user.Commodities.Food + agricultureIncome) > foodNeeded)
+        {
+            planet.CurrentPopulation += (int)Math.Floor(((planet.PopulationModifier * (planet.MaxPopulation - planet.CurrentPopulation)) * turnsToUse) / 2);
+
+        }
+        // Check if population should decrease
+        else if ((user.Commodities.Food + agricultureIncome) < foodNeeded)
+        {
+            planet.Loyalty -= (int)Math.Floor(planet.Loyalty * 0.05m);
+            planet.CurrentPopulation -= (int)Math.Floor(planet.CurrentPopulation * 0.1m);
+        }
+        // check if population exceeds max population
+        if (planet.CurrentPopulation > planet.MaxPopulation)
+        {
+            planet.CurrentPopulation = planet.MaxPopulation;
+        }
+        
         agricultureIncome -= foodNeeded;
+        return agricultureIncome;
     }
 
     private void UpdatePlanetResources(Planets planet, Infrastructer infra, (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier, decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost) mods, int turnsToUse, ApplicationUser user)
@@ -462,7 +468,7 @@ public class TurnService
     {
         return faction switch
         {
-            Faction.Terran => (1.0m, 1.1m, 2.2m, 1.2m, 1.0m, 3.5m, 1.0m),
+            Faction.Terran => (1.0m, 1.2m, 2.2m, 1.2m, 1.0m, 3.5m, 1.0m),
             Faction.AMiner => (2.2m, 0.05m, 3.5m, 0.5m, 29m, 1.0m, 0.8m),
             Faction.Marauder => (0.5m, 0.05m, 0.5m, 0.5m, 0.5m, 1.0m, 0.05m),
             Faction.Viral => (1.2m, 0.95m, 0.5m, 0.8m, 1.0m, 2.0m, 1.0m),

@@ -27,7 +27,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public List<EmpireStatsViewModel> BattlesWon { get; set; }
         public List<EmpireStatsViewModel> BattlesLost { get; set; }
         public List<EmpireStatsViewModel> RichestEmpire { get; set; }
-        public List<EmpireStatsViewModel> PlanetsRatio { get; set; }
+        public List<EmpireStatsViewModel> MostPlanets { get; set; }
         public List<EmpireStatsViewModel> PlanetsWon { get; set; }
         public List<EmpireStatsViewModel> PlanetsLost { get; set; }
         public List<EmpireStatsViewModel> PlanetsExplored { get; set; }
@@ -35,9 +35,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public void OnGet()
         {
+            var server = _context.ServerStats.FirstOrDefault();
             lock (_lock)
             {
-                if (_cachedRankings == null || (DateTime.UtcNow - _lastUpdate).TotalMinutes >= 60)
+                if (_cachedRankings == null || (DateTime.Now - _lastUpdate).TotalMinutes >= server.TableTimer)
                 {
                     var users = _context.Users
                         .AsNoTracking()
@@ -86,9 +87,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             .Take(20)
                             .ToList(),
 
-                        PlanetsRatio = users
-                            .OrderByDescending(u => u.PlanetsRatio)
-                            .ThenByDescending(u => u.ColoniesExplored)
+                        MostPlanets = users
+                            .OrderByDescending(u => u.TotalPlanets)
                             .Take(20)
                             .ToList(),
 
@@ -117,14 +117,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             .ToList()
                     };
 
-                    _lastUpdate = DateTime.UtcNow;
+                    _lastUpdate = DateTime.Now;
                 }
 
                 BattleRatio = _cachedRankings.BattleRatio;
                 BattlesWon = _cachedRankings.BattlesWon;
                 BattlesLost = _cachedRankings.BattlesLost;
                 RichestEmpire = _cachedRankings.RichestEmpire;
-                PlanetsRatio = _cachedRankings.PlanetsRatio;
+                MostPlanets = _cachedRankings.MostPlanets;
                 PlanetsWon = _cachedRankings.PlanetsWon;
                 PlanetsLost = _cachedRankings.PlanetsLost;
                 PlanetsExplored = _cachedRankings.PlanetsExplored;
@@ -148,7 +148,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             public int PlanetsLost { get; set; }
             public int PlanetsExplored { get; set; }
             public int PlanetsPlunderedStat { get; set; }
-            public double PlanetsRatio => PlanetsPlundered > 0 ? (double)ColoniesExplored / PlanetsPlundered : ColoniesExplored;
+            public int PlanetsRatio { get; set; }
         }
 
         private class CachedRankings
@@ -157,7 +157,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             public List<EmpireStatsViewModel> BattlesWon { get; set; }
             public List<EmpireStatsViewModel> BattlesLost { get; set; }
             public List<EmpireStatsViewModel> RichestEmpire { get; set; }
-            public List<EmpireStatsViewModel> PlanetsRatio { get; set; }
+            public List<EmpireStatsViewModel> MostPlanets { get; set; }
             public List<EmpireStatsViewModel> PlanetsWon { get; set; }
             public List<EmpireStatsViewModel> PlanetsLost { get; set; }
             public List<EmpireStatsViewModel> PlanetsExplored { get; set; }

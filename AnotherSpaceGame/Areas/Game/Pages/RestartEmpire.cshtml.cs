@@ -186,6 +186,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     _ => PlanetType.Balanced
                 }
             };
+            if (user.Faction == Faction.Viral)
+            {
+                planet.Type = PlanetType.TaintedC1;
+                planet.Name = "C." + Random.Shared.RandomString(4); // Set the planet type for Viral faction
+            }
+            if (user.Faction == Faction.Collective)
+            {
+                planet.Type = PlanetType.SimilareC1;
+                planet.Name = "B." + Random.Shared.RandomString(4);
+                // Set the planet type for Collective faction
+            }
+            if (user.Faction == Faction.Marauder)
+            {
+                planet.Type = PlanetType.Balanced;
+                planet.Name = "M." + Random.Shared.RandomString(4);
+                // Set the planet type for Collective faction
+            }
             user.Planets = new List<Planets> { planet };
             _context.Planets.Add(planet);
 
@@ -247,8 +264,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 case Faction.Viral:
                     var viralSpecificResearch = new ViralSpecificResearch { ApplicationUserId = userId };
                     var viralResearch = new ViralResearch { ApplicationUserId = userId };
+                    var viralReversedShips = new ViralReversedShips { ApplicationUserId = userId };
                     user.ViralSpecificResearch = viralSpecificResearch;
                     user.ViralResearch = viralResearch;
+                    user.ViralReversedShips = viralReversedShips;
+                    _context.ViralReversedShips.Add(viralReversedShips);
                     _context.ViralSpecificResearches.Add(viralSpecificResearch);
                     _context.ViralResearches.Add(viralResearch);
                     break;
@@ -313,16 +333,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // PowerRating and EmpireAge
             user.PowerRating = 1000;
-            user.EmpireAge = (DateTime.UtcNow - user.PlayingSince).TotalDays;
+            user.EmpireAge = (DateTime.Now - user.PlayingSince).TotalDays;
 
             // Damage Protection
             user.DamageProtection = DateTime.Now.AddDays(1);
 
             // Last Activity
-            user.LastAction = DateTime.UtcNow;
+            user.LastAction = DateTime.Now;
 
             // Artifact Shield
             user.ArtifactShield = 0m;
+            // Temple height
+            user.TempleHeight = 0;
 
             // Exploration
             // Remove existing exploration for this user if it exists

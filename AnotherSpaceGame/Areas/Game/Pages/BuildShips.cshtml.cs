@@ -51,6 +51,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.AMinerResearch)
                 .Include(u => u.ViralReversedShips)
                 .Include(u => u.Turns)
+                .Include(u => u.Commodities)
+                .Include(u => u.Fleets)
+                .Include(u => u.Federation)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             var ships = await _context.Ships.ToListAsync();
@@ -149,7 +152,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (CurrentUser.Faction == Faction.AMiner)
             {
                 AddShipById(237); // M.hal
-                AddShipById(254); // Scout
                 if (CurrentUser.AMinerResearch is { AsphaCorvette: true, AsphaCorvetteTurnsRequired: 0 }) AddShipById(238);
                 if (CurrentUser.AMinerResearch is { AsphaFrigate: true, AsphaFrigateTurnsRequired: 0 }) AddShipById(239);
                 if (CurrentUser.AMinerResearch is { AsphaDestroyer: true, AsphaDestroyerTurnsRequired: 0 }) { AddShipById(240); AddShipById(241); }
@@ -159,7 +161,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (CurrentUser.AMinerResearch is { AsphaLightStarbase: true, AsphaLightStarbaseTurnsRequired: 0 }) { AddShipById(246); AddShipById(248); }
                 if (CurrentUser.AMinerResearch is { AsphaHeavyStarbase: true, AsphaHeavyStarbaseTurnsRequired: 0 }) AddShipById(249);
                 if (CurrentUser.AMinerResearch is { GClassJuggernaught: true, GClassJuggernaughtTurnsRequired: 0 }) AddShipById(253);
-                if (CurrentUser.AMinerResearch is { AsphaSeeker: true, AsphaSeekerTurnsRequired: 0 }) AddShipById(255);
+                if (CurrentUser.AMinerResearch is { AsphaSeeker: true, AsphaSeekerTurnsRequired: 0 }) AddShipById(254);
+                if (CurrentUser.AMinerResearch is { AsphaRanger: true, AsphaRangerTurnsRequired: 0 }) AddShipById(255);
                 if (CurrentUser.AMinerResearch is { GClassShip: true, GClassShipTurnsRequired: 0 }) { AddShipById(250); AddShipById(251); AddShipById(252); }
             }
 

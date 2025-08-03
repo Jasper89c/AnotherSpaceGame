@@ -38,10 +38,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             bool updateCache = false;
             lock (_cacheLock)
             {
-                if (_cachedUniverseArtifacts == null || (DateTime.UtcNow - _lastCacheUpdate).TotalHours >= 24)
+                if (_cachedUniverseArtifacts == null || (DateTime.Now - _lastCacheUpdate).TotalHours >= 24)
                 {
                     updateCache = true;
-                    _lastCacheUpdate = DateTime.UtcNow;
+                    _lastCacheUpdate = DateTime.Now;
                 }
             }
 

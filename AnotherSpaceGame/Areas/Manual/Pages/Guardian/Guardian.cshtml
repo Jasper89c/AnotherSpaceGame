@@ -1,0 +1,130 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.Guardian.GuardianModel
+@{
+    ViewData["Title"] = "Guardian Stats";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>Guardian Stats</h1>
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+
+<div class="col-5">
+<table class="table table-bordered table-hover table-sm">
+	<thead>
+		<tr>
+			<th colspan="2">
+				Faction Attributes
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				Difficulty Setting
+			</td>
+			<td>
+				Easy
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Maximum Colonys
+			</td>
+			<td>
+				@Model.MaxmumColonies
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Exploration
+			</td>
+			<td>
+				Yes
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Research
+			</td>
+			<td>
+				Yes
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Missions
+			</td>
+			<td>
+				Yes
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<table class="table table-bordered table-hover table-sm">
+	<thead>
+		<tr>
+			<th colspan="2">
+				Faction Modifiers
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				Tax from Population
+			</td>
+			<td>
+				@Model.FactionTaxModifier
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Agriculture Yield
+			</td>
+			<td>
+				@Model.FactionAgricultureModifier
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Tax from Commercial
+			</td>
+			<td>
+				@Model.FactionCommercialModifier
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Industry Yield
+			</td>
+			<td>
+				@Model.FactionIndustryModifier
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Mining Yield
+			</td>
+			<td>
+				@Model.FactionMiningModifier
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Demand for Goods
+			</td>
+			<td>
+				@Model.FactionDemandForGoods
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Infrastructure Maintenance
+			</td>
+			<td>
+				@Model.InfrastructreMaintenanceCost
+			</td>
+		</tr>
+	</tbody>
+</table>
+</div>

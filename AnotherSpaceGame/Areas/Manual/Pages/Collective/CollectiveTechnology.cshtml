@@ -1,0 +1,43 @@
+﻿@page  
+@model AnotherSpaceGame.Areas.Manual.Pages.Collective.CollectiveTechnologyModel  
+@{  
+    ViewData["Title"] = "Collective Technology";  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+}  
+<h1>Collective Technology</h1>  
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>  
+<div class="col-5">  
+    <table class="table table-bordered table-hover table-sm">  
+        <thead>  
+            <tr>  
+                <th>  
+                    Research Name  
+                </th>  
+                <th>  
+                    Turns Required  
+                </th>  
+            </tr>  
+        </thead>  
+        <tbody>  
+            @foreach (var item in Model.CollectiveResearchItems)  
+            {  
+                <tr>  
+                    <td>  
+                        @item.Name  
+                    </td>  
+                    <td>  
+                        @item.TurnsRequired  
+                    </td>  
+                </tr>  
+            }  
+            <tr>
+                <td>
+                    @Model.CollectiveSpecificResearchItems[0].Name
+                </td>
+                <td>
+                    @Model.CollectiveSpecificResearchItems[0].TurnsRequired
+                </td>
+            </tr>
+        </tbody>  
+    </table>  
+</div>

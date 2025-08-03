@@ -1,7 +1,9 @@
+using AnotherSpaceGame.Data;
+using AnotherSpaceGame.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Identity;
-using AnotherSpaceGame.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
@@ -9,10 +11,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
     public class EmpireSummaryModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _dbContext;
 
-        public EmpireSummaryModel(UserManager<ApplicationUser> userManager)
+        public EmpireSummaryModel(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
         {
             _userManager = userManager;
+            _dbContext = dbContext;
         }
 
         public string Username { get; set; }
@@ -31,10 +35,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int ColoniesExplored { get; set; }
         public int PlanetsPlundered { get; set; }
         public DateTime LastActivity { get; set; }
+        public int? FederationId { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = _userManager.GetUserId(User);
+            var user = await _dbContext.Users
+                .Include(u => u.Federation)
+                .FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             if (user != null)
@@ -46,7 +54,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 TotalPlanets = user.TotalPlanets;
                 PowerRating = user.PowerRating;
                 Federation = user.Federation?.FederationName ?? "None";
-                EmpireAge = (DateTime.UtcNow - user.PlayingSince).Days;
+                EmpireAge = (DateTime.Now - user.PlayingSince).Days;
                 PlayingSince = user.PlayingSince;
                 BattlesWon = user.BattlesWon;
                 BattlesLost = user.BattlesLost;
@@ -55,7 +63,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ColoniesExplored = user.ColoniesExplored;
                 PlanetsPlundered = user.PlanetsPlundered;
                 LastActivity = user.LastAction; 
+                FederationId = user.FederationId;
             }
+            
             return Page();
         }
     }

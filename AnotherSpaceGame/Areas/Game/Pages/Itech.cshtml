@@ -13,11 +13,11 @@
 {
     <p>Invest turns to unlock the itech so you can redistribute your infrastructure levels.</p>
     <p>Turns Required: @Model.TurnsRequired</p>
-    <p>Turns Remaining: @Model.Infrastructer.ITechInvestmentTurns</p>
+    <p>Turns Invested: @Model.Infrastructer.ITechInvestmentTurns</p>
     <form method="post" asp-page-handler="Investment">
         <div class="form-group">
             <label for="investment">Investment Amount:</label>
-            <input type="number" class="form-control" id="investment" name="investment" min="0" max="45" value="0" required />
+            <input type="number" class="form-control" id="investment" name="investment" min="0" max="45" value="45" required />
         <button type="submit" class="btn btn-primary">Invest in ITech</button>
     </form>
 }

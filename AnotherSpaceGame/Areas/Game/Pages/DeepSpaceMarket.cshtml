@@ -1,0 +1,106 @@
+﻿@page  
+@model AnotherSpaceGame.Areas.Game.Pages.DeepSpaceMarketModel  
+@{  
+    ViewData["Title"] = "Deep Space Market";  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+}  
+@if (!ViewData.ModelState.IsValid)  
+{  
+    <div class="alert alert-danger">  
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))  
+        {  
+            <div>@error.ErrorMessage</div>  
+        }  
+    </div>  
+}  
+@if (!string.IsNullOrEmpty(Model.StatusMessage))  
+{  
+    <div class="alert alert-info mt-2">@Model.StatusMessage</div>  
+}  
+<h2>Deep Space Market</h2>  
+
+<form method="post">  
+    <div class="mb-3">  
+        <label for="marketType" class="form-label">Market Type</label>  
+        <select class="form-select" id="SelectedMarketType" name="SelectedMarketType" required>  
+            <option value="" disabled selected>Select a market type</option>  
+            @foreach (var type in Model.MarketTypes)  
+            {  
+                <option value="@type" selected="@(Model.SelectedMarketType.ToString() == type)">  
+                    @type  
+                </option>  
+            }  
+        </select>  
+    </div>  
+    <div class="mb-3">  
+        <label for="quantity" class="form-label">Quantity</label>  
+        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required />  
+    </div>  
+    <button type="submit" class="btn btn-primary">Buy</button>  
+</form>  
+
+<h3> Price List</h3>  
+<div class="col-4">  
+<table class="table table-bordered table-sm"> 
+    <thead>
+        <tr>
+            <td>Item</td>
+            <td>Cost Per Unit</td>
+            <td>Total Cost</td>
+        </tr>
+    </thead>
+    <tr>  
+        <td>Food</td>  
+        <td>$35</td>
+        <td></td>
+    </tr>  
+    <tr>  
+        <td>Ore</td>
+            <td>$40,000</td>
+            <td></td>
+    </tr>  
+    <tr>  
+        <td>Raw Material</td>
+            <td>$5</td>
+            <td></td>
+    </tr>  
+    <tr>  
+        <td>Consumer Goods</td>
+            <td>$5</td>
+            <td></td>
+    </tr>  
+    <tr>  
+        <td>Minerals</td>
+            <td>$1,500</td>
+            <td></td>
+    </tr>  
+</table>  
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceMap = {
+            "Food": 35,
+            "Ore": 40000,
+            "Raw Material": 5,
+            "Consumer Goods": 5,
+            "Minerals": 1500
+        };
+
+        const quantityInput = document.getElementById('quantity');
+        const table = document.querySelector('table');
+        function updateTotals() {
+            const qty = parseInt(quantityInput.value) || 0;
+            Array.from(table.querySelectorAll('tr')).forEach(row => {
+                const itemCell = row.querySelector('td:first-child');
+                const totalCell = row.querySelector('td:last-child');
+                if (itemCell && totalCell && priceMap[itemCell.textContent.trim()]) {
+                    const price = priceMap[itemCell.textContent.trim()];
+                    totalCell.textContent = qty > 0 ? `$${(qty * price).toLocaleString()}` : '';
+                }
+            });
+        }
+        quantityInput.addEventListener('input', updateTotals);
+        updateTotals(); // Initial update
+    });
+</script>

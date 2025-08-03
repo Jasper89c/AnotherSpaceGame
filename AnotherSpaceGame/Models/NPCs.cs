@@ -13,7 +13,7 @@ namespace AnotherSpaceGame.Models
         [Description("Federation")]
         public Federations? Federation { get; set; } = null;
         public int PowerRating { get; set; } = Random.Shared.Next(15000, 2000000);
-        public DateTime PlayingSince { get; set; } = DateTime.UtcNow;
+        public DateTime PlayingSince { get; set; } = DateTime.Now;
         public double EmpireAge { get; set; } = 0.0;
         public int BattlesWon { get; set; } = 0;
         public int BattlesLost { get; set; } = 0;
@@ -24,8 +24,8 @@ namespace AnotherSpaceGame.Models
         public Faction Faction { get; set; } = GetRandomFaction();
         public int TotalColonies { get; set; } = 0;
         public int TotalPlanets { get; set; } = 0;
-        public DateTime DamageProtection { get; set; } = DateTime.UtcNow;
-        public DateTime LastAction { get; set; } = DateTime.UtcNow;
+        public DateTime DamageProtection { get; set; } = DateTime.Now;
+        public DateTime LastAction { get; set; } = DateTime.Now;
         public decimal ArtifactShield { get; set; } = 0.0m;
         public bool IsNPC { get; set; } = true;
 

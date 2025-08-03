@@ -1,0 +1,209 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.TempleModel
+@{
+	ViewData["Title"] = "Temple";
+	Layout = "~/Views/Shared/_LayoutGame.cshtml";
+	var userTemple = Model.TempleHeight.ToString("N0") + "m";
+}
+@if (!ViewData.ModelState.IsValid)
+{
+	<div class="alert alert-danger">
+		@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+		{
+			<div>@error.ErrorMessage</div>
+		}
+	</div>
+}
+
+<h1>Temples</h1>
+
+<p>Welcome to the temple!</p>
+<p>Here you can find information about temples in the game.</p>
+<p>Explore the temples to discover their secrets and gain valuable resources.</p>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Empire Name</th>
+						<th>Temple Height</th>
+                    </tr>
+				@for (int i = 0; i < Model.Users.Count; i++)
+				{
+						var empire = Model.Users[i];
+						var templeHeight = @empire.TempleHeight.ToString("N0") + "m";
+						@if(i == 0)
+						{
+							<tr style="background-color: rgba(39, 255, 0, 0.15);">
+								<td>@(i + 1)</td>
+								<td>@empire.UserName</td>
+								<td>@templeHeight</td>
+							</tr>
+						}
+						else if (i >= 1 && i <= 4)
+						{
+							<tr style="background-color: rgba(241, 255, 0, 0.15);">
+								<td>@(i + 1)</td>
+						<td>@empire.UserName</td>
+						<td>@templeHeight</td>
+					</tr>
+						}
+						else 
+						{
+							<tr style="background-color: rgba(255, 0, 0, 0.15);">
+								<td>@(i + 1)</td>
+						<td>@empire.UserName</td>
+						<td>@templeHeight</td>
+					</tr>
+						}                        
+				}
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<td>Your Temple</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Height: @userTemple </td>
+					</tr>
+            </tbody>
+            </table>
+			<table class="table table-bordered table-sm">
+			<thead>
+				<tr>
+					<th>Market Type</th>
+					<th>Quantity</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<form method="post">
+					<td>
+							<label for="marketType" class="form-label">Choose Donation to Temple</label>
+							<select class="form-select" id="SelectedMarketType" name="SelectedMarketType" required>
+								<option value="" disabled selected>Select a market type</option>
+								@foreach (var type in Model.MarketTypes)
+								{
+									<option value="@type" selected="@(Model.SelectedMarketType.ToString() == type)">
+										@type
+									</option>
+								}
+							</select>
+						</td>
+					<td>
+						<input type="number" class="form-control" name="quantity" min="1" value="1" required readonly />
+					</td>
+						<td>
+							<button type="button" class="btn btn-primary btn-sm set-quantity" data-quantity="1">+ 1m</button>
+							<button type="button" class="btn btn-primary btn-sm set-quantity" data-quantity="5">+ 5m</button>
+							<button type="button" class="btn btn-primary btn-sm set-quantity" data-quantity="10">+ 10m</button>
+							<button type="submit" class="btn btn-success btn-sm">Donate</button>
+						</td>
+					</form>
+				</tr>
+			</tbody>
+				@if (!string.IsNullOrEmpty(Model.StatusMessage))
+				{
+					<tfoot>
+						<tr>
+							<td colspan="3">
+									<div class="alert alert-info mt-2">@Model.StatusMessage</div>
+							</td>
+						</tr>
+					</tfoot>
+				}
+			</table>
+			<table class="table table-bordered table-sm">
+				<thead>
+					<tr>
+						<td colspan="2">Your Stores</td>
+					</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>Ore:</td>
+					<td>@Model.Commodities.Ore.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>Terran Metal:</td>
+						<td>@Model.Commodities.TerranMetal.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>Red Crystal:</td>
+						<td>@Model.Commodities.RedCrystal.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>White Crystal:</td>
+						<td>@Model.Commodities.WhiteCrystal.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>Rutile:</td>
+						<td>@Model.Commodities.Rutile.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>Composite:</td>
+						<td>@Model.Commodities.Composite.ToString("N0")</td>
+				</tr>
+				<tr>
+					<td>Strafez Organism:</td>
+						<td>@Model.Commodities.StrafezOrganism.ToString("N0")</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		// Define increments for each market type
+		const increments = {
+			"Ore": [1000000, 5000000, 10000000],
+			"TerranMetal": [2750000, 13750000, 27500000],
+			"Composite": [2750000, 13750000, 27500000],
+			"Rutile": [2750000, 13750000, 27500000],
+			"RedCrystal": [2750000, 13750000, 27500000],
+			"WhiteCrystal": [2750000, 13750000, 27500000],
+			"StrafezOrganism": [2750000, 13750000, 27500000]
+			// Add more as needed
+		};
+
+		const select = document.getElementById('SelectedMarketType');
+		const buttons = document.querySelectorAll('.set-quantity');
+		const input = document.querySelector('input[name="quantity"]');
+
+		function updateButtonQuantities() {
+			const selected = select.value;
+			const values = increments[selected] || [1, 5, 10];
+			buttons.forEach((btn, idx) => {
+				btn.setAttribute('data-quantity', values[idx] || 1);
+				// Do not change btn.textContent
+			});
+			// Optionally reset the input when market type changes
+			input.value = values[0] || 1;
+		}
+
+		// Update on market type change
+		select.addEventListener('change', updateButtonQuantities);
+
+		// Set quantity on button click
+		buttons.forEach(function(btn) {
+			btn.addEventListener('click', function() {
+				var qty = btn.getAttribute('data-quantity');
+				if (input) {
+					input.value = qty;
+				}
+			});
+		});
+
+		// Initialize on page load if a market type is pre-selected
+		updateButtonQuantities();
+	});
+</script>

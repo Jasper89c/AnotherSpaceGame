@@ -36,6 +36,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             var currentUser = _context.Users
+                .Include(u => u.Fleets) // Include fleets to avoid lazy loading issues
+                .Include(u => u.Federation) // Assuming Faction is a navigation property
                 .FirstOrDefault(u => u.Id == user.Id);
             Faction = user.Faction; // Assuming Faction is a property of ApplicationUser
             UserFleets = await _context.Fleets
@@ -99,6 +101,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     // Optionally, remove fleet if ships reach 0
                     if (fleet.TotalShips <= 0) _context.Fleets.Remove(fleet);
                 }
+                
                 var ship = await _context.Ships.FindAsync(fleet.ShipId);
                 if (ship != null)
                 {

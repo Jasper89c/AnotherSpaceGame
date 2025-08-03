@@ -5,11 +5,7 @@ using System.ComponentModel;
 namespace AnotherSpaceGame.Models
 {
     public class ApplicationUser : IdentityUser
-    {
-        // navigation property for private messages
-        public ICollection<PrivateMessage> PrivateMessagesSent { get; set; }
-        public ICollection<PrivateMessage> PrivateMessagesReceived { get; set; }
-        
+    {        
         // navigation property for ViralReversedShips
         public ViralReversedShips ViralReversedShips { get; set; }
         // navigation property for counterattacks
@@ -93,5 +89,6 @@ namespace AnotherSpaceGame.Models
         public decimal ArtifactShield { get; set; }
         public bool IsNPC { get; set; }
         public DateTime ITechCooldown { get; set; }
+        public long TempleHeight { get; set; }
     }
 }

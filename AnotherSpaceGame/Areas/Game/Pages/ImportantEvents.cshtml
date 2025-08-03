@@ -12,10 +12,73 @@
 
     var prevDisabled = Model.PageNumber <= 1 ? "disabled" : "";  
     var nextDisabled = Model.PageNumber >= Model.TotalPages ? "disabled" : "";  
+
+   
 }  
 
 <h2>Important Events</h2>  
 <p>Here you can find a list of important events that have occurred in the game.</p>  
+
+@* UW STUFF *@
+@if (Model.Usernames.Count > 0)
+{
+    <div class="alert alert-info">
+        <p>WARNING!: The following users have completed the Kal-Zul Hektar:
+            @foreach (var s in Model.Usernames)
+            {
+                s.ToString();
+            }            
+        </p>
+    </div>
+
+}
+@if(Model.serverStats.UWEnabled == true)
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <h5 class="card-header">
+                        Ultimate Weapon Active!!
+                    </h5>
+                    <div class="card-body">
+                        <p class="card-text">
+                            <h3>@Model.serverStats.UWHolderName has actived the Ultimate Weapon</h3>
+                            Attack Restrictions have been lifted against the Empire!
+                            Stop this Empire before they destroy the galaxy!
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <h3>Time Remaining</h3>
+                        @{
+                            // Fix for CS1061: 'DateTime' does not contain a definition for 'TotalDays'
+                            // The 'KalZulLoktarUnlockTimer' property is likely a DateTime, not a TimeSpan. Adjust the code accordingly.
+                            var timeRemaining = Model.userProject.KalZulLoktarUnlockTimer - DateTime.Now; // Calculate the remaining time as a TimeSpan  
+                            var days = timeRemaining.TotalDays;  
+                            var hours = timeRemaining.Hours;  
+                            var minutes = timeRemaining.Minutes;  
+                            var seconds = timeRemaining.Seconds;  
+                        }
+                        <div class="progress">
+                            <div class="progress">
+                                <p>Days: @days Hours: @hours Minutes: @minutes</p>
+                                <div class="progress-bar" role="progressbar"
+                                     style="width:@Model.UWProgressPercent%;"
+                                     aria-valuenow="@Model.UWProgressPercent"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                    @Model.UWProgressPercent%
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+}
+
 
 <form method="get" class="mb-3">  
     <div class="row g-2 align-items-center">  

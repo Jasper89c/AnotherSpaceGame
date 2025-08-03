@@ -13,7 +13,7 @@ namespace AnotherSpaceGame.Models
         public ApplicationUser ApplicationUser { get; set; }
 
         [Description("Exploration Points Needed")]
-        public int ExplorationPointsNeeded { get; set; }
+        public long ExplorationPointsNeeded { get; set; }
 
         [Description("Exploration Completed")]
         public decimal ExplorationCompleted { get; set; }

@@ -38,16 +38,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            Infrastructer infra = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
-            if (infra == null)
+            Infrastructer = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            if (Infrastructer == null)
             {
                 StatusMessage = "Infrastructure not found.";
                 return Page();
             }
-
-            TotalLevels = infra.TotalLevels; // Assume you have a property or method to get total levels
+            ServerStats serverStats = _context.ServerStats.FirstOrDefault();
+            if(serverStats.UWEnabled == true)
+            {
+                return RedirectToPage("/Projects");
+            }
+            TotalLevels = Infrastructer.TotalLevels; // Assume you have a property or method to get total levels
             TurnsRequired = TotalLevels * 200;
-            CanRedistribute = user.ITechCooldown < DateTime.UtcNow;
+            CanRedistribute = user.ITechCooldown < DateTime.Now;
             CooldownTimer = user.ITechCooldown;
 
             return Page();
@@ -59,10 +63,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            Infrastructer infra = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
-            CanRedistribute = user.ITechCooldown < DateTime.UtcNow;
+            Infrastructer = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            var userTurns = _context.Turns.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            CanRedistribute = user.ITechCooldown < DateTime.Now;
             CooldownTimer = user.ITechCooldown;
-            if (infra == null)
+            if (Infrastructer == null)
             {
                 StatusMessage = "Infrastructure not found.";
                 return Page();
@@ -77,22 +82,22 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 StatusMessage = "Investment cannot be negative.";
                 return Page();
             }
-            if (investment > user.Turns.CurrentTurns)
+            if (investment > userTurns.CurrentTurns)
             {
-                StatusMessage = $"You do not have enough turns. You have {user.Turns.CurrentTurns} turns remaining.";
+                StatusMessage = $"You do not have enough turns. You have {userTurns.CurrentTurns} turns remaining.";
                 return Page();
             }
-            if (investment > (infra.ITechInvestmentTurnsRequired - infra.ITechInvestmentTurns))
+            if (investment > (Infrastructer.ITechInvestmentTurnsRequired - Infrastructer.ITechInvestmentTurns))
             {
-                investment = infra.ITechInvestmentTurnsRequired - infra.ITechInvestmentTurns;
+                investment = Infrastructer.ITechInvestmentTurnsRequired - Infrastructer.ITechInvestmentTurns;
             }
             // Update ITech investment turns
-            infra.ITechInvestmentTurns += investment;
+            Infrastructer.ITechInvestmentTurns += investment;
             var turnResult = await _turnService.TryUseTurnsAsync(user.Id, investment);
 
-            if (infra.ITechInvestmentTurns >= infra.ITechInvestmentTurnsRequired)
+            if (Infrastructer.ITechInvestmentTurns >= Infrastructer.ITechInvestmentTurnsRequired)
             {
-                StatusMessage = $"ITech investment updated. Current investment turns: {infra.ITechInvestmentTurns}";
+                StatusMessage = $"ITech investment updated. Current investment turns: {Infrastructer.ITechInvestmentTurns}";
             }
             else
             {
@@ -110,16 +115,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-            CanRedistribute = user.ITechCooldown < DateTime.UtcNow;
+            CanRedistribute = user.ITechCooldown < DateTime.Now;
             CooldownTimer = user.ITechCooldown;
-            Infrastructer infra = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            Infrastructer = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
             int total = housing + commercial + industry + agriculture + mining;
+            TotalLevels = Infrastructer.TotalLevels;
             if (total > TotalLevels)
             {
                 StatusMessage = $"The sum of all levels cannot exceed {TotalLevels}. Your total: {total}.";
                 return Page();
             }
-            if (infra == null)
+            if (Infrastructer == null)
             {
                 StatusMessage = "Infrastructure not found.";
                 return Page();
@@ -130,14 +136,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
             // Update infrastructure levels
-            infra.Housing = housing;
-            infra.Commercial = commercial;
-            infra.Industry = industry;
-            infra.Agriculture = agriculture;
-            infra.Mining = mining;
-            infra.ITechInvestmentTurns = 0; // Reset ITech investment turns
-            user.ITechCooldown = DateTime.UtcNow.AddHours(48); // Set cooldown to 48 hours
-            _context.Infrastructers.Update(infra);
+            Infrastructer.Housing = housing;
+            Infrastructer.Commercial = commercial;
+            Infrastructer.Industry = industry;
+            Infrastructer.Agriculture = agriculture;
+            Infrastructer.Mining = mining;
+            Infrastructer.UnusedLevels = 0;
+            Infrastructer.ITechInvestmentTurns = 0; // Reset ITech investment turns
+            user.ITechCooldown = DateTime.Now.AddHours(48); // Set cooldown to 48 hours
+            _context.Infrastructers.Update(Infrastructer);
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 

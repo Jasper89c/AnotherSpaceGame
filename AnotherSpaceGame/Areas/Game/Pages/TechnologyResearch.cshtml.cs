@@ -63,7 +63,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 TurnsToInvest = availableTurns;
             }
-
+            if (TurnsToInvest > 45)
+            {
+                TurnsToInvest = 45;
+            }
 
             // Find the research model and property
             object researchModel = null;
@@ -97,7 +100,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             foreach (var model in researchModels)
             {
                 if (model == null) continue;
-                turnsRequiredProp = model.GetType().GetProperty(turnsRequiredPropName);
+                turnsRequiredProp = model.GetType()
+                .GetProperties()
+                .FirstOrDefault(p =>
+                    string.Equals(p.Name.Replace("_", ""), turnsRequiredPropName, StringComparison.OrdinalIgnoreCase));
                 if (turnsRequiredProp != null)
                 {
                     researchModel = model;
@@ -121,7 +127,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (newTurnsRequired <= 0)
             {
                 string boolPropName = turnsRequiredPropName.Replace("TurnsRequired", "");
-                var boolProp = researchModel.GetType().GetProperty(boolPropName);
+                var boolProp = researchModel.GetType()
+                    .GetProperties()
+                    .FirstOrDefault(p =>
+                    string.Equals(p.Name.Replace("_", ""), boolPropName, StringComparison.OrdinalIgnoreCase)
+                    && p.PropertyType == typeof(bool));
                 if (boolProp != null && boolProp.PropertyType == typeof(bool))
                 {
                     boolProp.SetValue(researchModel, true);
@@ -657,6 +667,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             });
                         }
                     }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
+                    }
 
                     break;
                 case Faction.AMiner:
@@ -1136,6 +1154,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             });
                         }
                     }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
+                    }
                     break;
                 case Faction.Marauder:
                     MarauderData = _context.MarauderResearches.FirstOrDefault(r => r.ApplicationUserId == user.Id);
@@ -1578,6 +1604,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             });
                         }
                     }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
+                    }
                     break;
                 case Faction.Viral:
                     ViralData = _context.ViralResearches.FirstOrDefault(r => r.ApplicationUserId == currentUser.Id);
@@ -1945,6 +1979,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 TurnsRequired = PClassData.KalZulArtifactTurnsRequired
                             });
                         }
+                    }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
                     }
 
                     break;
@@ -2374,6 +2416,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 TurnsRequired = PClassData.KalZulArtifactTurnsRequired
                             });
                         }
+                    }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
                     }
 
                     break;
@@ -2842,6 +2892,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                                 TurnsRequired = PClassData.KalZulArtifactTurnsRequired
                             });
                         }
+                    }
+                    if (PClassData.AdvancedExploration != true)
+                    {
+                        ListOfAvailableResearch.Add(new AvailableResearch
+                        {
+                            Name = "Advanced Exploration",
+                            TurnsRequired = PClassData.AdvancedExplorationTurnsRequired
+                        });
                     }
                     break;
                 case Faction.KalZul:

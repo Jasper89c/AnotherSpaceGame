@@ -29,7 +29,7 @@ namespace AnotherSpaceGame.Hubs
             {
                 UserName = userName,
                 Message = message,
-                SentAt = DateTime.UtcNow
+                SentAt = DateTime.Now
             };
             _context.ChatMessages.Add(chatMessage);
             await _context.SaveChangesAsync();

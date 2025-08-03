@@ -1,0 +1,38 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.Other.PlanetsModel
+@{
+    ViewData["Title"] = "Planets";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h1>Planets</h1>
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+<div class="col-12">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Population Growth</th>
+                <th>Agriculture Modifier</th>
+                <th>Artifact Modifier</th>
+                <th>Land Size</th>
+                <th>Ore Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var planet in Model.Planets)
+            {
+                <tr>
+                    <td>@planet.Name</td>
+                    <td>@planet.Description</td>
+                    <td>@planet.PopulationGrowth</td>
+                    <td>@planet.AgricultureModifier</td>
+                    <td>@planet.ArtifactModifier</td>
+                    <td>@planet.LandSize</td>
+                    <td>@planet.OreSize</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

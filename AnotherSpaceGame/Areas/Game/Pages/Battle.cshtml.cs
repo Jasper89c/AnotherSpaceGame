@@ -54,6 +54,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public string PowerRatingWarning { get; set; }
         public bool IsFederationWar { get; set; } = false;
         public bool IsCounterAttack { get; set; } = false;
+        public bool IsSameFederation { get; private set; }
 
         public BattleModel(ApplicationDbContext context, TurnService turnService, UserManager<ApplicationUser> userManager)
         {
@@ -87,6 +88,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(s => s.Battlelogs)
                 .Include(s => s.ImportantEvents)
                 .Include(s => s.CounterAttacks)
+                .Include(s => s.Exploration)
                 .FirstOrDefault(u => u.Id == TargetUserId);
             if (targetUser == null)
             {
@@ -151,6 +153,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 NotEnoughTurnsMessage = "You do not have enough turns to attack. (5 required)";
                 return RedirectToPage("ConfirmAttack", new { NotEnoughTurnsMessage, SelectedAttackType = AttackType, TargetUser = targetUser, CurrentUser = currentUser });
             }
+            // check if current user and target user are in same federation
+            if (currentUser.FederationId != null && targetUser.FederationId != null)
+            {
+                int currentFedId = currentUser.FederationId.Value;
+                int targetFedId = targetUser.FederationId.Value;
+                // Check if both users are in the same federation
+                IsSameFederation = currentFedId == targetFedId;
+                NotEnoughTurnsMessage = IsSameFederation ? "You cannot attack a member of your own Federation." : null;
+            }
+            else
+            {
+                IsSameFederation = false;
+            }
             // Check for active damage protection
             if (targetUser != null && targetUser.DamageProtection > DateTime.Now)
             {
@@ -168,28 +183,66 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // check 30% above or below
             var minAllowed = 0.0;
             var maxAllowed = 0.0;
-            if (currentUser.PowerRating >= targetUser.PowerRating)
+            var serverStats = _context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled != true)
             {
-                minAllowed = currentUser.PowerRating * 0.7;
-                if (targetUser.PowerRating > minAllowed)
+                if (currentUser.PowerRating >= targetUser.PowerRating)
                 {
-                    PowerRatingAllowed = true;
+                    minAllowed = currentUser.PowerRating * 0.7;
+                    if (targetUser.PowerRating > minAllowed)
+                    {
+                        PowerRatingAllowed = true;
+                    }
+                    else
+                    {
+                        PowerRatingAllowed = false;
+                    }
                 }
-                else
+                else if (currentUser.PowerRating <= targetUser.PowerRating)
                 {
-                    PowerRatingAllowed = false;
+                    maxAllowed = currentUser.PowerRating * 1.3;
+                    if (targetUser.PowerRating > maxAllowed)
+                    {
+                        PowerRatingAllowed = false;
+                    }
+                    else
+                    {
+                        PowerRatingAllowed = true;
+                    }
                 }
             }
-            else if (currentUser.PowerRating <= targetUser.PowerRating)
+            else
             {
-                maxAllowed = currentUser.PowerRating * 1.3;
-                if (targetUser.PowerRating > maxAllowed)
+                if (serverStats.UWEnabled == true && targetUser.Id == serverStats.UWHolderId)
                 {
-                    PowerRatingAllowed = false;
+                    PowerRatingAllowed = true;
                 }
                 else
                 {
-                    PowerRatingAllowed = true;
+                    if (currentUser.PowerRating >= targetUser.PowerRating)
+                    {
+                        minAllowed = currentUser.PowerRating * 0.7;
+                        if (targetUser.PowerRating > minAllowed)
+                        {
+                            PowerRatingAllowed = true;
+                        }
+                        else
+                        {
+                            PowerRatingAllowed = false;
+                        }
+                    }
+                    else if (currentUser.PowerRating <= targetUser.PowerRating)
+                    {
+                        maxAllowed = currentUser.PowerRating * 1.3;
+                        if (targetUser.PowerRating > maxAllowed)
+                        {
+                            PowerRatingAllowed = false;
+                        }
+                        else
+                        {
+                            PowerRatingAllowed = true;
+                        }
+                    }
                 }
             }
 
@@ -284,7 +337,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 NotEnoughTurnsMessage = "You cannot attack yourself.";
                 return RedirectToPage("ConfirmAttack", new { NotEnoughTurnsMessage, SelectedAttackType = AttackType, TargetUser = targetUser, CurrentUser = currentUser });
             }
-
+            // check user has a fleet
+            if (currentUser.Fleets.Count == 0)
+            {
+                NotEnoughTurnsMessage = "No Ships available to attack. Try building some ships first.";
+                return Page();
+            }
             // Get current user's top 10 fleets, ignoring any with ShipType Starbase
             CurrentUserFleets = (from fleet in _context.Fleets
                                  join ship in _context.Ships on fleet.ShipId equals ship.Id
@@ -1233,6 +1291,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         TotalShipsStart = f.TotalShipsStart
     })
             .ToList();
+            AttackerFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
+            DefenderFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
             if (TargetUserFleets.Count() > 0)
             {
                 // Wave 1
@@ -1282,13 +1342,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     // Defender Attacks First
                     if (defender.Range >= attacker.Range)
                     {
-                        
-                        // Defender Attacks First
-                        // Defender Attacks
-                        DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
-                        HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        if (defender.TotalShips > 0)
+                        {
+                            // Defender Attacks First
+                            // Defender Attacks
+                            DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
+                            HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageAttackersStackTakes = 0;
+                            HowManyAttackersShipsKilled = 0;
+                        }
                         //// Attacker Retals (if Defender does not have NoRetal && Attacker does not have NoDefense)
-                        if (defender.NoRetal == false && attacker.NoDefense == false)
+                        if (defender.NoRetal == false && attacker.NoDefense == false && attacker.TotalShips > 0)
                         {
                             DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, true).DamageDealt;
                             HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, true).ShipsKilled;
@@ -1358,11 +1425,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         // Update Stacks
                         attacker.TotalShips -= HowManyAttackersShipsKilled;
                         defender.TotalShips -= HowManyDefendersShipsKilled;
-                        // Attacker Attacks
-                        DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
-                        HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        if (attacker.TotalShips > 0)
+                        {
+                            // Attacker Attacks
+                            DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
+                            HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageDefendersStackTakes = 0;
+                            HowManyDefendersShipsKilled = 0;
+                        }
                         //// Defender Retals (if Attacker does not have NoRetal && Defender does not have NoDefense)
-                        if (attacker.NoRetal == false && defender.NoDefense == false)
+                        if (attacker.NoRetal == false && defender.NoDefense == false && defender.TotalShips > 0)
                         {
                             DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, true).DamageDealt;
                             HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, true).ShipsKilled;
@@ -1393,13 +1468,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     // Attacker Attacks First
                     else
                     {
-                        
-                        // Attacker Attacks First
-                        // Attacker Attacks
-                        DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
-                        HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        if (attacker.TotalShips > 0)
+                        {
+                            // Attacker Attacks First
+                            // Attacker Attacks
+                            DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
+                            HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageDefendersStackTakes = 0;
+                            HowManyDefendersShipsKilled = 0;
+                        }
                         //// Defender Retals (if Attacker does not have NoRetal && Defender does not have NoDefense)
-                        if (attacker.NoRetal == false && defender.NoDefense == false)
+                        if (attacker.NoRetal == false && defender.NoDefense == false && defender.TotalShips > 0)
                         {
                             DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, true).DamageDealt;
                             HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, true).ShipsKilled;
@@ -1423,11 +1505,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         // Update Stacks
                         attacker.TotalShips -= HowManyAttackersShipsKilled;
                         defender.TotalShips -= HowManyDefendersShipsKilled;
-                        // Defender Attacks
-                        DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
-                        HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        if (defender.TotalShips > 0)
+                        {
+                            // Defender Attacks
+                            DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
+                            HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageAttackersStackTakes = 0;
+                            HowManyAttackersShipsKilled = 0;
+                        }
                         //// Attacker Retals (if Defender does not have NoRetal && Attacker does not have NoDefense)
-                        if (defender.NoRetal == false && attacker.NoDefense == false)
+                        if (defender.NoRetal == false && attacker.NoDefense == false && attacker.TotalShips > 0)
                         {
                             DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, true).DamageDealt;
                             HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, true).ShipsKilled;
@@ -2100,20 +2190,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 _context.Planets.Update(DefenderPlanets[0]);
                             }
                             else if (DefenderPlanets.Count == 2)
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                                 _context.Planets.Update(DefenderPlanets[0]);
                                 _context.Planets.Update(DefenderPlanets[1]);
                             }
@@ -2121,19 +2208,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                                 DefenderPlanets[2].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[2].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[2].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[2].DateTimeAcquired = DateTime.Now;
                                 _context.Planets.Update(DefenderPlanets[0]);
                                 _context.Planets.Update(DefenderPlanets[1]);
                                 _context.Planets.Update(DefenderPlanets[2]);
+                            }
+                            if((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                            {
+                                UWEnd(targetUser, serverStats);
                             }
                         }
                         // Fleet Report + Important Events for attacker and defender
@@ -2172,6 +2260,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>"; ;
                             EndFleets += "/table>";
                         }
+                        if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                        {
+                            EndFleets += "<h3>Ultimate Weapon</h3>";
+                            EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                        }
+                        // Important Events
                         ImportantEvents attackerEvent = new ImportantEvents
                         {
                             ApplicationUserId = currentUser.Id,
@@ -2301,6 +2395,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 5);
                         StatusMessage = turnsMessage.Message;
                         VictoryMessage = $"You have won the battle against {TargetUserName}";
+                        currentUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
+                        targetUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(targetUser);
                         _context.SaveChanges();
                         return Page();
                     }
@@ -2476,13 +2572,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     // Defender Attacks First
                     if (defender.Range >= attacker.Range)
                     {
-                        
-                        // Defender Attacks First
-                        // Defender Attacks
-                        DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
-                        HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        if (defender.TotalShips > 0)
+                        {
+                            // Defender Attacks First
+                            // Defender Attacks
+                            DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
+                            HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageAttackersStackTakes = 0;
+                            HowManyAttackersShipsKilled = 0;
+                        }
                         //// Attacker Retals (if Defender does not have NoRetal && Attacker does not have NoDefense)
-                        if (defender.NoRetal == false && attacker.NoDefense == false)
+                        if (defender.NoRetal == false && attacker.NoDefense == false && attacker.TotalShips > 0)
                         {
                             DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, true).DamageDealt;
                             HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, true).ShipsKilled;
@@ -2506,11 +2609,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         // Update Stacks
                         attacker.TotalShips -= HowManyAttackersShipsKilled;
                         defender.TotalShips -= HowManyDefendersShipsKilled;
-                        // Attacker Attacks
-                        DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
-                        HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        if (attacker.TotalShips > 0)
+                        {
+                            // Attacker Attacks
+                            DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
+                            HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageDefendersStackTakes = 0;
+                            HowManyDefendersShipsKilled = 0;
+                        }
                         //// Defender Retals (if Attacker does not have NoRetal && Defender does not have NoDefense)
-                        if (attacker.NoRetal == false && defender.NoDefense == false)
+                        if (attacker.NoRetal == false && defender.NoDefense == false && defender.TotalShips > 0)
                         {
                             DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, true).DamageDealt;
                             HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, true).ShipsKilled;
@@ -2593,12 +2704,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             var max = DefenderFleet.Count + 1;
                             defender = DefenderFleet[Random.Shared.Next(0, max)];
                         }
-                        // Attacker Attacks First
-                        // Attacker Attacks
-                        DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
-                        HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        if (attacker.TotalShips > 0)
+                        {
+                            // Attacker Attacks First
+                            // Attacker Attacks
+                            DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, false).DamageDealt;
+                            HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageDefendersStackTakes = 0;
+                            HowManyDefendersShipsKilled = 0;
+                        }
                         //// Defender Retals (if Attacker does not have NoRetal && Defender does not have NoDefense)
-                        if (attacker.NoRetal == false && defender.NoDefense == false)
+                        if (attacker.NoRetal == false && defender.NoDefense == false && defender.TotalShips > 0)
                         {
                             DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, true).DamageDealt;
                             HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, true).ShipsKilled;
@@ -2622,11 +2741,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         // Update Stacks
                         attacker.TotalShips -= HowManyAttackersShipsKilled;
                         defender.TotalShips -= HowManyDefendersShipsKilled;
-                        // Defender Attacks
-                        DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
-                        HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        if (defender.TotalShips > 0)
+                        {
+                            // Defender Attacks
+                            DamageAttackersStackTakes = CalulateDefenderDamage(attacker, defender, false).DamageDealt;
+                            HowManyAttackersShipsKilled = CalulateDefenderDamage(attacker, defender, false).ShipsKilled;
+                        }
+                        else
+                        {
+                            DamageAttackersStackTakes = 0;
+                            HowManyAttackersShipsKilled = 0;
+                        }
                         //// Attacker Retals (if Defender does not have NoRetal && Attacker does not have NoDefense)
-                        if (defender.NoRetal == false && attacker.NoDefense == false)
+                        if (defender.NoRetal == false && attacker.NoDefense == false && attacker.TotalShips > 0)
                         {
                             DamageDefendersStackTakes = CalulateAttackerDamage(attacker, defender, true).DamageDealt;
                             HowManyDefendersShipsKilled = CalulateAttackerDamage(attacker, defender, true).ShipsKilled;
@@ -3299,20 +3426,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 _context.Planets.Update(DefenderPlanets[0]);
                             }
                             else if (DefenderPlanets.Count == 2)
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                                currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                                DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                                 _context.Planets.Update(DefenderPlanets[0]);
                                 _context.Planets.Update(DefenderPlanets[1]);
                             }
@@ -3320,19 +3444,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             {
                                 DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
+                                DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                                 currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
                                 DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
+                                DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                                 currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
                                 DefenderPlanets[2].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                                 DefenderPlanets[2].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                                DefenderPlanets[2].DateTimeAcquired = DateTime.UtcNow;
+                                DefenderPlanets[2].DateTimeAcquired = DateTime.Now;
                                 currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
                                 _context.Planets.Update(DefenderPlanets[0]);
                                 _context.Planets.Update(DefenderPlanets[1]);
                                 _context.Planets.Update(DefenderPlanets[2]);
+                            }
+                            if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                            {
+                                UWEnd(targetUser, serverStats);
                             }
                         }
                         // Fleet Report + Important Events for attacker and defender
@@ -3371,6 +3499,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>";
                             EndFleets += "/table>";
                         }
+                        if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                        {
+                            EndFleets += "<h3>Ultimate Weapon</h3>";
+                            EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                        }
+                        // Important Events
                         ImportantEvents attackerEvent = new ImportantEvents
                         {
                             ApplicationUserId = currentUser.Id,
@@ -3500,6 +3634,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                         StatusMessage = turnsMessage.Message;
                         VictoryMessage = $"You have won the battle against {TargetUserName}";
+                        currentUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
+                        targetUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(targetUser);
                         _context.SaveChanges();
                         return Page();
                     }
@@ -4213,20 +4349,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                     }
                     else if (DefenderPlanets.Count == 2)
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                         _context.Planets.Update(DefenderPlanets[1]);
                     }
@@ -4234,19 +4367,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[2].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[2].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[2].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[2].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                         _context.Planets.Update(DefenderPlanets[1]);
                         _context.Planets.Update(DefenderPlanets[2]);
+                    }
+                    if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                    {
+                        UWEnd(targetUser, serverStats);
                     }
                 }
                 // Fleet Report + Important Events for attacker and defender
@@ -4286,6 +4420,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>"; ;
                     EndFleets += "/table>";
                 }
+                if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                {
+                    EndFleets += "<h3>Ultimate Weapon</h3>";
+                    EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                }
+                // Important Events
                 ImportantEvents attackerEvent = new ImportantEvents
                 {
                     ApplicationUserId = currentUser.Id,
@@ -4412,6 +4552,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                 StatusMessage = turnsMessage.Message;
                 VictoryMessage = $"You have won the battle against {TargetUserName}";
+                currentUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
+                targetUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(targetUser);
                 _context.SaveChanges();
                 return Page();
             }
@@ -5119,20 +5261,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                     }
                     else if (DefenderPlanets.Count == 2)
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                         _context.Planets.Update(DefenderPlanets[1]);
                     }
@@ -5140,19 +5279,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     {
                         DefenderPlanets[0].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[0].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[0].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[0].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[1].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[1].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[1].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[1].DateTimeAcquired = DateTime.Now;
                         DefenderPlanets[2].ApplicationUser = CurrentUserFleets.FirstOrDefault().ApplicationUser;
                         DefenderPlanets[2].ApplicationUserId = CurrentUserFleets.FirstOrDefault().ApplicationUserId;
-                        DefenderPlanets[2].DateTimeAcquired = DateTime.UtcNow;
-                        currentUser.Exploration.ExplorationPointsNeeded = (int)(currentUser.Exploration.ExplorationPointsNeeded * 1.2);
+                        DefenderPlanets[2].DateTimeAcquired = DateTime.Now;
                         _context.Planets.Update(DefenderPlanets[0]);
                         _context.Planets.Update(DefenderPlanets[1]);
                         _context.Planets.Update(DefenderPlanets[2]);
+                    }
+                    if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                    {
+                        UWEnd(targetUser, serverStats);
                     }
                 }
                 // Fleet Report + Important Events for attacker and defender
@@ -5191,6 +5331,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>";
                     EndFleets += "/table>";
                 }
+                if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
+                {
+                    EndFleets += "<h3>Ultimate Weapon</h3>";
+                    EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                }
+                // Important Events
                 ImportantEvents attackerEvent = new ImportantEvents
                 {
                     ApplicationUserId = currentUser.Id,
@@ -5320,6 +5466,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                 StatusMessage = turnsMessage.Message;
                 VictoryMessage = $"You have won the battle against {TargetUserName}";
+                currentUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
+                targetUser.Exploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(targetUser);
                 _context.SaveChanges();
                 return Page();
             }
@@ -5409,6 +5557,137 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             };
             int cap = maxColoniesByFaction.TryGetValue(user.Faction, out int val) ? val : 10;
             return user.TotalColonies > cap - 1;
+        }
+
+        public void UWEnd(ApplicationUser user,ServerStats serverStats)
+        {
+            var userProject = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
+            var userResearch = _context.ProjectsResearches.FirstOrDefault(up => up.ApplicationUserId == user.Id);
+            userProject.KalZulHektar = false;
+            userProject.KalZulLoktar = false;
+            userProject.KalZulHektarCreditsRequired = 800000000; // Reset requirements for other users
+            userProject.KalZulHektarTurnsRequired = 400; // Reset requirements for other users
+            userProject.KalZulLoktarCreditsRequired = 400000000; // Reset requirements for other users
+            userProject.KalZulLoktarTurnsRequired = 200; // Reset requirements for other users
+            userProject.KalZulLoktarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+            userProject.KalZulHektarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+            _context.UserProjects.Update(userProject); // Update other users' projects
+            userResearch.KalZulArtifact = false;
+            userResearch.KalZulArtifactTurnsRequired = 90;
+            _context.ProjectsResearches.Update(userResearch);
+            serverStats.UWCompleted = false;
+            serverStats.UWEnabled = false;
+            serverStats.UWHolderId = null; // Reset the holder ID
+            serverStats.UWHolderName = null; // Reset the holder name
+            _context.ServerStats.Update(serverStats); // Update server stats
+        }
+        public long SetExplorationPointsNeeded(ApplicationUser user)
+        {
+            long explorationPointsNeeded = user.TotalPlanets switch
+            {
+                1 => 5000,
+                2 => 6000,
+                3 => 7200,
+                4 => 8640,
+                5 => 10368,
+                6 => 12442,
+                7 => 14930,
+                8 => 17916,
+                9 => 21499,
+                10 => 25799,
+                11 => 30959,
+                12 => 37150,
+                13 => 44581,
+                14 => 53497,
+                15 => 64196,
+                16 => 77035,
+                17 => 92442,
+                18 => 110931,
+                19 => 133117,
+                20 => 159740,
+                21 => 191688,
+                22 => 230026,
+                23 => 276031,
+                24 => 331237,
+                25 => 397484,
+                26 => 476981,
+                27 => 572377,
+                28 => 686853,
+                29 => 824223,
+                30 => 989068,
+                31 => 1186882,
+                32 => 1424258,
+                33 => 1709109,
+                34 => 2050931,
+                35 => 2461118,
+                36 => 2953341,
+                37 => 3544009,
+                38 => 4252811,
+                39 => 5103373,
+                40 => 6124048,
+                41 => 7348858,
+                42 => 8818629,
+                43 => 10582355,
+                44 => 12698826,
+                45 => 15238592,
+                46 => 18286310,
+                47 => 21943572,
+                48 => 26332286,
+                49 => 31598744,
+                50 => 37918492,
+                51 => 45502191,
+                52 => 54602629,
+                53 => 65523155,
+                54 => 78627786,
+                55 => 94353343,
+                56 => 113224011,
+                57 => 135868814,
+                58 => 163042576,
+                59 => 195651092,
+                60 => 234781310,
+                61 => 281737572,
+                62 => 338085086,
+                63 => 405702103,
+                64 => 486842524,
+                65 => 584211029,
+                66 => 701053235,
+                67 => 841263881,
+                68 => 1009516658,
+                69 => 1211419989,
+                70 => 1453703987,
+                71 => 1744444785,
+                72 => 2093333742,
+                73 => 2512000490,
+                74 => 3014400588,
+                75 => 3617280705,
+                76 => 4340736847,
+                77 => 5208884216,
+                78 => 6250661059,
+                79 => 7500793271,
+                80 => 9000951925,
+                81 => 10801142310,
+                82 => 12961370772,
+                83 => 15553644926,
+                84 => 18664373912,
+                85 => 22397248694,
+                86 => 26876698433,
+                87 => 32252038120,
+                88 => 38702445743,
+                89 => 46442934892,
+                90 => 55731521871,
+                91 => 66877826245,
+                92 => 80253391494,
+                93 => 96304069792,
+                94 => 115564883751,
+                95 => 138677860501,
+                96 => 166413432601,
+                97 => 199696119121,
+                98 => 239635342946,
+                99 => 287562411535,
+                _ => 287562411535 // Default if not in range
+            };
+
+            return explorationPointsNeeded;
         }
     }
 

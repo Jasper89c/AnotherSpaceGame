@@ -10,6 +10,19 @@
         @Html.Raw(Model.StatusMessage)
     </div>
 }
+<h1>Projects</h1>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+<p>
+    <a asp-page="/Temple">Go to Temples</a>
+</p>
 
 @if (Model.Faction == AnotherSpaceGame.Models.Faction.Terran || Model.Faction == AnotherSpaceGame.Models.Faction.AMiner || Model.Faction == AnotherSpaceGame.Models.Faction.Marauder || Model.Faction == AnotherSpaceGame.Models.Faction.Guardian)
 {    
@@ -21,11 +34,11 @@
             }
             @if (Model.ClusterResearch.ColonyClusterLevel2 == true)
             {
-                <a asp-page="/Game/CreateColonyCluster" asp-route-id="2">Create Colony Cluster Level 2</a>
+                <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="2">Create Colony Cluster Level 2</a>
             }
             @if (Model.ClusterResearch.ColonyClusterLevel3 == true)
             {
-                <a asp-page="/Game/CreateColonyCluster" asp-route-id="3">Create Colony Cluster Level 3</a>
+                <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="3">Create Colony Cluster Level 3</a>
             }
     </p>
     </div>
@@ -34,12 +47,12 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
 {
     @if(Model.ViralSpecificResearch.ViralClustering == true)
     {
-    <p>        
-        <a asp-page="/Game/CreateColonyCluster" asp-route-id="4">Create Tainted C.2</a>
-        <a asp-page="/Game/CreateColonyCluster" asp-route-id="5">Create Tainted C.3</a>
-        <a asp-page="/Game/CreateColonyCluster" asp-route-id="6">Create Tainted C.4</a>
-        <a asp-page="/Game/CreateColonyCluster" asp-route-id="7">Create Infected Colony Cluster 2</a>
-        <a asp-page="/Game/CreateColonyCluster" asp-route-id="8">Create Infected Colony Cluster 3</a>
+    <p>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="4">Create Tainted C.2</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="5">Create Tainted C.3</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="6">Create Tainted C.4</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="7">Create Infected Colony Cluster 2</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="8">Create Infected Colony Cluster 3</a>
     </p>
     }
 }
@@ -48,17 +61,17 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
     @if (Model.CollectiveSpecificResearch.CollectiveClustering == true)
     {
         <p>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="9">Create Similare C.2</a>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="10">Create Similare C.3</a>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="11">Create Similare C.4</a>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="14">Create Similare C.5</a>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="12">Create Assimilated Cluster 2</a>
-            <a asp-page="/Game/CreateColonyCluster" asp-route-id="13">Create Assimilated Cluster 3</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="9">Create Similare C.2</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="10">Create Similare C.3</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="11">Create Similare C.4</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="14">Create Similare C.5</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="12">Create Assimilated Cluster 2</a>
+            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="13">Create Assimilated Cluster 3</a>
         </p>
     }
 }
 
-@if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true)
+@if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true && Model.ServerUWEnabled != true)
 {
     <div>
         <h2>Capsule Laboratory</h2>
@@ -77,7 +90,7 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
         @Html.AntiForgeryToken()
     </form>
 }
-else if (Model.UserProjects.CapsuleLab == true)
+else if (Model.UserProjects.CapsuleLab == true && Model.ServerUWEnabled != true)
 {
     <p>
         <a asp-page="/CapsuleLab">Go to Capsule Lab</a>
@@ -87,7 +100,7 @@ else
 {
 }
 
-@if (Model.UserProjects.Itech != true && Model.ProjectsResearch.ITechLaboratory == true)
+@if (Model.UserProjects.Itech != true && Model.ProjectsResearch.ITechLaboratory == true && Model.ServerUWEnabled != true)
 {
     <div>
         <h2>ITech Laboratory</h2>
@@ -106,17 +119,17 @@ else
         @Html.AntiForgeryToken()
     </form>
 }
-else if (Model.UserProjects.Itech == true)
+else if (Model.UserProjects.Itech == true && Model.ServerUWEnabled != true)
 {
     <p>
-        <a asp-page="/Game/Itech">Go to Itech</a>
+        <a asp-page="/Itech">Go to Itech</a>
     </p>
 }
 else
 {
 }
 
-@if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral && Model.ViralSpecificResearch.UnreverseEngineering == true)
+@if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral && Model.ViralSpecificResearch.UnreverseEngineering == true && Model.ServerUWEnabled != true)
 {
     <div>
         <h2>Unreverse Engineering</h2>
@@ -135,12 +148,99 @@ else
         @Html.AntiForgeryToken()
     </form>
 }
-else if (Model.UserProjects.UnreverseEngineering == true)
+else if (Model.UserProjects.UnreverseEngineering == true && Model.ServerUWEnabled != true)
 {
     <p>
-        <a asp-page="/Game/UnreverseEngineering">Go to Unreverse Engineering</a>
+        <a asp-page="/UnreverseEngineering">Go to Unreverse Engineering</a>
     </p>
 }
 else
 {
+}
+
+@if (Model.ProjectsResearch.KalZulArtifact == true && Model.ProjectsResearch.KalZulArtifactTurnsRequired == 0 && Model.ServerUWEnabled != true)
+{
+    <div>
+        <h2>Kal-Zul Hektar</h2>
+        <p>Turns Required: @Model.UserProjects.KalZulHektarTurnsRequired</p>
+        <p>Credits Required: @Model.UserProjects.KalZulHektarCreditsRequired</p>
+        <p>Status: @(Model.UserProjects.KalZulHektar ? "Unlocked" : "Locked")</p>
+    </div>
+    <form method="post" asp-page-handler="InvestKalZulHektar">
+        <label>Turns to Invest:</label>
+        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <br />
+        <label>Credits to Invest:</label>
+        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulHektarCreditsRequired" />
+        <br />
+        <button type="submit">Invest</button>
+        @Html.AntiForgeryToken()
+    </form>
+}
+else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHektarUnlockTimer >= DateTime.Now)
+{
+    <div>
+        <h2>Kal-Zul Loktar</h2>
+        @{
+            var minutes = (int)Math.Ceiling((Model.UserProjects.KalZulHektarUnlockTimer - DateTime.Now).TotalHours);
+            if (minutes < 0) { minutes = 0; }
+        }
+        <p>Unlock Timer: @minutes Hours remaining</p>
+    </div>
+}
+else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHektarUnlockTimer <= DateTime.Now)
+{
+    <div>
+        <h2>Kal-Zul Loktar</h2>
+        <p>Turns Required: @Model.UserProjects.KalZulLoktarTurnsRequired</p>
+        <p>Credits Required: @Model.UserProjects.KalZulLoktarCreditsRequired</p>
+        <p>Status: @(Model.UserProjects.KalZulLoktar ? "Unlocked" : "Locked")</p>
+    </div>
+    <form method="post" asp-page-handler="InvestKalZulLoktar">
+        <label>Turns to Invest:</label>
+        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <br />
+        <label>Credits to Invest:</label>
+        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulLoktarCreditsRequired" />
+        <br />
+        <button type="submit">Invest</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <div>
+        <h3>Please Read the following before completing this project!!</h3>
+        <p>Restrictions for completeing this project</p>
+        <p>Damage protection will end immediately.</p>
+        <p>Your planets will be at risk.</p>
+        <p>All your ships will be at risk.</p>
+        <p>Exploring while this project is active will remove any damage protection.</p>
+        <p>Losing a battle below 500,000 Power rating will destroy the project and reset the restrictions back.</p>
+        <p>Your Big Time Capsules will be set to Quantity of 2.</p>
+        <p>Once the timer ends and activated you will lose your empire but gain rewards for your next empire.</p>
+    </div>
+}
+else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLoktarUnlockTimer > DateTime.Now)
+{
+    <div>
+        <h2>Kal-Zul Loktar</h2>
+        @{
+            var minutes = (int)Math.Ceiling((Model.UserProjects.KalZulLoktarUnlockTimer - DateTime.Now).TotalMinutes);
+            if (minutes < 0) { minutes = 0; }
+        }
+        <p>Unlock Timer: @minutes minutes remaining</p>
+    </div>
+}
+else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLoktarUnlockTimer <= DateTime.Now)
+{
+    <h1>ACTIVATE ULTIMATE WEAPON</h1>
+    <p>WARNING: This will destroy your empire!!!</p>
+    <p>Server Effects:</p>
+    <p>All Empires Credits -99%</p>
+    <p>All Empires Food -99%</p>
+    <p>All Empires Minerals Etc -99%</p>
+    <p>All Empires Damage Protection = 24 hours</p>
+    <form method="post" asp-page-handler="DestroyGalaxy">        
+        <button type="submit">DESTROY GALAXY!!</button>
+        @Html.AntiForgeryToken()
+    </form>
+    <p>You will be redirected to restart your empire and choose your rewards. Failure to do this will result in the loss of your rewards.</p>
 }

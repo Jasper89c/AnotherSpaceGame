@@ -203,6 +203,12 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         planets[0].Name = "B." + Random.Shared.RandomString(4);
                         // Set the planet type for Collective faction
                     }
+                    if (user.Faction == Faction.Marauder)
+                    {
+                        planets[0].Type = PlanetType.Balanced;
+                        planets[0].Name = "M." + Random.Shared.RandomString(4);
+                        // Set the planet type for Collective faction
+                    }
 
                     user.Planets = planets;
                     _context.Planets.AddRange(planets);
@@ -220,11 +226,11 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                     user.PowerRating = 1000; // Initialize Power Rating
                     // --- End Power Rating logic ---
                     // --- Playing Since ---
-                    user.PlayingSince = DateTime.UtcNow; // Set Playing Since to current time
+                    user.PlayingSince = DateTime.Now; // Set Playing Since to current time
                     // --- End Playing Since logic ---
                     // --- Empire Age ---
                     // Fixing the EmpireAge assignment to correctly calculate the age in days
-                    user.EmpireAge = (DateTime.UtcNow - user.PlayingSince).TotalDays; // Set Empire Age to current time
+                    user.EmpireAge = (DateTime.Now - user.PlayingSince).TotalDays; // Set Empire Age to current time
                     // --- End Empire Age logic ---
                     // --- Battles Won ---
                     user.BattlesWon = 0; // Initialize Battles Won
@@ -254,7 +260,7 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                     user.DamageProtection = DateTime.Now.AddDays(1); // Initialize Damage Protection
                     // --- End Damage Protection logic ---
                     // --- Last Activity ---
-                    user.LastAction = DateTime.UtcNow; // Set Last Activity to current time
+                    user.LastAction = DateTime.Now; // Set Last Activity to current time
                     // --- End Last Activity logic ---
                     // --- Artifact Shield ---
                     user.ArtifactShield = 0m; // Initialize Artifact Shield
@@ -269,7 +275,7 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         {
                             ApplicationUserId = user.Id,
                             Text = "Welcome to Another Space Game! Your journey begins now.",
-                            DateAndTime = DateTime.UtcNow
+                            DateAndTime = DateTime.Now
                         }
                     };  
                     user.ImportantEvents = importantEvents;
@@ -281,7 +287,7 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         new BattleLogs
                         {
                             ApplicationUserId = user.Id,
-                            DateAndTime = DateTime.UtcNow,
+                            DateAndTime = DateTime.Now,
                             Attacker = "System",
                             Defender = "System",
                             FleetReport = "Sytem",
@@ -498,7 +504,7 @@ namespace AnotherSpaceGame.Areas.Identity.Pages.Account
                         _context.ViralReversedShips.Add(viralReversedShips);
                     }
                     // --- End viralreversedships logic ---
-                    user.ITechCooldown = DateTime.UtcNow.AddDays(2); // Initialize ITechCooldown to current time
+                    user.ITechCooldown = DateTime.Now.AddDays(2); // Initialize ITechCooldown to current time
 
                     await _context.SaveChangesAsync();
 

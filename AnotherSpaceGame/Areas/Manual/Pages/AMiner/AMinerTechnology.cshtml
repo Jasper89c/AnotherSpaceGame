@@ -1,0 +1,35 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.AMiner.AMinerTechnologyModel
+@{
+    ViewData["Title"] = "A.Miner Technology";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>A.Miner Technology</h1>
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+<div class="col-5">
+    <table class="table table-bordered table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Research Name
+                </th>
+                <th>
+                    Turns Required
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ResearchItems)
+            {                
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.TurnsRequired
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    </div>

@@ -96,7 +96,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 SenderId = user.Id,
                 MessageText = NewMessage.Trim(),
-                SentAt = DateTime.UtcNow,
+                SentAt = DateTime.Now,
                 FederationId = user.FederationId.Value // Set the federation ID
             };
 

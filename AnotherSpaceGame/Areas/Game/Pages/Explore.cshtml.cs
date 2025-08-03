@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
@@ -27,10 +28,39 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         public Exploration UserExploration { get; set; }
+        public UserProjects UserProjects { get; set; }
         public string ExploreMessage { get; set; }
         public bool CanExplore { get; set; }
         public Planets? NewPlanet { get; set; }
-
+        [BindProperty]
+        public PlanetType SelectedPlanetType { get; set; } = PlanetType.None;
+        public IEnumerable<SelectListItem> PlanetTypeOptions =>
+        Enum.GetValues(typeof(PlanetType))
+        .Cast<PlanetType>().Where(pt => 
+        pt != PlanetType.AssimilatedC1 && 
+        pt != PlanetType.AssimilatedC2 && 
+        pt != PlanetType.AssimilatedC3 && 
+        pt != PlanetType.ClusterLevel1 && 
+        pt != PlanetType.ClusterLevel2 && 
+        pt != PlanetType.ClusterLevel3 && 
+        pt != PlanetType.InfectedC1 && 
+        pt != PlanetType.InfectedC2 && 
+        pt != PlanetType.InfectedC3 && 
+        pt != PlanetType.TaintedC1 && 
+        pt != PlanetType.TaintedC2 && 
+        pt != PlanetType.TaintedC3 && 
+        pt != PlanetType.TaintedC4 && 
+        pt != PlanetType.SimilareC1 && 
+        pt != PlanetType.SimilareC2 && 
+        pt != PlanetType.SimilareC3 && 
+        pt != PlanetType.SimilareC4 && 
+        pt != PlanetType.SimilareC5)
+        .Select(pt => new SelectListItem
+        {
+            Value = pt.ToString(),
+            Text = pt.ToString(),
+            Selected = pt == PlanetType.None
+        });
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -47,6 +77,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             UserExploration = await _context.Explorations
                 .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
+            UserProjects = await _context.UserProjects
+                .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
 
             if (UserExploration == null)
             {
@@ -78,6 +110,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             UserExploration = await _context.Explorations
                 .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
+            UserProjects = await _context.UserProjects
+                .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
 
             if (UserExploration == null)
                 return RedirectToPage();
@@ -143,15 +177,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Define your weighted planet types and their chances (sum should be 100)
             var weightedTypes = new (PlanetType Type, int Weight)[]
             {
-                (PlanetType.Barren, 20),
-                (PlanetType.Icy, 20),
-                (PlanetType.Marshy, 20),
-                (PlanetType.Forest, 20),
-                 (PlanetType.Oceanic, 20),
-                (PlanetType.Rocky, 21),
-                (PlanetType.Desert, 21),
-                (PlanetType.Balanced, 21),
-                (PlanetType.Gas, 21),
+                (PlanetType.Barren, 30),
+                (PlanetType.Icy, 30),
+                (PlanetType.Marshy, 30),
+                (PlanetType.Forest, 30),
+                (PlanetType.Oceanic, 30),
+                (PlanetType.Rocky, 30),
+                (PlanetType.Desert, 30),
+                (PlanetType.Balanced, 30),
+                (PlanetType.Gas, 30),
                 (PlanetType.URich, 1),
                 (PlanetType.UEden, 1),
                 (PlanetType.USpazial, 1),
@@ -178,7 +212,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 // Found a new planet
                 UserExploration.ExplorationCompleted = 0;
-                UserExploration.ExplorationPointsNeeded = (int)(UserExploration.ExplorationPointsNeeded * 1.2);
+                UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
                 user.TotalPlanets += 1;
                 user.TotalColonies += 1;
                 user.ColoniesExplored += 1;
@@ -344,21 +378,26 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 // Calculate LandAvailable
                 NewPlanet.LandAvailable = NewPlanet.TotalLand - (NewPlanet.Housing + NewPlanet.Commercial + NewPlanet.Industry + NewPlanet.Agriculture + NewPlanet.Mining);
-                _context.Planets.Add(NewPlanet);
-                ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";
+                if (NewPlanet.Type != SelectedPlanetType)
+                {
+                    ModelState.AddModelError(string.Empty, "Planet plundered due to not being the chosen type.");  
+                    NewPlanet = null;
+                }
+                else
+                {
+                    _context.Planets.Add(NewPlanet);
+                    ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";
+                }
             }
             else
             {
-                // Deduct turns
-                var turnResultb = await _turnService.TryUseTurnsAsync(user.Id, turnsUsed);
-                if (!turnResult.Success)
-                {
-                    ModelState.AddModelError(string.Empty, turnResult.Message);
-                    return Page();
-                }
-                ExploreMessage = $"Exploration progress: {UserExploration.ExplorationCompleted:0.##}% complete for the next planet. <br> {turnResultb.Message}";
+                ExploreMessage = $"Exploration progress: {UserExploration.ExplorationCompleted:0.##}% complete for the next planet. <br> {turnResult.Message}";
             }
-
+            ServerStats serverStats = _context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled == true && serverStats.UWHolderId == user.Id)
+            {
+                user.DamageProtection = DateTime.Now;
+            }
             await _context.SaveChangesAsync();
             await UpdateExplorationStats(user, UserExploration);
             CanExplore = await UserHasFleet(user) && !IsAtColonyCap(user);
@@ -420,6 +459,115 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             };
             int cap = maxColoniesByFaction.TryGetValue(user.Faction, out int val) ? val : 10;
             return user.TotalColonies >= cap;
+        }
+
+        public long SetExplorationPointsNeeded(ApplicationUser user)
+        {
+            long explorationPointsNeeded = user.TotalPlanets switch
+            {
+                1 => 5000,
+                2 => 6000,
+                3 => 7200,
+                4 => 8640,
+                5 => 10368,
+                6 => 12442,
+                7 => 14930,
+                8 => 17916,
+                9 => 21499,
+                10 => 25799,
+                11 => 30959,
+                12 => 37150,
+                13 => 44581,
+                14 => 53497,
+                15 => 64196,
+                16 => 77035,
+                17 => 92442,
+                18 => 110931,
+                19 => 133117,
+                20 => 159740,
+                21 => 191688,
+                22 => 230026,
+                23 => 276031,
+                24 => 331237,
+                25 => 397484,
+                26 => 476981,
+                27 => 572377,
+                28 => 686853,
+                29 => 824223,
+                30 => 989068,
+                31 => 1186882,
+                32 => 1424258,
+                33 => 1709109,
+                34 => 2050931,
+                35 => 2461118,
+                36 => 2953341,
+                37 => 3544009,
+                38 => 4252811,
+                39 => 5103373,
+                40 => 6124048,
+                41 => 7348858,
+                42 => 8818629,
+                43 => 10582355,
+                44 => 12698826,
+                45 => 15238592,
+                46 => 18286310,
+                47 => 21943572,
+                48 => 26332286,
+                49 => 31598744,
+                50 => 37918492,
+                51 => 45502191,
+                52 => 54602629,
+                53 => 65523155,
+                54 => 78627786,
+                55 => 94353343,
+                56 => 113224011,
+                57 => 135868814,
+                58 => 163042576,
+                59 => 195651092,
+                60 => 234781310,
+                61 => 281737572,
+                62 => 338085086,
+                63 => 405702103,
+                64 => 486842524,
+                65 => 584211029,
+                66 => 701053235,
+                67 => 841263881,
+                68 => 1009516658,
+                69 => 1211419989,
+                70 => 1453703987,
+                71 => 1744444785,
+                72 => 2093333742,
+                73 => 2512000490,
+                74 => 3014400588,
+                75 => 3617280705,
+                76 => 4340736847,
+                77 => 5208884216,
+                78 => 6250661059,
+                79 => 7500793271,
+                80 => 9000951925,
+                81 => 10801142310,
+                82 => 12961370772,
+                83 => 15553644926,
+                84 => 18664373912,
+                85 => 22397248694,
+                86 => 26876698433,
+                87 => 32252038120,
+                88 => 38702445743,
+                89 => 46442934892,
+                90 => 55731521871,
+                91 => 66877826245,
+                92 => 80253391494,
+                93 => 96304069792,
+                94 => 115564883751,
+                95 => 138677860501,
+                96 => 166413432601,
+                97 => 199696119121,
+                98 => 239635342946,
+                99 => 287562411535,
+                _ => 287562411535 // Default if not in range
+            };
+
+            return explorationPointsNeeded;
         }
     }
 }

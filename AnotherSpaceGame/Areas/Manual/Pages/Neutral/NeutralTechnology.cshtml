@@ -1,0 +1,104 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.Neutral.NeutralTechnologyModel
+@{
+    ViewData["Title"] = "Neutral Technology";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>Neutral Technology</h1>
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+<div class="col-5">
+    <table class="table table-bordered table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Research Name
+                </th>
+                <th>
+                    Turns Required
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <b>Project Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.ProjectsResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2">
+                    <b>Cluster Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.ClusterResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2">
+                    <b> C Class Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.CyrilClassResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2">
+                    <b> E Class Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.EClassResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2">
+                    <b> F Class Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.FClassResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

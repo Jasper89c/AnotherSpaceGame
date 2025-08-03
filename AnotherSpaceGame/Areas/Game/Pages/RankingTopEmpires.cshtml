@@ -16,8 +16,8 @@
         <b>Rank:</b> @Model.CurrentUserRank of @Model.TotalEmpires<br />
         <b>Username:</b> @Model.CurrentUserEmpire.UserName<br />
         <b>Faction:</b> @Model.CurrentUserEmpire.Faction<br />
-        <b>Total Planets:</b> @Model.CurrentUserEmpire.TotalPlanets<br />
-        <b>Power Rating:</b> @Model.CurrentUserEmpire.PowerRating
+        <b>Total Planets:</b> @Model.CurrentUserEmpire.TotalPlanets.ToString("N0")<br />
+        <b>Power Rating:</b> @Model.CurrentUserEmpire.PowerRating.ToString("N0")
     </div>
 }
 
@@ -25,7 +25,6 @@
     <thead>
         <tr>
             <th>Ranking</th>
-            <th></th>
             <th>Username</th>
             <th>Faction</th>
             <th>Total Planets</th>
@@ -38,12 +37,12 @@
             var empire = Model.TopEmpires[i];
             <tr>
                 <td>@(i + 1)</td>
+                
                 <td>
                     <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@empire.UserName" title="View Empire">
                         <i class="bi bi-info-circle"></i>
                     </a>
-                </td>
-                <td>@empire.UserName
+                    @empire.UserName
                     @if (empire.LastActivity >= DateTime.Now.AddMinutes(-30))
                     {
                         <i class="bi bi-fire"></i>

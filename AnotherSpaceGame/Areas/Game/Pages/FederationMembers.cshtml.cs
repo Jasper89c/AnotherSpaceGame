@@ -84,6 +84,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
            
             federation.FederationMembers.Remove(member);
             member.FederationId = null; // Clear the federation ID from the member
+            federation.TotalMembers -= 1; // Decrease total members count
+            federation.TotalPlanets = federation.FederationMembers.Sum(m => m.Planets.Count); // Recalculate total planets
+            federation.TotalPowerating = federation.FederationMembers.Sum(m => m.PowerRating); // Recalculate total power rating
             _context.Users.Update(member); // Corrected to use the `Users` DbSet for ApplicationUser
             _context.Federations.Update(federation);
 
@@ -91,7 +94,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var importantEvent = new ImportantEvents
             {
                 ApplicationUserId = member.Id,
-                DateAndTime = DateTime.UtcNow,
+                DateAndTime = DateTime.Now,
                 ImportantEventTypes = ImportantEventTypes.Misc,
                 Text = $"{federation.FederationLeader?.UserName} has kicked you from the federation {federation.FederationName}."
             };

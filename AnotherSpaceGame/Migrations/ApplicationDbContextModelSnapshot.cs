@@ -237,6 +237,9 @@ namespace AnotherSpaceGame.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long>("TempleHeight")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("TotalColonies")
                         .HasColumnType("int");
 
@@ -758,8 +761,8 @@ namespace AnotherSpaceGame.Migrations
                     b.Property<decimal>("ExplorationCompleted")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ExplorationPointsNeeded")
-                        .HasColumnType("int");
+                    b.Property<long>("ExplorationPointsNeeded")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("ScanningPower")
                         .HasColumnType("int");
@@ -1534,52 +1537,6 @@ namespace AnotherSpaceGame.Migrations
                     b.ToTable("Planets");
                 });
 
-            modelBuilder.Entity("AnotherSpaceGame.Models.PrivateMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ApplicationUserId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("ApplicationUserId1");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("PrivateMessages");
-                });
-
             modelBuilder.Entity("AnotherSpaceGame.Models.ProjectsResearch", b =>
                 {
                     b.Property<int>("Id")
@@ -1587,6 +1544,12 @@ namespace AnotherSpaceGame.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AdvancedExploration")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("AdvancedExplorationTurnsRequired")
+                        .HasColumnType("int");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -1622,6 +1585,42 @@ namespace AnotherSpaceGame.Migrations
                         .IsUnique();
 
                     b.ToTable("ProjectsResearches");
+                });
+
+            modelBuilder.Entity("AnotherSpaceGame.Models.ServerStats", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FederationTimer")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TableTimer")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TurnTimer")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("UWCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("UWEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UWHolderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UWHolderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ServerStats");
                 });
 
             modelBuilder.Entity("AnotherSpaceGame.Models.Ships", b =>
@@ -1944,6 +1943,38 @@ namespace AnotherSpaceGame.Migrations
                     b.ToTable("Turns");
                 });
 
+            modelBuilder.Entity("AnotherSpaceGame.Models.UWWinners", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DaysTaken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PowerRating")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TotalPlanets")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UWWinners");
+                });
+
             modelBuilder.Entity("AnotherSpaceGame.Models.UserProjects", b =>
                 {
                     b.Property<int>("Id")
@@ -1951,6 +1982,9 @@ namespace AnotherSpaceGame.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AdvancedExploration")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
@@ -2647,33 +2681,6 @@ namespace AnotherSpaceGame.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("AnotherSpaceGame.Models.PrivateMessage", b =>
-                {
-                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", null)
-                        .WithMany("PrivateMessagesReceived")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", null)
-                        .WithMany("PrivateMessagesSent")
-                        .HasForeignKey("ApplicationUserId1");
-
-                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("AnotherSpaceGame.Models.ProjectsResearch", b =>
                 {
                     b.HasOne("AnotherSpaceGame.Models.ApplicationUser", "ApplicationUser")
@@ -2885,10 +2892,6 @@ namespace AnotherSpaceGame.Migrations
                         .IsRequired();
 
                     b.Navigation("Planets");
-
-                    b.Navigation("PrivateMessagesReceived");
-
-                    b.Navigation("PrivateMessagesSent");
 
                     b.Navigation("ProjectsResearch")
                         .IsRequired();

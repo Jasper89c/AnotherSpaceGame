@@ -15,7 +15,6 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th>User</th>
                 <th>Attacker</th>
                 <th>Defender</th>
                 <th>Outcome</th>
@@ -23,16 +22,38 @@
             </tr>
         </thead>
         <tbody>
-        @foreach (var log in Model.BattleLogs)
-        {
+            @for (int i = 0; i < Model.BattleLogs.Count; i++)
+            {
+                var log = Model.BattleLogs[i];
+                var collapseId = $"fleetReportCollapse_{i}";
+                var buttonId = $"toggleFleetReportBtn_{i}";
             <tr>
                 <td>@log.DateAndTime.ToLocalTime().ToString("g")</td>
-                <td>@log.ApplicationUser?.UserName</td>
                 <td>@log.Attacker</td>
                 <td>@log.Defender</td>
                 <td>@log.Outcome</td>
-                <td>@log.FleetReport</td>
-            </tr>
+                    <td>
+                        <button id="@buttonId"
+                                class="btn btn-sm btn-primary"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#@collapseId"
+                                aria-expanded="false"
+                                aria-controls="@collapseId"
+                                data-bs-toggle-text="Hide Fleet Report">
+                            Show Fleet Report
+                        </button>
+                    </td>
+                </tr>
+                <tr class="collapse mt-2" id="@collapseId">
+                    <td colspan="5">
+                        <div>
+                            <div class="card card-body">
+                                @Html.Raw(log.FleetReport)
+                            </div>
+                        </div>
+                    </td>
+                </tr>            
         }
         </tbody>
     </table>
@@ -57,4 +78,23 @@
 else
 {
     <div class="alert alert-info mt-3">No battle logs found for your federation.</div>
+}
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Find all collapse elements for fleet reports
+            document.querySelectorAll('.collapse[id^="fleetReportCollapse_"]').forEach(function (collapseEl) {
+                var btn = document.querySelector('button[data-bs-target="#' + collapseEl.id + '"]');
+                if (!btn) return;
+
+                collapseEl.addEventListener('show.bs.collapse', function () {
+                    var toggleText = btn.getAttribute('data-bs-toggle-text') || 'Hide Fleet Report';
+                    btn.textContent = toggleText;
+                });
+                collapseEl.addEventListener('hide.bs.collapse', function () {
+                    btn.textContent = 'Show Fleet Report';
+                });
+            });
+        });
+    </script>
 }

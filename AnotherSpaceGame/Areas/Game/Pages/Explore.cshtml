@@ -1,84 +1,105 @@
-﻿@page
-@model AnotherSpaceGame.Areas.Game.Pages.ExploreModel
-@{
-    ViewData["Title"] = "Explore";
-    Layout = "~/Views/Shared/_LayoutGame.cshtml";
-}
+﻿@page  
+@model AnotherSpaceGame.Areas.Game.Pages.ExploreModel  
+@{  
+    ViewData["Title"] = "Explore";  
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";  
+}  
 
-<h2>Explore for New Planets</h2>
+<h2>Explore for New Planets</h2>  
 
-@if (!string.IsNullOrEmpty(Model.ExploreMessage))
+@if (!string.IsNullOrEmpty(Model.ExploreMessage))  
+{  
+    <div class="alert alert-info">@Html.Raw(Model.ExploreMessage)</div>  
+}  
+@if (!ViewData.ModelState.IsValid)
 {
-    <div class="alert alert-info">@Html.Raw(Model.ExploreMessage)</div>
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
 }
-@if (Model.NewPlanet != null)
-{
-    <table class ="table table-bordered">
-        <tr>
-            <th>Planet Name</th>
-            <td>@Model.NewPlanet.Name</td>
-        </tr>
-        <tr>
-            <th>Planet Type</th>
-            <td>@Model.NewPlanet.Type</td>
-        </tr>
-        <tr>
-            <th>Total Land</th>
-            <td>@Model.NewPlanet.TotalLand.ToString("N0")</td>
-        </tr>
-        <tr>
-            <th>Ore Available</th>
-            <td>@Model.NewPlanet.AvailableOre.ToString("N0")</td>
-        </tr>
-    </table>
-}
+@if (Model.NewPlanet != null)  
+{  
+    <table class ="table table-bordered">  
+        <tr>  
+            <th>Planet Name</th>  
+            <td>@Model.NewPlanet.Name</td>  
+        </tr>  
+        <tr>  
+            <th>Planet Type</th>  
+            <td>@Model.NewPlanet.Type</td>  
+        </tr>  
+        <tr>  
+            <th>Total Land</th>  
+            <td>@Model.NewPlanet.TotalLand.ToString("N0")</td>  
+        </tr>  
+        <tr>  
+            <th>Ore Available</th>  
+            <td>@Model.NewPlanet.AvailableOre.ToString("N0")</td>  
+        </tr>  
+    </table>  
+}  
 
-@if (Model.UserExploration != null)
-{
-    <table class="table table-bordered">
-        <tr>
-            <th>Exploration Points Needed</th>
-            <td>@Model.UserExploration.ExplorationPointsNeeded.ToString("N0")</td>
-        </tr>
-        <tr>
-            <th>Exploration Completed</th>
-            <td>@Model.UserExploration.ExplorationCompleted.ToString("0.##")%</td>
-        </tr>
-        <tr>
-            <th>Estimated Turns Required (for next planet) </th>
-            <td>@Model.UserExploration.TurnsRequired</td>
-        </tr>
-        <tr>
-            <th>Ships in Fleet</th>
-            <td>@Model.UserExploration.ShipsInFleet.ToString("N0")</td>
-        </tr>
-        <tr>
-            <th>Total Scanning Power</th>
-            <td>@Model.UserExploration.ScanningPower.ToString("N0")</td>
-        </tr>
-        <tr>
-            <th>Total Planets</th>
-            <td>@Model.UserExploration.TotalPlanets.ToString("N0")</td>
-        </tr>
-        <tr>
-            <th>Total Colonies</th>
-            <td>@Model.UserExploration.TotalColonies.ToString("N0")</td>
-        </tr>
-    </table>
+@if (Model.UserExploration != null)  
+{  
+    <table class="table table-bordered">  
+        <tr>  
+            <th>Exploration Points Needed</th>  
+            <td>@Model.UserExploration.ExplorationPointsNeeded.ToString("N0")</td>  
+        </tr>  
+        <tr>  
+            <th>Exploration Completed</th>  
+            <td>@Model.UserExploration.ExplorationCompleted.ToString("0.##")%</td>  
+        </tr>  
+        <tr>  
+            <th>Estimated Turns Required (for next planet) </th>  
+            <td>@Model.UserExploration.TurnsRequired</td>  
+        </tr>  
+        <tr>  
+            <th>Ships in Fleet</th>  
+            <td>@Model.UserExploration.ShipsInFleet.ToString("N0")</td>  
+        </tr>  
+        <tr>  
+            <th>Total Scanning Power</th>  
+            <td>@Model.UserExploration.ScanningPower.ToString("N0")</td>  
+        </tr>  
+        <tr>  
+            <th>Total Planets</th>  
+            <td>@Model.UserExploration.TotalPlanets.ToString("N0")</td>  
+        </tr>  
+        <tr>  
+            <th>Total Colonies</th>  
+            <td>@Model.UserExploration.TotalColonies.ToString("N0")</td>  
+        </tr>  
+    </table>  
 
-    @if (Model.CanExplore)
-    {
-        <form method="post">
-            <div class="mb-3">
-                <label for="turnsUsed" class="form-label">Turns to use:</label>
-                <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="@Model.UserExploration.TurnsRequired" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Explore</button>
-            @Html.AntiForgeryToken()
-        </form>
-    }
-    else
-    {
-        <div class="alert alert-warning">Reasons to not be able to explore, lack of turns,fleet or maxium colonies</div>
-    }
+    @if (Model.CanExplore)  
+    {  
+        <form method="post">  
+            <div class="mb-3">  
+                <label for="turnsUsed" class="form-label">Turns to use:</label>  
+                <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="@Model.UserExploration.TurnsRequired" required />  
+            </div>  
+                <div class="mb-3">  
+                <label for="planetType" class="form-label">Preferred Planet Type:</label>  
+            @if (Model.UserProjects.AdvancedExploration == true)  
+            {  
+                <select id="planetType" name="SelectedPlanetType" class="form-select">  
+                @foreach (var option in Model.PlanetTypeOptions)  
+                {  
+                     <option value="@option.Value" selected="@(option.Selected ? "true" : "false")">@option.Text</option>  
+                }  
+                </select>  
+            }  
+                </div>  
+            <button type="submit" class="btn btn-primary">Explore</button>  
+            @Html.AntiForgeryToken()  
+        </form>  
+    }  
+    else  
+    {  
+        <div class="alert alert-warning">Reasons to not be able to explore, lack of turns,fleet or maxium colonies</div>  
+    }  
 }

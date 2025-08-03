@@ -28,9 +28,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public void OnGet()
         {
+            var server = _context.ServerStats.FirstOrDefault();
             lock (_lock)
             {
-                if (_cachedEmpires == null || (DateTime.UtcNow - _lastUpdate).TotalMinutes >= 60)
+                if (_cachedEmpires == null || (DateTime.Now - _lastUpdate).TotalMinutes >= server.TableTimer)
                 {
                     _cachedEmpires = _context.Users
                         .AsNoTracking()
@@ -48,7 +49,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         })
                         .ToList();
 
-                    _lastUpdate = DateTime.UtcNow;
+                    _lastUpdate = DateTime.Now;
                 }
                 TopEmpires = _cachedEmpires;
             }

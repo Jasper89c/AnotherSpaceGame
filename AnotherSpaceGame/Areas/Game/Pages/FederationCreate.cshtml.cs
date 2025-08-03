@@ -77,7 +77,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 FederationLeader = user,
                 FederationLeaderId = user.Id,
                 FederationMembers = new System.Collections.Generic.List<ApplicationUser> { user },
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.Now,
                 TotalMembers = 1,
                 MaximumMembers = 21,
                 TotalPowerating = user.PowerRating,
@@ -95,7 +95,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var importantEvent = new ImportantEvents
             {
                 ApplicationUserId = user.Id,
-                DateAndTime = DateTime.UtcNow,
+                DateAndTime = DateTime.Now,
                 ImportantEventTypes = ImportantEventTypes.Misc,
                 Text = $"You have created the federation '{FederationName}'."
             };
@@ -104,7 +104,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             await _context.SaveChangesAsync();
 
             FeedbackMessage = "Federation created successfully!";
-            return Page();
+            return RedirectToPage("FederationMembers", new { id = federation.Id });
         }
     }
 }

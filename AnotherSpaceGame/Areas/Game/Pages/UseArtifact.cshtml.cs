@@ -334,212 +334,220 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             return "Target has no commodities.";
         }
-
+        
         private static string GiveRandomPlanet(ApplicationUser target, ApplicationUser fromUser, ApplicationDbContext context, string targetName)
         {
-            // Faction-based max colonies
-            var maxColoniesByFaction = new Dictionary<Faction, int>
+            ServerStats serverStats = context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled != true)
             {
-                { Faction.Terran, 16 },
-                { Faction.AMiner, 13 },
-                { Faction.Collective, 14 },
-                { Faction.Marauder, 13 },
-                { Faction.Guardian, 11 },
-                { Faction.Viral, 13 }
-            };
+                // Faction-based max colonies
+                var maxColoniesByFaction = new Dictionary<Faction, int>
+                {
+                    { Faction.Terran, 16 },
+                    { Faction.AMiner, 13 },
+                    { Faction.Collective, 14 },
+                    { Faction.Marauder, 13 },
+                    { Faction.Guardian, 11 },
+                    { Faction.Viral, 13 }
+                };
 
-            int maxColonies = maxColoniesByFaction.TryGetValue(target.Faction, out var val) ? val : 10;
+                int maxColonies = maxColoniesByFaction.TryGetValue(target.Faction, out int val) ? val : 10;
 
-            // Count current colonies
-            int currentColonies = context.Planets.Count(p => p.ApplicationUserId == target.Id);
+                // Count current colonies
+                int currentColonies = context.Planets.Count(p => p.ApplicationUserId == target.Id);
 
-            if (currentColonies >= maxColonies)
-            {
-                return $"{targetName} already has the maximum number of colonies for their faction ({maxColonies}).";
+                if (currentColonies >= maxColonies)
+                {
+                    return $"{targetName} already has the maximum number of colonies for their faction ({maxColonies}).";
+                }
+
+                // Only allow planet types that are handled in the switch
+                var allowedTypes = new[]
+                {
+                    PlanetType.Barren,
+                    PlanetType.Icy,
+                    PlanetType.Marshy,
+                    PlanetType.Forest,
+                    PlanetType.Oceanic,
+                    PlanetType.Rocky,
+                    PlanetType.Desert,
+                    PlanetType.Balanced,
+                    PlanetType.Gas,
+                    PlanetType.URich,
+                    PlanetType.UEden,
+                    PlanetType.USpazial,
+                    PlanetType.ULarge,
+                    PlanetType.UFertile,
+                    PlanetType.Dead
+                };
+
+                var random = new System.Random();
+                var chosenType = allowedTypes[random.Next(allowedTypes.Length)];
+
+                // Set up base values
+                var newPlanet = new Planets
+                {
+                    ApplicationUserId = target.Id,
+                    Name = "E." + random.Next(1000, 9999).ToString(),
+                    Type = chosenType,
+                    FoodRequired = 1,
+                    GoodsRequired = 1,
+                    CurrentPopulation = 10,
+                    MaxPopulation = 10,
+                    Loyalty = 2500,
+                    AvailableLabour = 8,
+                    Housing = 1,
+                    Commercial = 0,
+                    Industry = 0,
+                    Agriculture = 0,
+                    Mining = 1,
+                    MineralProduced = 0,
+                    PowerRating = 0
+                };
+
+                // Set type-specific values
+                switch (chosenType)
+                {
+                    case PlanetType.Barren:
+                        newPlanet.PopulationModifier = 0.5m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0.02m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.AvailableOre = random.Next(150, 500);
+                        newPlanet.TotalLand = random.Next(50, 1100);
+                        break;
+                    case PlanetType.Icy:
+                        newPlanet.PopulationModifier = 0.75m;
+                        newPlanet.AgricultureModifier = 1m;
+                        newPlanet.OreModifier = 0.005m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.AvailableOre = random.Next(1500, 4500);
+                        newPlanet.TotalLand = random.Next(24, 83);
+                        break;
+                    case PlanetType.Marshy:
+                        newPlanet.PopulationModifier = 0.8m;
+                        newPlanet.AgricultureModifier = 0.5m;
+                        newPlanet.OreModifier = 0.005m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(50, 150);
+                        newPlanet.AvailableOre = random.Next(0, 150);
+                        break;
+                    case PlanetType.Forest:
+                        newPlanet.PopulationModifier = 0.9m;
+                        newPlanet.AgricultureModifier = 2m;
+                        newPlanet.OreModifier = 0.005m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(50, 350);
+                        newPlanet.AvailableOre = random.Next(0, 50);
+                        break;
+                    case PlanetType.Oceanic:
+                        newPlanet.PopulationModifier = 0.8m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0.005m;
+                        newPlanet.ArtifactModifier = 0.10m;
+                        newPlanet.TotalLand = random.Next(10, 50);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.Rocky:
+                        newPlanet.PopulationModifier = 0.75m;
+                        newPlanet.AgricultureModifier = 1m;
+                        newPlanet.OreModifier = 0.001m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(34, 121);
+                        newPlanet.AvailableOre = random.Next(500, 3300);
+                        break;
+                    case PlanetType.Desert:
+                        newPlanet.PopulationModifier = 0.75m;
+                        newPlanet.AgricultureModifier = 0.75m;
+                        newPlanet.OreModifier = 0.02m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(100, 250);
+                        newPlanet.AvailableOre = random.Next(100, 350);
+                        break;
+                    case PlanetType.Balanced:
+                        newPlanet.PopulationModifier = 1.2m;
+                        newPlanet.AgricultureModifier = 1m;
+                        newPlanet.OreModifier = 0.01m;
+                        newPlanet.ArtifactModifier = 0.05m;
+                        newPlanet.TotalLand = random.Next(185, 1050);
+                        newPlanet.AvailableOre = random.Next(750, 1100);
+                        break;
+                    case PlanetType.Gas:
+                        newPlanet.PopulationModifier = 1m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.05m;
+                        newPlanet.TotalLand = random.Next(2, 6);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.URich:
+                        newPlanet.PopulationModifier = 0.1m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0.03m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(11, 28);
+                        newPlanet.AvailableOre = random.Next(50000, 350000);
+                        break;
+                    case PlanetType.UEden:
+                        newPlanet.PopulationModifier = 10m;
+                        newPlanet.AgricultureModifier = 0.02m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(500, 2500);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.USpazial:
+                        newPlanet.PopulationModifier = 0.1m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.15m;
+                        newPlanet.TotalLand = random.Next(2, 4);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.ULarge:
+                        newPlanet.PopulationModifier = 0.2m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(7000, 16000);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.UFertile:
+                        newPlanet.PopulationModifier = 0.5m;
+                        newPlanet.AgricultureModifier = 1.75m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(950, 2150);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    case PlanetType.Dead:
+                        newPlanet.PopulationModifier = 0.05m;
+                        newPlanet.AgricultureModifier = 0m;
+                        newPlanet.OreModifier = 0m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(2, 4);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                    default:
+                        newPlanet.PopulationModifier = 1m;
+                        newPlanet.AgricultureModifier = 1m;
+                        newPlanet.OreModifier = 1m;
+                        newPlanet.ArtifactModifier = 0.01m;
+                        newPlanet.TotalLand = random.Next(2, 4);
+                        newPlanet.AvailableOre = 0;
+                        break;
+                }
+
+                // Calculate LandAvailable
+                newPlanet.LandAvailable = newPlanet.TotalLand - (newPlanet.Housing + newPlanet.Commercial + newPlanet.Industry + newPlanet.Agriculture + newPlanet.Mining);
+
+                context.Planets.Add(newPlanet);
+                return $"Created a new random planet for {targetName}.";
             }
-
-            // Only allow planet types that are handled in the switch
-            var allowedTypes = new[]
+            else
             {
-                PlanetType.Barren,
-                PlanetType.Icy,
-                PlanetType.Marshy,
-                PlanetType.Forest,
-                PlanetType.Oceanic,
-                PlanetType.Rocky,
-                PlanetType.Desert,
-                PlanetType.Balanced,
-                PlanetType.Gas,
-                PlanetType.URich,
-                PlanetType.UEden,
-                PlanetType.USpazial,
-                PlanetType.ULarge,
-                PlanetType.UFertile,
-                PlanetType.Dead
-            };
-
-            var random = new System.Random();
-            var chosenType = allowedTypes[random.Next(allowedTypes.Length)];
-
-            // Set up base values
-            var newPlanet = new Planets
-            {
-                ApplicationUserId = target.Id,
-                Name = "E." + random.Next(1000, 9999).ToString(),
-                Type = chosenType,
-                FoodRequired = 1,
-                GoodsRequired = 1,
-                CurrentPopulation = 10,
-                MaxPopulation = 10,
-                Loyalty = 2500,
-                AvailableLabour = 8,
-                Housing = 1,
-                Commercial = 0,
-                Industry = 0,
-                Agriculture = 0,
-                Mining = 1,
-                MineralProduced = 0,
-                PowerRating = 0
-            };
-
-            // Set type-specific values
-            switch (chosenType)
-            {
-                case PlanetType.Barren:
-                    newPlanet.PopulationModifier = 0.5m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0.02m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.AvailableOre = random.Next(150, 500);
-                    newPlanet.TotalLand = random.Next(50, 1100);
-                    break;
-                case PlanetType.Icy:
-                    newPlanet.PopulationModifier = 0.75m;
-                    newPlanet.AgricultureModifier = 1m;
-                    newPlanet.OreModifier = 0.005m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.AvailableOre = random.Next(1500, 4500);
-                    newPlanet.TotalLand = random.Next(24, 83);
-                    break;
-                case PlanetType.Marshy:
-                    newPlanet.PopulationModifier = 0.8m;
-                    newPlanet.AgricultureModifier = 0.5m;
-                    newPlanet.OreModifier = 0.005m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(50, 150);
-                    newPlanet.AvailableOre = random.Next(0, 150);
-                    break;
-                case PlanetType.Forest:
-                    newPlanet.PopulationModifier = 0.9m;
-                    newPlanet.AgricultureModifier = 2m;
-                    newPlanet.OreModifier = 0.005m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(50, 350);
-                    newPlanet.AvailableOre = random.Next(0, 50);
-                    break;
-                case PlanetType.Oceanic:
-                    newPlanet.PopulationModifier = 0.8m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0.005m;
-                    newPlanet.ArtifactModifier = 0.10m;
-                    newPlanet.TotalLand = random.Next(10, 50);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.Rocky:
-                    newPlanet.PopulationModifier = 0.75m;
-                    newPlanet.AgricultureModifier = 1m;
-                    newPlanet.OreModifier = 0.001m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(34, 121);
-                    newPlanet.AvailableOre = random.Next(500, 3300);
-                    break;
-                case PlanetType.Desert:
-                    newPlanet.PopulationModifier = 0.75m;
-                    newPlanet.AgricultureModifier = 0.75m;
-                    newPlanet.OreModifier = 0.02m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(100, 250);
-                    newPlanet.AvailableOre = random.Next(100, 350);
-                    break;
-                case PlanetType.Balanced:
-                    newPlanet.PopulationModifier = 1.2m;
-                    newPlanet.AgricultureModifier = 1m;
-                    newPlanet.OreModifier = 0.01m;
-                    newPlanet.ArtifactModifier = 0.05m;
-                    newPlanet.TotalLand = random.Next(185, 1050);
-                    newPlanet.AvailableOre = random.Next(750, 1100);
-                    break;
-                case PlanetType.Gas:
-                    newPlanet.PopulationModifier = 1m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.05m;
-                    newPlanet.TotalLand = random.Next(2, 6);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.URich:
-                    newPlanet.PopulationModifier = 0.1m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0.03m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(11, 28);
-                    newPlanet.AvailableOre = random.Next(50000, 350000);
-                    break;
-                case PlanetType.UEden:
-                    newPlanet.PopulationModifier = 10m;
-                    newPlanet.AgricultureModifier = 0.02m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(500, 2500);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.USpazial:
-                    newPlanet.PopulationModifier = 0.1m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.15m;
-                    newPlanet.TotalLand = random.Next(2, 4);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.ULarge:
-                    newPlanet.PopulationModifier = 0.2m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(7000, 16000);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.UFertile:
-                    newPlanet.PopulationModifier = 0.5m;
-                    newPlanet.AgricultureModifier = 1.75m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(950, 2150);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                case PlanetType.Dead:
-                    newPlanet.PopulationModifier = 0.05m;
-                    newPlanet.AgricultureModifier = 0m;
-                    newPlanet.OreModifier = 0m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(2, 4);
-                    newPlanet.AvailableOre = 0;
-                    break;
-                default:
-                    newPlanet.PopulationModifier = 1m;
-                    newPlanet.AgricultureModifier = 1m;
-                    newPlanet.OreModifier = 1m;
-                    newPlanet.ArtifactModifier = 0.01m;
-                    newPlanet.TotalLand = random.Next(2, 4);
-                    newPlanet.AvailableOre = 0;
-                    break;
+                return "Planetary Core is disabled due to Ultimate Weapon.";
             }
-
-            // Calculate LandAvailable
-            newPlanet.LandAvailable = newPlanet.TotalLand - (newPlanet.Housing + newPlanet.Commercial + newPlanet.Industry + newPlanet.Agriculture + newPlanet.Mining);
-
-            context.Planets.Add(newPlanet);
-            return $"Created a new random planet for {targetName}.";
         }
     }
 }

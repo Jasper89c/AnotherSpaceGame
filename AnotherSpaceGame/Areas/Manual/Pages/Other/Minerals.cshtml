@@ -1,0 +1,46 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.Other.MineralsModel
+@{
+    ViewData["Title"] = "Minerals";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>Mineral Types</h1>
+
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+<p>Like resources, minerals are specially used to construct ships. Selling off unused minerals is also a way of getting more credits. Some minerals available in the game are:-</p>
+<div class="col-5">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td>Terran Metal</td>
+                    <td>This is the basic form of metal for Teran species</td>
+                </tr>
+                <tr>
+                    <td>Red Crystal</td>
+                    <td>This is a type of crystal.</td>
+                </tr>
+                <tr>
+                    <td>White Crystal</td>
+                    <td>This is a type of crystal.</td>
+                </tr>
+                <tr>
+                    <td>Rutile</td>
+                    <td>This is a type of crystal.</td>
+                </tr>
+                <tr>
+                    <td>Composite</td>
+                    <td>This is a light weight metal composite.</td>
+                </tr>
+                <tr>
+                    <td>Strafez Organism</td>
+                    <td>This is a chemical/living metal composite.</td>
+                </tr>
+        </tbody>
+    </table>
+</div>

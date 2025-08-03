@@ -16,7 +16,7 @@ namespace AnotherSpaceGame.Models
         public int FederationId { get; set; }
         public Federations Federation { get; set; }
 
-        public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
+        public DateTime AppliedAt { get; set; } = DateTime.Now;
         // Optionally, add status, message, etc.
     }
 }

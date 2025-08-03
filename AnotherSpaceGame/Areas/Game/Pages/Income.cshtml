@@ -3,36 +3,69 @@
 @{
     ViewData["Title"] = "Income Per Turn";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    var totalnogoods = Model.TaxCreditsPerTurn + Model.CommercialCreditsPerTurn;
+    var totalwithgoods = Model.TaxCreditsPerTurnWithGoods + Model.CommercialCreditsPerTurn;
+    var Total = (totalwithgoods - Model.FleetCostPerTurn) - Model.InfrastructureCostPerTurn;
 }
 
 <h2>Income Per Turn</h2>
 <table class="table table-bordered w-auto">
     <tr>
-        <th>Credits</th>
-        <td>@Model.CreditsPerTurn</td>
+        <th>Tax Without Goods</th>
+        <td>@Model.TaxCreditsPerTurn.ToString("C0")</td>
     </tr>
     <tr>
         <th>Commercial</th>
-        <td>@Model.CommercialPerTurn</td>
+        <td>@Model.CommercialCreditsPerTurn.ToString("C0")</td>
     </tr>
     <tr>
         <th>Agriculture</th>
-        <td>@Model.AgriculturePerTurn</td>
+        <td>@Model.AgriculturePerTurn.ToString("N0")</td>
     </tr>
     <tr>
         <th>Industry</th>
-        <td>@Model.IndustryPerTurn</td>
+        <td>@Model.IndustryPerTurn.ToString("N0")</td>
     </tr>
     <tr>
-        <th>Mining</th>
-        <td>@Model.MiningPerTurn</td>
+        <th>Mining *</th>
+        <td>@Model.MiningPerTurn.ToString("N0")</td>
     </tr>
     <tr>
-        <th>Infrastructure Cost</th>
-        <td>@Model.InfrastructureCostPerTurn</td>
+        <th>Maintance Cost</th>
+        <td>-@Model.InfrastructureCostPerTurn.ToString("C0")</td>
     </tr>
     <tr>
         <th>Fleet Cost</th>
-        <td>@Model.FleetCostPerTurn</td>
+        <td>-@Model.FleetCostPerTurn.ToString("C0")</td>
     </tr>
 </table>
+<table class="table table-bordered w-auto">
+    <tr>
+        <th>Tax With Goods</th>
+        <td>@Model.TaxCreditsPerTurnWithGoods.ToString("C0")</td>
+    </tr>
+    <tr>
+        <th>Agriculture Minus Consumption</th>
+        <td>@Model.AgriculturePerTurnMinusFood.ToString("N0")</td>
+    </tr>
+    <tr>
+        <th>Industry Minus Consumption</th>
+        <td>@Model.IndustryPerTurnMinusGoodsEaten.ToString("N0")</td>
+    </tr>
+</table>
+<table class="table table-bordered w-auto">
+    <tr>
+        <th>Tax + Commercial Without goods</th>
+        <td>@totalnogoods.ToString("C0")</td>
+    </tr>
+    <tr>
+        <th>Tax + Commercial With goods</th>
+        <td>@totalwithgoods.ToString("C0")</td>
+    </tr>
+    <tr>
+        <th>Tax + Commercial With goods Minus Fleet + Maintance</th>
+        <td>@Total.ToString("C0")</td>
+    </tr>
+</table>
+<hr />
+<p class="">**Total minerals produced across all mineral types.</p>

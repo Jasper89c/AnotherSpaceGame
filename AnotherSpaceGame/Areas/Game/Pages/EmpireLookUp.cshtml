@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Empire Intelligence";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
-    var now = DateTime.UtcNow;
+    var now = DateTime.Now;
     var remaining = (Model.DamageProtection > now)
         ? Model.DamageProtection - now
         : TimeSpan.Zero;
@@ -57,7 +57,18 @@
     </tr>
     <tr>
         <th>Federation</th>
-        <td>@Model.Federation</td>
+        <td>
+            @if (Model.FederationId != null && !string.IsNullOrEmpty(Model.Federation))
+            {
+                <a asp-area="Game" asp-page="/FederationLookUp" asp-route-id="@Model.FederationId">
+                    @Model.Federation
+                </a>
+            }
+            else
+            {
+                @Model.Federation
+            }
+        </td>
     </tr>
     <tr>
         <th>Playing Since</th>

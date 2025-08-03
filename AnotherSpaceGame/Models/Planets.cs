@@ -56,7 +56,7 @@ namespace AnotherSpaceGame.Models
             MineralProduced = MineralType.TerranMetal;
             PowerRating = 1000; // Default power rating for the planet
             TotalPlanets = 1; // Default total planets count
-            DateTimeAcquired = DateTime.UtcNow; // Default to current time
+            DateTimeAcquired = DateTime.Now; // Default to current time
             switch (Type)   
             {
                 case PlanetType.Barren:

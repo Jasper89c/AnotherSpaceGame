@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "NPC Intelligence";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
-    var now = DateTime.UtcNow;
+    var now = DateTime.Now;
     var remaining = (Model.DamageProtection > now)
         ? Model.DamageProtection - now
         : TimeSpan.Zero;

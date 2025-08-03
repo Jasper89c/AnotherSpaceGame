@@ -48,6 +48,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public bool IsFederationWar { get; set; } = false;
         [BindProperty(SupportsGet = true)]
         public bool IsCounterAttack { get; set; } = false;
+        public bool IsSameFederation { get; private set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -853,11 +854,29 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             break;
                     }
                 }
-
+            // check user has a fleet
+            if (currentUser.Fleets.Count == 0)
+            {
+                NotEnoughTurnsMessage = "No Ships available to attack. Try building some ships first.";
+                return Page();
+            }
             // Default: not at war
             IsFederationWar = false;
             //default: no counterattack
             IsCounterAttack = false;
+            // check if current user and target user are in same federation
+            if (CurrentUser.FederationId != null && TargetUser.FederationId != null)
+            {
+                int currentFedId = CurrentUser.FederationId.Value;
+                int targetFedId = TargetUser.FederationId.Value;
+                // Check if both users are in the same federation
+                IsSameFederation = currentFedId == targetFedId;
+                NotEnoughTurnsMessage = IsSameFederation ? "You cannot attack a member of your own Federation." : null;
+            }
+            else
+            {
+                IsSameFederation = false;
+            }
 
             // Check if the user has at least 5 turns
             HasEnoughTurns = CurrentUser.Turns.CurrentTurns >= 5;
@@ -883,28 +902,66 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // check 30% above or below
             var minAllowed = 0.0;
             var maxAllowed = 0.0;
-            if (CurrentUser.PowerRating >= targetUser.PowerRating)
+            var serverStats = _context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled != true)
             {
-                minAllowed = CurrentUser.PowerRating * 0.7;
-                if(targetUser.PowerRating > minAllowed)
+                if (CurrentUser.PowerRating >= targetUser.PowerRating)
                 {
-                    PowerRatingAllowed = true;
+                    minAllowed = CurrentUser.PowerRating * 0.7;
+                    if (targetUser.PowerRating > minAllowed)
+                    {
+                        PowerRatingAllowed = true;
+                    }
+                    else
+                    {
+                        PowerRatingAllowed = false;
+                    }
                 }
-                else
+                else if (CurrentUser.PowerRating <= targetUser.PowerRating)
                 {
-                    PowerRatingAllowed = false;
-                }                
+                    maxAllowed = CurrentUser.PowerRating * 1.3;
+                    if (targetUser.PowerRating > maxAllowed)
+                    {
+                        PowerRatingAllowed = false;
+                    }
+                    else
+                    {
+                        PowerRatingAllowed = true;
+                    }
+                }
             }
-            else if (CurrentUser.PowerRating <= targetUser.PowerRating)
+            else
             {
-                maxAllowed = CurrentUser.PowerRating * 1.3;
-                if (targetUser.PowerRating > maxAllowed)
+                if(serverStats.UWEnabled == true && targetUser.Id == serverStats.UWHolderId)
                 {
-                    PowerRatingAllowed = false;
+                    PowerRatingAllowed = true;
                 }
                 else
                 {
-                    PowerRatingAllowed = true;
+                    if (CurrentUser.PowerRating >= targetUser.PowerRating)
+                    {
+                        minAllowed = CurrentUser.PowerRating * 0.7;
+                        if (targetUser.PowerRating > minAllowed)
+                        {
+                            PowerRatingAllowed = true;
+                        }
+                        else
+                        {
+                            PowerRatingAllowed = false;
+                        }
+                    }
+                    else if (CurrentUser.PowerRating <= targetUser.PowerRating)
+                    {
+                        maxAllowed = CurrentUser.PowerRating * 1.3;
+                        if (targetUser.PowerRating > maxAllowed)
+                        {
+                            PowerRatingAllowed = false;
+                        }
+                        else
+                        {
+                            PowerRatingAllowed = true;
+                        }
+                    }
                 }
             }
 

@@ -101,7 +101,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 // Override the old war
                 existingWar.DefenderFederationId = targetFederationId;
-                existingWar.DeclaredAt = DateTime.UtcNow;
+                existingWar.DeclaredAt = DateTime.Now;
                 FeedbackMessage = "Previous war overridden. New war declared successfully!";
             }
             else
@@ -111,7 +111,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     AttackerFederationId = user.Federation.Id,
                     DefenderFederationId = targetFederationId,
-                    DeclaredAt = DateTime.UtcNow
+                    DeclaredAt = DateTime.Now
                 };
                 _context.FederationWars.Add(war);
                 FeedbackMessage = "War declared successfully!";

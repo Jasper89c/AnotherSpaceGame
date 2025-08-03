@@ -2,6 +2,7 @@ using AnotherSpaceGame.Data;
 using AnotherSpaceGame.Hubs;
 using AnotherSpaceGame.Models;
 using AnotherSpaceGame.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ builder.Services.AddScoped<IUserStatusService, UserStatusService>();
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<PeriodicTableUpdater>();
 builder.Services.AddHostedService<FederationUpdater>();
-
+builder.Services.AddHostedService<TempleUpdater>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +45,81 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    // 1. Get the user ID from claims
+    var userId = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
+    if (!string.IsNullOrEmpty(userId))
+    {
+        // 2. Create a scope to resolve scoped services
+        using var scope = context.RequestServices.CreateScope();
+
+        // 3. Get UserManager<ApplicationUser>
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        // 4. Retrieve the user from the database
+        var user = await userManager.FindByIdAsync(userId);
+
+        app.Use(async (context, next) =>
+        {
+            // 1. Get the user ID from claims
+            var userId = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                // 2. Create a scope to resolve scoped services
+                using var scope = context.RequestServices.CreateScope();
+
+                // 3. Get UserManager<ApplicationUser>
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                // 4. Retrieve the user from the database
+                var user = await userManager.FindByIdAsync(userId);
+
+                // Now you can access additional properties, e.g. user.Faction, user.Email, etc.
+                // Example: check for a custom property
+                if (user == null)
+                {
+                    // Fix: Redirect method expects a string and a boolean, not an anonymous type.
+                    context.Response.Redirect("/Account/Login");
+                    return;
+                }
+
+                if (user.TotalPlanets == 0)
+                {
+                    context.Response.Redirect("/Game/RestartEmpire");
+                    return;
+                }
+
+
+
+                    // Get the ApplicationDbContext
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                    // Query the ServerStats table (example: get the first row)
+                    var serverStats = await dbContext.ServerStats.FirstOrDefaultAsync();
+
+                if (serverStats.UWCompleted == true)
+                {
+                    if(userId == serverStats.UWHolderId)
+                    {
+                        context.Response.Redirect("/Game/UltimateWeaponCompleted");
+                        return;
+                    }
+                    else
+                    {
+                        context.Response.Redirect("/Game/GalaxyEnd");
+                        return;
+                    }
+                }
+            }
+
+            await next();
+        });
+    }
+    await next();
+});
 
 app.MapControllerRoute(
     name: "default",
@@ -56,6 +131,3 @@ app.MapHub<TurnHub>("/turnhub");
 
 app.Run();
 
-// In Program.cs or Startup.cs
-builder.Services.AddSession();
-app.UseSession();

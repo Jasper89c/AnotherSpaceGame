@@ -33,6 +33,11 @@ namespace AnotherSpaceGame.Models
 
         [Description("I-Tech Laboratory Turns Required")]
         public int ITechLaboratoryTurnsRequired { get; set; }
+        [Description("Advanced Exploration")]
+        public bool AdvancedExploration { get; set; }
+
+        [Description("Advanced Exploration Turns Required")]
+        public int AdvancedExplorationTurnsRequired { get; set; }
 
         public ProjectsResearch()
         {
@@ -46,6 +51,9 @@ namespace AnotherSpaceGame.Models
             KalZulArtifactTurnsRequired = 90;
             ITechLaboratory = false;
             ITechLaboratoryTurnsRequired = 1200;
+            AdvancedExploration = false;
+            AdvancedExplorationTurnsRequired = 800;
+
         }
     }
 }

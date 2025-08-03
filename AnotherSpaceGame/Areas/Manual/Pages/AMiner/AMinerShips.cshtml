@@ -1,0 +1,207 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.AMiner.AMinerShipsModel
+@{
+    ViewData["Title"] = "A.Miner Ships";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h1>A.Miner Ships</h1>
+
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+
+<div class="col-12">
+    <div class="table-responsive">
+    <table class="table table-bordered table-hover table-sm">
+        <thead>
+            <tr>
+                <th>
+                    Ship Name
+                </th>
+                <th>
+                    Ship Class
+                </th>
+                <th>
+                    Power Rating
+                </th>
+                <th>
+                    Range
+                </th>
+                <th>
+                    Hull
+                </th>
+                <th>
+                    Weapon
+                </th>
+                <th>
+                    Energy Weapon
+                </th>
+                <th>
+                    Kinetic Weapon
+                </th>
+                <th>
+                    Missile Weapon
+                </th>
+                <th>
+                    Chemical Weapon
+                </th>
+                <th>
+                    Energy Shield
+                </th>
+                <th>
+                    Kinetic Shield
+                </th>
+                <th>
+                    Missile Shield
+                </th>
+                <th>
+                    Chemical Shield
+                </th>
+                <th>
+                    No Defense
+                </th>
+                <th>
+                    No Retal
+                </th>
+                <th>
+                    Capture Chance
+                </th>
+                <th>
+                    Cost
+                </th>
+                <th>
+                    Upkeep
+                </th>
+                <th>
+                    Terran Metal
+                </th>
+                <th>
+                    Red Crystal
+                </th>
+                <th>
+                    White Crystal
+                </th>
+                <th>
+                    Rutile
+                </th>
+                <th>
+                    Composite
+                </th>
+                <th>
+                    Strafez Organism
+                </th>
+                <th>
+                    Scanning Power
+                </th>
+                <th>
+                    Build Rate
+                </th>
+                <th>
+                    Immune To Capture
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Ship in Model.AllShips)
+            {   <tr>
+                <td>
+                @Ship.ShipName
+                </td>
+                <td>
+                    @Ship.ShipType
+                </td>
+                <td>
+                    @Ship.PowerRating.ToString("N0")
+                </td>
+                <td>
+                            @Ship.Range.ToString("N0")
+                </td>
+                <td>
+                            @Ship.Hull.ToString("N0")
+                </td>
+                <td>
+                            @Ship.Weapon.ToString("N0")
+                </td>
+                <td>
+                            @Ship.EnergyWeapon.ToString("N0")
+                </td>
+                <td>
+                            @Ship.KineticWeapon.ToString("N0")
+                </td>
+                <td>
+                            @Ship.MissileWeapon.ToString("N0")
+                </td>
+                <td>
+                            @Ship.ChemicalWeapon.ToString("N0")
+                </td>
+                <td>
+                            @{
+                                var e = Ship.EnergyShield;
+                            }
+                            @((e < 1.0m ? "+" : "-") + Math.Abs((e - 1.0m) * 100).ToString("F0") + "%")
+                </td>
+                <td>
+                            @{
+                                var k = Ship.KineticShield;
+                            }
+                            @((k < 1.0m ? "+" : "-") + Math.Abs((k - 1.0m) * 100).ToString("F0") + "%")
+                </td>
+                <td>
+                            @{
+                                var m = Ship.MissileShield;
+                            }
+                            @((m < 1.0m ? "+" : "-") + Math.Abs((m - 1.0m) * 100).ToString("F0") + "%")
+                </td>
+                <td>
+                            @{
+                                var c = Ship.ChemicalShield;
+                            }
+                            @((c < 1.0m ? "+" : "-") + Math.Abs((c - 1.0m) * 100).ToString("F0") + "%")
+                </td>
+                <td>
+                            @((Ship.NoDefense ? "100%" : "0%"))
+                </td>
+                <td>
+                            @((Ship.NoRetal ? "100%" : "0%"))
+                </td>
+                <td>
+                            @($"{Ship.CapChance * 100:F0}%")
+                </td>
+                <td>
+                            @Ship.Cost.ToString("C0")
+                </td>
+                <td>
+                            @Ship.Upkeep.ToString("N0")
+                </td>
+                <td>
+                            @Ship.TerranMetal.ToString("N0")
+                </td>
+                <td>
+                            @Ship.RedCrystal.ToString("N0")
+                </td>
+                <td>
+                            @Ship.WhiteCrystal.ToString("N0")
+                </td>
+                <td>
+                            @Ship.Rutile.ToString("N0")
+                </td>
+                <td>
+                            @Ship.Composite.ToString("N0")
+                </td>
+                <td>
+                            @Ship.StrafezOrganism.ToString("N0")
+                </td>
+                <td>
+                            @Ship.ScanningPower.ToString("N0")
+                </td>
+                <td>
+                            @Ship.BuildRate.ToString("N0")
+                </td>
+                <td>
+                            @((Ship.ImmuneToCapture ? "100%" : "0%"))
+                </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+    </div>

@@ -44,7 +44,11 @@
     <h2>@Model.Federation.FederationName</h2>
     <dl class="row">
         <dt class="col-sm-3">Leader</dt>
-        <dd class="col-sm-9">@Model.Federation.FederationLeader?.UserName</dd>
+        <dd class="col-sm-9">
+            <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@Model.Federation.FederationLeader?.UserName" title="View Empire">
+                <i class="bi bi-info-circle"></i>
+            </a>@Model.Federation.FederationLeader?.UserName
+        </dd>
 
         <dt class="col-sm-3">Total Power Rating</dt>
         <dd class="col-sm-9">@Model.Federation.TotalPowerating.ToString("N0")</dd>
@@ -78,7 +82,11 @@
             @foreach (var member in Model.Federation.FederationMembers)
             {
                 <tr>
-                    <td>@member.UserName
+                    <td>
+                        <a asp-area="Game" asp-page="/EmpireLookup" asp-route-id="@member.UserName" title="View Empire">
+                            <i class="bi bi-info-circle"></i>
+                        </a>
+                        @member.UserName
                         @if (member.LastAction >= DateTime.Now.AddMinutes(-30))
                         {
                             <i class="bi bi-fire"></i>

@@ -9,10 +9,7 @@
     var status = UserStatusService.GetCurrentStatus(User);
     var user = UserManager.GetUserAsync(User).Result;
     int unreadCount = 0;
-    if (user != null)
-    {
-        unreadCount = DbContext.PrivateMessages.Count(m => m.ReceiverId == user.Id && !m.IsRead);
-    }
+    
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -194,7 +191,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="gameDropdown">
                                 <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/Manual">Manual</a>
+                                    <a class="dropdown-item" asp-area="Manual" asp-page="/Index">Manual</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/Rules">Rules</a>
@@ -296,15 +293,6 @@
                 <i class="bi bi-currency-dollar"></i> Income
             </a>
         </div>
-        <div class="mx-3">
-            <a asp-area="Game" asp-page="/PrivateMessages" class="text-light" title="Private Messages">
-                <i class="bi bi-envelope"></i> Private Messages
-                @if (unreadCount > 0)
-                {
-                    <span class="badge bg-danger">@unreadCount</span>
-                }
-            </a>
-        </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -329,7 +317,38 @@
         // SignalR chat logic
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub")
+            .withAutomaticReconnect([0,2000,10000,30000]) // Enables automatic reconnect
             .build();
+
+        // Optional: Handle reconnecting, reconnected, and closed events
+        connection.onreconnecting((error) => {
+            // Optionally notify the user
+            console.warn("Connection lost. Attempting to reconnect...");
+            // You can disable UI here if needed
+        });
+
+        connection.onreconnected((connectionId) => {
+            // Optionally notify the user
+            console.info("Reconnected to the server.");
+            // Re-enable UI or reload data if needed
+        });
+
+        connection.onclose((error) => {
+            // If automatic reconnect fails, this will be called
+            console.error("Connection closed. Unable to reconnect.", error);
+            // Optionally notify the user and/or try manual reconnect
+        });
+
+        // Start the connection
+        function startConnection() {
+            connection.start().catch(function (err) {
+                console.error("SignalR connection error:", err.toString());
+                // Try to reconnect after a delay if needed
+                setTimeout(startConnection, 5000);
+            });
+        }
+
+        startConnection();
 
         connection.start().then(function () {
             // Enable chat input when connected

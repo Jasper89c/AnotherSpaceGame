@@ -72,23 +72,31 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (application.Federation.FederationLeaderId != Federation.FederationLeaderId)
                 return Forbid();
 
-            // Add user to federation
-            var user = application.ApplicationUser;
+            if (Federation.FederationMembers.Count >= Federation.MaximumMembers)
+            {
+                FeedbackMessage = "Federation is full. Cannot approve application.";
+                return RedirectToPage(new { federationId = application.FederationId });
+            }
+
+                // Add user to federation
+                var user = _context.Users
+                .Include(u => u.Federation)
+                .FirstOrDefault(u => u.Id == application.ApplicationUserId);
             user.FederationId = application.FederationId;
             user.Federation = application.Federation;
             _context.Users.Update(user);
 
             // Optionally add to FederationMembers collection
             Federation.FederationMembers.Add(user);
-            Federation.TotalMembers = Federation.FederationMembers.Count;
-            Federation.TotalPlanets = Federation.FederationMembers.Sum(m => m.Planets.Count);
+            Federation.TotalMembers += 1;
+            Federation.TotalPlanets = Federation.FederationMembers.Sum(m => m.TotalPlanets);
             Federation.TotalPowerating = Federation.FederationMembers.Sum(m => m.PowerRating);
 
             // Create important event
             _context.ImportantEvents.Add(new ImportantEvents
             {
                 ApplicationUserId = user.Id,
-                DateAndTime = DateTime.UtcNow,
+                DateAndTime = DateTime.Now,
                 Text = $"Your application to join '{application.Federation.FederationName}' was approved.",
                 ImportantEventTypes = ImportantEventTypes.Misc
             });
@@ -120,7 +128,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.ImportantEvents.Add(new ImportantEvents
             {
                 ApplicationUserId = application.ApplicationUserId,
-                DateAndTime = DateTime.UtcNow,
+                DateAndTime = DateTime.Now,
                 Text = $"Your application to join '{application.Federation.FederationName}' was denied.",
                 ImportantEventTypes = ImportantEventTypes.Misc
             });

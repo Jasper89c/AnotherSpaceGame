@@ -27,6 +27,7 @@
         public int UnreverseEngineeringTurnsRequired { get; set; }
         public int UnreverseEngineeringCreditsRequired { get; set; }
         public DateTime UnreverseEngineeringUnlockTimer { get; set; }
+        public bool AdvancedExploration { get; set; }
 
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }

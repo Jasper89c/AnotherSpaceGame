@@ -1,0 +1,145 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.IndexModel
+@{
+	ViewData["Title"] = "Manual";
+	Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+<h1>Another Space Game Manual</h1>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4">
+			<h3 class="text-warning">
+				Terran
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Terran/Terran">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Terran/TerranShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Terran/TerranTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				A.Miner
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/AMiner/AMiner">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/AMiner/AMinerShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/AMiner/AMinerTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Guardian
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Guardian/Guardian">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Guardian/GuardianShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Guardian/GuardianTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Collective
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Collective/Collective">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Collective/CollectiveShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Collective/CollectiveTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Viral
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Viral/Viral">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Viral/ViralShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Viral/ViralTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Marauder
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Marauder/Marauder">Faction Stats</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Marauder/MarauderShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Marauder/MarauderTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Neutral
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Neutral/NeutralShips">Ships</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Neutral/NeutralTechnology">Technology</a>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<h3 class=" text-warning">
+				Other Information
+			</h3>
+			<ul class="list-unstyled">
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Other/UltimateWeaponWinners">Ultimate Weapon Winners</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Other/Planets">Planets</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Other/Minerals">Mineral Types</a>
+				</li>
+				<li class="list-item">
+					<a asp-area="Manual" asp-page="/Other/Resources">Resources</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

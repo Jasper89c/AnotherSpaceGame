@@ -117,7 +117,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             DisplayName = $"{a.ArtifactName} (x{a.Total})"
         })
         .ToList();
-
+            ServerStats serverStats = _context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled == true)
+            {
+                return RedirectToPage("/Projects");
+            }
 
             BuildDisplayCombinations();
             return Page();

@@ -153,7 +153,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
                 Planet.LandAvailable -= totalLandRequired;
                 Planet.AvailableLabour -= totalLaborRequired;
-                Ore -= totalOreRequired;
+                commodities.Ore -= totalOreRequired;
                 var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 1);
                 TempData["TurnMessage"] = turnsMessage.Message;
                 TurnMessage = $"Build successful! 1 turn used.<hr>{turnsMessage.Message}";
@@ -250,5 +250,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }            
             return RedirectToPage(new { id = Planet.Id });
         }
+
     }
 }

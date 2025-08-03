@@ -1,0 +1,59 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Manual.Pages.Other.ResourcesModel
+@{
+    ViewData["Title"] = "Resources";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>Resource Types</h1>
+
+<a asp-area="Manual" asp-page="/Index"> Back to Manual </a>
+<p>Resources are the basic things you need to perform stuff, like buying things to building things.</p>
+<div class="col-5">
+    <table class="table table-bordered table-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Credits</td>
+                <td>
+                    Credit is the universal currency in Galactic Conquest.
+                    It is used for almost every single task which includes
+                    constructing buildings and infrastructure, building ships
+                    and others.
+                </td>
+            </tr>
+            <tr>
+                <td>Food</td>
+                <td>
+                    Food is used to feed your population. With out food your population will starve and die.
+                </td>
+            </tr>
+            <tr>
+                <td>Consumer Goods</td>
+                <td>
+                    Goods is used to increase your credit income. Your population
+                    buys from your empire a certain number of goods. Your population's
+                    demand for goods depends on the race you are playing. There is no
+                    penalty or negative effect if you do not meet the goods demand of
+                    your population.
+                </td>
+            </tr>
+            <tr>
+                <td>Ore</td>
+                <td>
+                    Ore is used to construct infrastructure on your colonies. Think of it as
+                    building materials. Each unit of infrastructure (one building) requires 1 unit
+                    of ore to build.
+                </td>
+            </tr>
+            <tr>
+                <td>Raw Material</td>
+                <td>A by product from creating food, this is used to create Consumer Goods and can be sold on the market.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

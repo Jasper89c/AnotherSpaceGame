@@ -32,9 +32,26 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public int TotalPages { get; set; }
+        public ServerStats serverStats { get; set; }
+        public DateTime UWTimer { get; set; }
+        public UserProjects userProject { get; set; }
+        public List<UserProjects> userProjectList { get; set; }
+        public List<string> Usernames = new List<string>();
 
         public async Task<IActionResult> OnGetAsync()
         {
+            serverStats = _context.ServerStats.FirstOrDefault();
+            if (serverStats.UWEnabled == true)
+            {
+                userProject = _context.UserProjects.FirstOrDefault(x => x.ApplicationUserId == serverStats.UWHolderId);
+                UWTimer = userProject.KalZulLoktarUnlockTimer;
+            }
+            userProjectList = _context.UserProjects.Where(x => x.KalZulHektar == true).ToList();
+            foreach (var u in userProjectList)
+            {
+                var user1 = await _userManager.FindByIdAsync(u.ApplicationUserId);
+                Usernames.Add(user1.UserName);
+            }
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
@@ -60,6 +77,29 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 TotalPages = 1;
             }
             return Page();
+        }
+
+        public int UWProgressPercent
+        {
+            get
+            {
+                if (serverStats == null || !serverStats.UWEnabled || UWTimer == default)
+                    return 0;
+
+                // Set your event's total duration here (in minutes)
+                var totalDuration = 2880; // e.g., 60 minutes
+
+                var now = DateTime.Now;
+                var end = UWTimer;
+                var start = end.AddMinutes(-totalDuration);
+
+                var elapsed = (now - start).TotalMinutes;
+                var percent = (int)((elapsed / totalDuration) * 100);
+
+                if (percent < 0) percent = 0;
+                if (percent > 100) percent = 100;
+                return percent;
+            }
         }
     }
 }

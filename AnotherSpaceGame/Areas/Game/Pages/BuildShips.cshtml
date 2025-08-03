@@ -34,7 +34,7 @@ else
                     <th>Range</th>
                     <th>Weapon</th>
                     <th>Hull</th>
-                    <th>Power</th>
+                    <th>Power Rating</th>
                     <th>Details</th>
                 </tr>
             </thead>
@@ -48,57 +48,57 @@ else
                 var totalPower = fleet?.TotalPowerRating ?? 0;
                 var buildRate = ship.BuildRate > 0 ? ship.BuildRate : 1;
                 var collapseId = $"collapse-ship-{ship.Id}";
-            <tr>
+                    <tr data-shipid="@ship.Id" data-basepower="@totalPower" data-powerperbuild="@ship.PowerRating">
                 <td>@ship.ShipName</td>
                         <td>@totalInFleet.ToString("N0")</td>
                 <td>
-                    <input type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control"
-                           value="0" data-buildrate="@buildRate" />
+                            <input class="form-control form-control-sm" type="number" name="BuildAmounts[@ship.Id]" min="0" max="@maxTurns * @buildRate" class="form-control"
+                                   value="0" data-buildrate="@buildRate" data-powerperbuild="@ship.PowerRating" />
                 </td>
-                        <td>@totalPower.ToString("N0")</td>
+                        <td class="power-rating">@totalPower.ToString("N0")</td>
                 <td>
                     <span id="turns-@ship.Id">0</span>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-outline-primary add-one-turn" data-shipid="@ship.Id" data-buildrate="@buildRate">+1</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary add-one-turn" style="width: 35px; height: 30px;" data-shipid="@ship.Id" data-buildrate="@buildRate">+1</button>
                 </td>
-                <td>@ship.Range</td>
-                <td>@ship.Weapon</td>
-                <td>@ship.Hull</td>
-                <td>@ship.PowerRating</td>
+                        <td>@ship.Range.ToString("N0")</td>
+                        <td>@ship.Weapon.ToString("N0")</td>
+                        <td>@ship.Hull.ToString("N0")</td>
+                        <td>@ship.PowerRating.ToString("N0")</td>
                         <td class="details-toggle" data-bs-target="#@collapseId" style="cursor:pointer;" title="Click to show/hide details">
                             <i class="bi bi-info-square" aria-label="Details"></i>
                         </td>
             </tr>
             <tr class="collapse" id="@collapseId">
-                <td colspan="10">
+                <td colspan="11">
                     <strong>Ship Data:</strong>
                     <ul class="mb-0">
                         <li><strong>Name:</strong> @ship.ShipName</li>
                         <li><strong>Type:</strong> @ship.ShipType</li>
-                        <li><strong>Range:</strong> @ship.Range</li>
-                        <li><strong>Weapon:</strong> @ship.Weapon</li>
-                                <li><strong>Energy Weapon:</strong> @ship.EnergyWeapon</li>
-                                <li><strong>Kinetic Weapon:</strong> @ship.KineticWeapon</li>
-                                <li><strong>Missile Weapon:</strong> @ship.MissileWeapon</li>
-                                <li><strong>Chemical Weapon:</strong> @ship.ChemicalWeapon</li>
-                        <li><strong>Hull:</strong> @ship.Hull</li>
+                                <li><strong>Range:</strong> @ship.Range.ToString("N0")</li>
+                                <li><strong>Weapon:</strong> @ship.Weapon.ToString("N0")</li>
+                                <li><strong>Energy Weapon:</strong> @ship.EnergyWeapon.ToString("N0")</li>
+                                <li><strong>Kinetic Weapon:</strong> @ship.KineticWeapon.ToString("N0")</li>
+                                <li><strong>Missile Weapon:</strong> @ship.MissileWeapon.ToString("N0")</li>
+                                <li><strong>Chemical Weapon:</strong> @ship.ChemicalWeapon.ToString("N0")</li>
+                                <li><strong>Hull:</strong> @ship.Hull.ToString("N0")</li>
                                 <li><strong>Energy Shield:</strong> @(ship.EnergyShield.ToString("P0"))</li>
                                 <li><strong>Kinetic Shield:</strong> @(ship.KineticShield.ToString("P0"))</li>
                                 <li><strong>Missile Shield:</strong> @(ship.MissileShield.ToString("P0"))</li>
                                 <li><strong>Chemical Shield:</strong> @(ship.ChemicalShield.ToString("P0"))</li>
-                        <li><strong>Power Rating:</strong> @ship.PowerRating</li>
-                        <li><strong>Build Rate:</strong> @ship.BuildRate</li>
-                                <li><strong>Cost To Build:</strong> @ship.CostToBuild</li>
-                                <li><strong>Scanner Rating:</strong> @ship.ScanningPower</li>
+                                <li><strong>Power Rating:</strong> @ship.PowerRating.ToString("N0")</li>
+                                <li><strong>Build Rate:</strong> @ship.BuildRate.ToString("N0")</li>
+                                <li><strong>Cost To Build:</strong> @ship.CostToBuild.ToString("C0")</li>
+                                <li><strong>Scanner Rating:</strong> @ship.ScanningPower.ToString("N0")</li>
                                 <li><strong>No Defense:</strong> @ship.NoDefense</li>
                                 <li><strong>No Retal:</strong> @ship.NoRetal</li>
-                                <li><strong>Terran Metal Cost:</strong> @ship.TerranMetal</li>
-                                <li><strong>Red Crystal Cost:</strong> @ship.RedCrystal</li>
-                                <li><strong>White Crystal Cost:</strong> @ship.WhiteCrystal</li>
-                                <li><strong>Rutile Cost:</strong> @ship.Rutile</li>
-                                <li><strong>Composite Cost:</strong> @ship.Composite</li>
-                                <li><strong>Strafez Organism Cost:</strong> @ship.StrafezOrganism</li>
+                                <li><strong>Terran Metal Cost:</strong> @ship.TerranMetal.ToString("N0")</li>
+                                <li><strong>Red Crystal Cost:</strong> @ship.RedCrystal.ToString("N0")</li>
+                                <li><strong>White Crystal Cost:</strong> @ship.WhiteCrystal.ToString("N0")</li>
+                                <li><strong>Rutile Cost:</strong> @ship.Rutile.ToString("N0")</li>
+                                <li><strong>Composite Cost:</strong> @ship.Composite.ToString("N0")</li>
+                                <li><strong>Strafez Organism Cost:</strong> @ship.StrafezOrganism.ToString("N0")</li>
                                 <li><strong>Ship Capture Chance:</strong> @(ship.CapChance.ToString("P0"))</li>
                         <!-- Add more ship properties here as needed -->
                     </ul>
@@ -107,8 +107,15 @@ else
             }
             </tbody>
         </table>
+        <div class="form-check form-check-inline mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="rememberBuilds" />
+            <label class="form-check-label" for="rememberBuilds">
+                Remember
+            </label>
         <button type="submit" class="btn btn-primary">Build Selected Ships</button>
+        </div>
         @Html.AntiForgeryToken()
+        
     </form>
     <script>
         // Update turns required as user types
@@ -148,5 +155,109 @@ else
                 }
             });
         });
+    </script>
+    <script>
+        const rememberKey = "buildAmounts";
+        const rememberCheckKey = "rememberBuildsChecked";
+
+        // Restore checkbox state and input values
+        window.addEventListener('DOMContentLoaded', function () {
+            const rememberCheck = document.getElementById('rememberBuilds');
+            const savedChecked = localStorage.getItem(rememberCheckKey) === "true";
+            rememberCheck.checked = savedChecked;
+
+            if (savedChecked) {
+                const saved = JSON.parse(localStorage.getItem(rememberKey) || "{}");
+                Object.entries(saved).forEach(([shipId, value]) => {
+                    const input = document.querySelector('input[name="BuildAmounts[' + shipId + ']"]');
+                    if (input) {
+                        input.value = value;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                });
+            }
+        });
+
+        // Save input values if checkbox is checked
+        function saveBuildAmounts() {
+            const rememberCheck = document.getElementById('rememberBuilds');
+            localStorage.setItem(rememberCheckKey, rememberCheck.checked);
+            if (rememberCheck.checked) {
+                const inputs = document.querySelectorAll('input[name^="BuildAmounts"]');
+                const values = {};
+                inputs.forEach(input => {
+                    const shipId = input.name.match(/\d+/)[0];
+                    values[shipId] = input.value;
+                });
+                localStorage.setItem(rememberKey, JSON.stringify(values));
+            } else {
+                localStorage.removeItem(rememberKey);
+            }
+        }
+
+        // Save on input change and checkbox toggle
+        document.addEventListener('input', function (e) {
+            if (e.target && e.target.name && e.target.name.startsWith("BuildAmounts")) {
+                saveBuildAmounts();
+            }
+        });
+        document.getElementById('rememberBuilds').addEventListener('change', saveBuildAmounts);
+
+        // Save on form submit (optional, ensures latest values)
+        document.querySelector('form').addEventListener('submit', saveBuildAmounts);
+    </script>
+    <script>
+        function updatePowerRatingsAndSort() {
+            const tableBody = document.querySelector('table tbody');
+            const rows = Array.from(tableBody.querySelectorAll('tr')).filter(row => row.hasAttribute('data-shipid'));
+
+            rows.forEach(row => {
+                const shipId = row.getAttribute('data-shipid');
+                const input = row.querySelector('input[name="BuildAmounts[' + shipId + ']"]');
+                const basePower = parseInt(row.getAttribute('data-basepower')) || 0;
+                const powerPerBuild = parseInt(row.getAttribute('data-powerperbuild')) || 0;
+                const buildAmount = parseInt(input.value) || 0;
+                const newPower = basePower + (buildAmount * powerPerBuild);
+
+                // Update the power rating cell
+                const powerCell = row.querySelector('.power-rating');
+                if (powerCell) {
+                    powerCell.innerText = newPower.toLocaleString();
+                }
+                // Store new power for sorting
+                row.setAttribute('data-currentpower', newPower);
+            });
+
+            // Sort rows by current power rating (descending)
+            rows.sort((a, b) => {
+                return (parseInt(b.getAttribute('data-currentpower')) || 0) - (parseInt(a.getAttribute('data-currentpower')) || 0);
+            });
+
+            // Re-append rows in sorted order
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+
+        // Update power rating and sort when add-one-turn is clicked
+        document.querySelectorAll('.add-one-turn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var shipId = btn.getAttribute('data-shipid');
+                var buildRate = parseInt(btn.getAttribute('data-buildrate')) || 1;
+                var input = document.querySelector('input[name="BuildAmounts[' + shipId + ']"]');
+                if (input) {
+                    var current = parseInt(input.value) || 0;
+                    input.value = current + buildRate;
+                    input.dispatchEvent(new Event('input'));
+                }
+                updatePowerRatingsAndSort();
+            });
+        });
+
+        // Also update when user types in the input
+        document.querySelectorAll('input[name^="BuildAmounts"]').forEach(function (input) {
+            input.addEventListener('input', updatePowerRatingsAndSort);
+        });
+
+        // Initial update on page load
+        window.addEventListener('DOMContentLoaded', updatePowerRatingsAndSort);
     </script>
 }

@@ -113,11 +113,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     var creditsGainedForPlunder = ((int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier)).ToString("C");
                     var creditsGained = (int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier);
                     UserCommodities.Credits += creditsGained;
-                    totalCreditsForPlunder += creditsGained;
-                    for (int i = 0; i < planet.TotalPlanets; i++)
-                    {
-                        UserExploration.ExplorationPointsNeeded = (int)Math.Floor(UserExploration.ExplorationPointsNeeded / 1.2);
-                    }
+                    totalCreditsForPlunder += creditsGained;                    
+                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);                    
                     user.TotalColonies -= 1;
                     user.TotalPlanets -= planet.TotalPlanets;
                     user.PlanetsPlundered += planet.TotalPlanets;
@@ -147,6 +144,115 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 Faction.DarkMarauder => (1.0m, 1.0m, 1.0m, 1.0m, 1.0m, 3.5m, 1.0m, 0.05m),
                 _ => (1.0m, 1.0m, 1.0m, 1.0m, 1.0m, 1.0m, 1.0m, 1.0m)
             };
+        }
+
+        public long SetExplorationPointsNeeded(ApplicationUser user)
+        {
+            long explorationPointsNeeded = user.TotalPlanets switch
+            {
+                1 => 5000,
+                2 => 6000,
+                3 => 7200,
+                4 => 8640,
+                5 => 10368,
+                6 => 12442,
+                7 => 14930,
+                8 => 17916,
+                9 => 21499,
+                10 => 25799,
+                11 => 30959,
+                12 => 37150,
+                13 => 44581,
+                14 => 53497,
+                15 => 64196,
+                16 => 77035,
+                17 => 92442,
+                18 => 110931,
+                19 => 133117,
+                20 => 159740,
+                21 => 191688,
+                22 => 230026,
+                23 => 276031,
+                24 => 331237,
+                25 => 397484,
+                26 => 476981,
+                27 => 572377,
+                28 => 686853,
+                29 => 824223,
+                30 => 989068,
+                31 => 1186882,
+                32 => 1424258,
+                33 => 1709109,
+                34 => 2050931,
+                35 => 2461118,
+                36 => 2953341,
+                37 => 3544009,
+                38 => 4252811,
+                39 => 5103373,
+                40 => 6124048,
+                41 => 7348858,
+                42 => 8818629,
+                43 => 10582355,
+                44 => 12698826,
+                45 => 15238592,
+                46 => 18286310,
+                47 => 21943572,
+                48 => 26332286,
+                49 => 31598744,
+                50 => 37918492,
+                51 => 45502191,
+                52 => 54602629,
+                53 => 65523155,
+                54 => 78627786,
+                55 => 94353343,
+                56 => 113224011,
+                57 => 135868814,
+                58 => 163042576,
+                59 => 195651092,
+                60 => 234781310,
+                61 => 281737572,
+                62 => 338085086,
+                63 => 405702103,
+                64 => 486842524,
+                65 => 584211029,
+                66 => 701053235,
+                67 => 841263881,
+                68 => 1009516658,
+                69 => 1211419989,
+                70 => 1453703987,
+                71 => 1744444785,
+                72 => 2093333742,
+                73 => 2512000490,
+                74 => 3014400588,
+                75 => 3617280705,
+                76 => 4340736847,
+                77 => 5208884216,
+                78 => 6250661059,
+                79 => 7500793271,
+                80 => 9000951925,
+                81 => 10801142310,
+                82 => 12961370772,
+                83 => 15553644926,
+                84 => 18664373912,
+                85 => 22397248694,
+                86 => 26876698433,
+                87 => 32252038120,
+                88 => 38702445743,
+                89 => 46442934892,
+                90 => 55731521871,
+                91 => 66877826245,
+                92 => 80253391494,
+                93 => 96304069792,
+                94 => 115564883751,
+                95 => 138677860501,
+                96 => 166413432601,
+                97 => 199696119121,
+                98 => 239635342946,
+                99 => 287562411535,
+                _ => 287562411535 // Default if not in range
+            };
+
+            return explorationPointsNeeded;
         }
     }
 }

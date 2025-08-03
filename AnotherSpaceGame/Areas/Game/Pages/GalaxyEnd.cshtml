@@ -1,0 +1,31 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.GalaxyEndModel
+@{
+    ViewData["Title"] = "End of the Galaxy";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+
+@if (Model.LatestGalaxyEnd != null && Model.LatestGalaxyEnd.CreatedAt < DateTime.Now.AddHours(1))
+{
+    <div>
+        <h2>THE GALAXY HAS BEEN DESTROYED!!</h2>
+        <h4>The following user has successfully completed the Ultimate Weapon</h4>
+        <strong>Name:</strong> @Model.LatestGalaxyEnd.Name <br />
+        <strong>Power Rating:</strong> @Model.LatestGalaxyEnd.PowerRating <br />
+        <strong>Completed At:</strong> @Model.LatestGalaxyEnd.CreatedAt
+    </div>
+    <div>
+        <h3>Ultimate Weapon Effects for all Empires</h3>
+        <p>Credits -99%</p>
+        <p>Food -99%</p>
+        <p>Ore -99%</p>
+        <p>Raw Material -99%</p>
+        <p>Consumer Goods -99%</p>
+        <p>All Mineral Types -99%</p>
+        <p>Power Rating set to 1,500 untill turn use</p>
+        <p>Damage Protection +24 Hours </p>
+    </div>
+}
+else
+{
+}

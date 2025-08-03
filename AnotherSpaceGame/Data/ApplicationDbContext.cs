@@ -11,12 +11,13 @@ namespace AnotherSpaceGame.Data
             : base(options)
         {
         }
+        public DbSet<GalaxyEnd> GalaxyEnd { get; set; }
+        public DbSet<UWWinners> UWWinners { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<ViralReversedShips> ViralReversedShips { get; set; }
         public DbSet<CounterAttacks> CounterAttacks { get; set; }
         public DbSet<Missions> Missions { get; set; }
         public DbSet<UserProjects> UserProjects { get; set; }
-        public DbSet<PrivateMessage> PrivateMessages { get; set; }
         public DbSet<Commodities> Commodities { get; set; }
         public DbSet<Fleet> Fleets { get; set; }
         public DbSet<Planets> Planets { get; set; }
@@ -47,6 +48,7 @@ namespace AnotherSpaceGame.Data
         public DbSet<FederationApplication> FederationApplications { get; set; }
         public DbSet<FederationWar> FederationWars { get; set; }
         public DbSet<NPCs> NPCs { get; set; }
+        public DbSet<ServerStats> ServerStats { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -275,24 +277,7 @@ namespace AnotherSpaceGame.Data
                 .HasOne(mp => mp.ApplicationUser)
                 .WithMany(u => u.MarketPosts)
                 .HasForeignKey(mp => mp.ApplicationUserId);
-            // configure one-to-many relationship for private messages
-            builder.Entity<ApplicationUser>()
-                .HasMany(u => u.PrivateMessagesSent)
-                .WithOne(pm => pm.Sender)
-                .HasForeignKey(pm => pm.SenderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<PrivateMessage>()
-                .HasOne(pm => pm.Sender)
-                .WithMany()
-                .HasForeignKey(pm => pm.SenderId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<PrivateMessage>()
-                .HasOne(pm => pm.Receiver)
-                .WithMany()
-                .HasForeignKey(pm => pm.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict);
+            
             // configure one-to-many relationship for counterattacks
             builder.Entity<ApplicationUser>()
                 .HasMany(u => u.CounterAttacks)
@@ -331,7 +316,7 @@ namespace AnotherSpaceGame.Data
             //        Id = i + 1,
             //        UserName = npcNames[i],
             //        PowerRating = random.Next(15000, 2000000),
-            //        PlayingSince = DateTime.UtcNow,
+            //        PlayingSince = DateTime.Now,
             //        EmpireAge = 0,
             //        BattlesWon = 0,
             //        BattlesLost = 0,
@@ -342,8 +327,8 @@ namespace AnotherSpaceGame.Data
             //        Faction = (Faction)random.Next(Enum.GetValues(typeof(Faction)).Length),
             //        TotalColonies = 0,
             //        TotalPlanets = 0,
-            //        DamageProtection = DateTime.UtcNow,
-            //        LastAction = DateTime.UtcNow,
+            //        DamageProtection = DateTime.Now,
+            //        LastAction = DateTime.Now,
             //        ArtifactShield = 0.0m,
             //        IsNPC = true
             //    });

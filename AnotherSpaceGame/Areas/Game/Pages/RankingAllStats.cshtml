@@ -8,7 +8,7 @@
         new { Id = "battles-won", Name = "Battles Won" },
         new { Id = "battles-lost", Name = "Battles Lost" },
         new { Id = "richest-empire", Name = "Richest Empire" },
-        new { Id = "planets-ratio", Name = "Planets Ratio" },
+        new { Id = "most-planets", Name = "Most Planets" },
         new { Id = "planets-won", Name = "Planets Won" },
         new { Id = "planets-lost", Name = "Planets Lost" },
         new { Id = "planets-explored", Name = "Planets Explored" },
@@ -150,9 +150,9 @@
     </table>
 </div>
 
-@* Planets Ratio *@
-<div id="planets-ratio-table" class="ranking-table" style="display:none;">
-    <h4>Planets Ratio</h4>
+@* Most Planets *@
+<div id="most-planets-table" class="ranking-table" style="display:none;">
+    <h4>Most Planets</h4>
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
@@ -161,20 +161,18 @@
                 <th>Faction</th>
                 <th>Total Planets</th>
                 <th>Power Rating</th>
-                <th>Planets Ratio</th>
             </tr>
         </thead>
         <tbody>
-        @for (int i = 0; i < Model.PlanetsRatio.Count; i++)
+        @for (int i = 0; i < Model.MostPlanets.Count; i++)
         {
-            var e = Model.PlanetsRatio[i];
+            var e = Model.MostPlanets[i];
             <tr>
                 <td>@(i + 1)</td>
                 <td>@e.Username</td>
                 <td>@e.Faction</td>
                     <td>@e.TotalPlanets.ToString("N0")</td>
                     <td>@e.PowerRating.ToString("N0")</td>
-                <td>@e.PlanetsRatio.ToString("0.00")</td>
             </tr>
         }
         </tbody>
