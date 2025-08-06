@@ -300,78 +300,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     @RenderSection("Scripts", required: false)
     <script>
-        // Chat panel toggle logic
-        // $(function () {
-        //     $('#chat-toggle-btn').on('click', function () {
-        //         $('#chat-panel').toggle();
-        //         if ($('#chat-panel').is(':visible')) {
-        //             hideChatNotification();
-        //         }
-        //     });
-        //     $('#chat-close-btn').on('click', function () {
-        //         $('#chat-panel').hide();
-        //         hideChatNotification();
-        //     });
-        // });
-
-        // SignalR chat logic
+              // SignalR chat logic
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/chathub")
-            .withAutomaticReconnect([0,2000,10000,30000]) // Enables automatic reconnect
+            .withAutomaticReconnect([0, 2000, 10000, 30000])
             .build();
 
-        // Optional: Handle reconnecting, reconnected, and closed events
+        // Handle reconnecting, reconnected, and closed events
         connection.onreconnecting((error) => {
-            // Optionally notify the user
             console.warn("Connection lost. Attempting to reconnect...");
-            // You can disable UI here if needed
+            $('#chat-input').prop('disabled', true);
+            $('#chat-input-area button[type="submit"]').prop('disabled', true);
         });
 
         connection.onreconnected((connectionId) => {
-            // Optionally notify the user
             console.info("Reconnected to the server.");
-            // Re-enable UI or reload data if needed
+            $('#chat-input').prop('disabled', false);
+            $('#chat-input-area button[type="submit"]').prop('disabled', false);
+            // Reload message history after reconnect
+            connection.invoke("GetRecentMessages", 50);
         });
 
         connection.onclose((error) => {
-            // If automatic reconnect fails, this will be called
             console.error("Connection closed. Unable to reconnect.", error);
-            // Optionally notify the user and/or try manual reconnect
+            $('#chat-input').prop('disabled', true);
+            $('#chat-input-area button[type="submit"]').prop('disabled', true);
         });
 
-        // Start the connection
-        function startConnection() {
-            connection.start().catch(function (err) {
-                console.error("SignalR connection error:", err.toString());
-                // Try to reconnect after a delay if needed
-                setTimeout(startConnection, 5000);
-            });
-        }
-
-        startConnection();
-
+        // Start the connection and load message history
         connection.start().then(function () {
-            // Enable chat input when connected
             $('#chat-input').prop('disabled', false);
             $('#chat-input-area button[type="submit"]').prop('disabled', false);
-
-            // Optionally, load message history
             connection.invoke("GetRecentMessages", 50);
         }).catch(function (err) {
-            return console.error(err.toString());
+            console.error("SignalR connection error:", err.toString());
         });
 
-        connection.on("ReceiveMessage", function (user, message) {
-            addMessageToChat(user, message, new Date());
+        connection.on("ReceiveMessage", function (user, message, sentAt) {
+            addMessageToChat(user, message, sentAt || new Date());
             if ($('#chat-panel').is(':hidden')) {
                 showChatNotification();
             }
             $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
         });
 
-        connection.on("ReceiveMessageHistory", function(messages) {
-            $('#chat-messages').empty(); // Clear previous messages
-            messages.forEach(function(msg) {
+        connection.on("ReceiveMessageHistory", function (messages) {
+            $('#chat-messages').empty();
+            messages.forEach(function (msg) {
                 addMessageToChat(msg.userName, msg.message, msg.sentAt);
             });
             $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
@@ -379,7 +354,6 @@
 
         // Helper function to render a message
         function addMessageToChat(user, message, sentAt) {
-            // Format the timestamp (optional: adjust to local time)
             const date = new Date(sentAt);
             const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const encodedMsg = `<div class="mb-2">
@@ -410,7 +384,7 @@
             }
         });
 
-            // Connect to the turn hub
+        // Connect to the turn hub
         const turnConnection = new signalR.HubConnectionBuilder()
             .withUrl("/turnhub")
             .build();
@@ -421,16 +395,6 @@
 
         // Listen for turn updates
         turnConnection.on("UpdateTurns", function (newTurns) {
-            // Update the turns display
-            // document.querySelectorAll("strong")
-            //     .forEach(function(el) {
-            //         if (el.textContent == "@status.Turns") {
-            //             el.textContent = newTurns;
-            //         }
-            //     });
-            // Or, more specifically, give your turns <strong> an id:
-            // <strong id="turns-count">@status.Turns</strong>
-            // and then:
             document.getElementById("turns-count").textContent = newTurns;
         });
     </script>

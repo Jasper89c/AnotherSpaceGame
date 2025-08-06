@@ -115,7 +115,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                StatusMessage = $"Faction changed to {SelectedFaction}.";
             }
             catch (Exception ex)
             {
@@ -258,6 +257,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.ProjectsResearches.Add(projectsResearch);
             _context.Missions.Add(Missions);
 
+            // UWships
+            var uWships = new UWShips { ApplicationUserId = userId };
+            user.UWShips = uWships;
+            _context.UWShips.Add(uWships);
+
             // Faction-specific research
             switch (faction)
             {
@@ -372,7 +376,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Artifacts
             _context.Artifacts.RemoveRange(_context.Artifacts.Where(a => a.ApplicationUserId == user.Id));
-
 
         }
     }

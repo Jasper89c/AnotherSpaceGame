@@ -11,8 +11,8 @@ namespace AnotherSpaceGame.Models
         public int FederationTimer { get; set; }
         public bool UWEnabled { get; set; }
         public bool UWCompleted { get; set; }
-        public string UWHolderName { get; set; }
-        public string UWHolderId { get; set; }
+        public string? UWHolderName { get; set; }
+        public string? UWHolderId { get; set; }
 
 
     }

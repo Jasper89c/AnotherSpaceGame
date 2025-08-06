@@ -85,7 +85,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 TempData["TurnMessage"] = "No planets selected for plunder.";
                 return RedirectToPage();
             }
-
+            
             int totalTurnsRequired = PlunderPlanetIds.Count * 5;
             var userTurns = await _context.Turns.FirstOrDefaultAsync(t => t.ApplicationUserId == user.Id);
 
@@ -99,6 +99,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var planets = await _context.Planets
                 .Where(p => PlunderPlanetIds.Contains(p.Id) && p.ApplicationUserId == user.Id)
                 .ToListAsync();
+            if (planets.Any(x => x.Name.Contains("H.")))
+            {
+                TempData["TurnMessage"] = "You cannot plunder a homeworld. Please select another planet.";
+                return Page();
+            }
             var totalCreditsForPlunder = 0;
             foreach (var planet in planets)
             {

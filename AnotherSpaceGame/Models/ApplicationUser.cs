@@ -8,6 +8,8 @@ namespace AnotherSpaceGame.Models
     {        
         // navigation property for ViralReversedShips
         public ViralReversedShips ViralReversedShips { get; set; }
+        // navigation property for UWShips
+        public UWShips UWShips { get; set; }
         // navigation property for counterattacks
         public ICollection<CounterAttacks> CounterAttacks { get; set; }
         // navigation property for missions

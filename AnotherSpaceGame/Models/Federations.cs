@@ -11,11 +11,11 @@ namespace AnotherSpaceGame.Models
         public int Id { get; set; }
 
         [Description("Federation Name")]
-        public string FederationName { get; set; }
+        public string? FederationName { get; set; }
 
         [Description("Federation Leader")]
         public ApplicationUser FederationLeader { get; set; }
-        public string FederationLeaderId { get; set; }
+        public string? FederationLeaderId { get; set; }
 
         [Description("Federation Members")]
         public ICollection<ApplicationUser> FederationMembers { get; set; }
@@ -48,7 +48,7 @@ namespace AnotherSpaceGame.Models
         public int TotalPlanets { get; set; }
 
         [Description("Federation Description")]
-        public string FederationDescription { get; set; }
+        public string? FederationDescription { get; set; }
 
     }
 
@@ -59,10 +59,10 @@ namespace AnotherSpaceGame.Models
 
         [Description("Sender")]
         public ApplicationUser Sender { get; set; }
-        public string SenderId { get; set; }
+        public string? SenderId { get; set; }
 
         [Description("Message Text")]
-        public string MessageText { get; set; }
+        public string? MessageText { get; set; }
 
         [Description("Sent At")]
         public DateTime SentAt { get; set; }

@@ -4,7 +4,6 @@ namespace AnotherSpaceGame.Models
 {
     public enum PlanetType
     {
-        None,
         [Description("Barren")]
         Barren,
         [Description("Icy")]

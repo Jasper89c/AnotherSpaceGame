@@ -60,45 +60,45 @@ namespace AnotherSpaceGame.Services
                                     Artifacts newArtifact = new Artifacts(randomArtifactId1, randomArtifactAmount1, usersTemples[i].Id);
                                     arti1Name = newArtifact.ArtifactName.ToString();
                                     dbContext.Artifacts.Add(newArtifact);
-                                    dbContext.SaveChanges();
                                 }
                                 else
                                 {
                                     arti1.Total += randomArtifactAmount1;
                                     arti1Name = arti1.ArtifactName.ToString();
                                 }
+                                    dbContext.SaveChanges();
                                 var randomArtifactId2 = _random1.Next(52, 65);
                                 var randomArtifactAmount2 = _random1.Next(3, 6);
                                 Artifacts arti2 = dbContext.Artifacts.FirstOrDefault(x => x.ApplicationUserId == usersTemples[i].Id && x.ArtifactId == randomArtifactId2);
                                 string arti2Name = "Unknown Artifact";
                                 if (arti2 == null)
                                 {
-                                    Artifacts newArtifact = new Artifacts(randomArtifactId1, randomArtifactAmount1, usersTemples[i].Id);
+                                    Artifacts newArtifact = new Artifacts(randomArtifactId2, randomArtifactAmount2, usersTemples[i].Id);
                                     arti2Name = newArtifact.ArtifactName.ToString();
                                     dbContext.Artifacts.Add(newArtifact);
-                                    dbContext.SaveChanges();
                                 }
                                 else
                                 {
                                     arti2.Total += randomArtifactAmount2;
                                     arti2Name = arti2.ArtifactName.ToString();
                                 }
+                                    dbContext.SaveChanges();
                                 var randomArtifactId3 = _random2.Next(52, 65);
                                 var randomArtifactAmount3 = _random2.Next(3, 6);
                                 Artifacts arti3 = dbContext.Artifacts.FirstOrDefault(x => x.ApplicationUserId == usersTemples[i].Id && x.ArtifactId == randomArtifactId3);
                                 string arti3Name = "Unknown Artifact";
                                 if (arti3 == null)
                                 {
-                                    Artifacts newArtifact = new Artifacts(randomArtifactId1, randomArtifactAmount1, usersTemples[i].Id);
+                                    Artifacts newArtifact = new Artifacts(randomArtifactId3, randomArtifactAmount3, usersTemples[i].Id);
                                     arti3Name = newArtifact.ArtifactName.ToString();
                                     dbContext.Artifacts.Add(newArtifact);
-                                    dbContext.SaveChanges();
                                 }
                                 else
                                 {
                                     arti3.Total += randomArtifactAmount3;
                                     arti3Name = arti3.ArtifactName.ToString();
                                 }
+                                    dbContext.SaveChanges();
                                 Commodities com = dbContext.Commodities.FirstOrDefault(x => x.ApplicationUserId == usersTemples[i].Id);
                                 long creditsToAdd = (long)(_random.NextDouble() * (5000000000L - 1000000000L)) + 1000000000L;
                                 com.Credits += creditsToAdd;
@@ -125,13 +125,13 @@ namespace AnotherSpaceGame.Services
                                     Artifacts newArtifact = new Artifacts(randomArtifactId1, randomArtifactAmount1, usersTemples[i].Id);
                                     arti1Name = newArtifact.ArtifactName.ToString();
                                     dbContext.Artifacts.Add(newArtifact);
-                                    dbContext.SaveChanges();
                                 }
                                 else
                                 {
                                     arti1.Total += randomArtifactAmount1;
                                     arti1Name = arti1.ArtifactName.ToString();
                                 }
+                                    dbContext.SaveChanges();
                                 Commodities com = dbContext.Commodities.FirstOrDefault(x => x.ApplicationUserId == usersTemples[i].Id);
                                 long creditsToAdd = _random.Next(500000000, 1000000000);
                                 com.Credits += creditsToAdd;
@@ -158,13 +158,13 @@ namespace AnotherSpaceGame.Services
                                     Artifacts newArtifact = new Artifacts(randomArtifactId1, randomArtifactAmount1, usersTemples[i].Id);
                                     arti1Name = newArtifact.ArtifactName.ToString();
                                     dbContext.Artifacts.Add(newArtifact);
-                                    dbContext.SaveChanges();
                                 }
                                 else
                                 {
                                     arti1.Total += randomArtifactAmount1;
                                     arti1Name = arti1.ArtifactName.ToString();
                                 }
+                                    dbContext.SaveChanges();
                                 Commodities com = dbContext.Commodities.FirstOrDefault(x => x.ApplicationUserId == usersTemples[i].Id);
                                 long creditsToAdd = _random.Next(250000000, 500000000);
                                 com.Credits += creditsToAdd;

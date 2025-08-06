@@ -32,7 +32,7 @@ namespace AnotherSpaceGame.Models
 
         [Description("Total Colonies")]
         public int TotalColonies { get; set; }
-
+        public bool EnableFeature { get; set; }
         public Exploration()
         {
             ExplorationPointsNeeded = 5000;

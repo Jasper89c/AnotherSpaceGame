@@ -67,7 +67,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == Id && p.ApplicationUserId == user.Id);
             if (planet == null)
                 return RedirectToPage("/ManageColonies", new { area = "Game" });
-
+            if (planet.Name.Contains("H."))
+            {
+                PlunderMessage = "You cannot plunder a homeworld. Please select another planet.";
+                return Page();
+            }
             // Deduct 5 turns
             var turnResult = await _turnService.TryUseTurnsAsync(user.Id, 5);
             if (!turnResult.Success)

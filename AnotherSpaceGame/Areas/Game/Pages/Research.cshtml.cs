@@ -95,6 +95,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return Page();
             }
             AvailableTurns = turns.CurrentTurns;
+            
+            if (TurnsToUse > AvailableTurns)
+            {
+                TurnsToUse = AvailableTurns;
+            }
             if (TurnsToUse < 1)
             {
                 CurrentLevel = Infrastructure.TotalLevels;
@@ -104,44 +109,43 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 StatusMessage = "You must use atleast 1 turn.";
                 return Page();
             }
-            if (TurnsToUse > AvailableTurns)
+            else
             {
-                TurnsToUse = AvailableTurns;
-            }
+
                 if (TurnsToUse > Infrastructure.TurnsRemaining)
                 {
                     TurnsToUse = Infrastructure.TurnsRemaining;
                 }
-            if ( TurnsToUse <= AvailableTurns)
-            {
-                Infrastructure.TurnsRemaining -= TurnsToUse;                
-            }
-            if (Infrastructure.TurnsRemaining <= 0)
-            {
-                Infrastructure.TotalLevels += 1;
-                Infrastructure.UnusedLevels += 1;
-                Infrastructure.ITechInvestmentTurnsRequired += 200;
-                Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
-                turns.CurrentTurns -= TurnsToUse;
-                var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
-                StatusMessage = $"You gained 1 infrastructure level(s) </br > {turnsMessage.Message}";
-                await _context.SaveChangesAsync();
-                CurrentLevel = Infrastructure.TotalLevels;
-                UnusedLevels = Infrastructure.UnusedLevels;
-                AvailableTurns = turns.CurrentTurns;
-                TurnsRemaining = Infrastructure.TurnsRemaining;
-                return Page();
-            }
-            else
-            {
-                var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
-                StatusMessage = $"{turnsMessage.Message}";
-                await _context.SaveChangesAsync();
-                CurrentLevel = Infrastructure.TotalLevels;
-                UnusedLevels = Infrastructure.UnusedLevels;
-                AvailableTurns = turns.CurrentTurns;
-                TurnsRemaining = Infrastructure.TurnsRemaining;
-                return Page();
+                if (TurnsToUse <= AvailableTurns)
+                {
+                    Infrastructure.TurnsRemaining -= TurnsToUse;
+                }
+                if (Infrastructure.TurnsRemaining <= 0 && TurnsToUse > 0)
+                {
+                    Infrastructure.TotalLevels += 1;
+                    Infrastructure.UnusedLevels += 1;
+                    Infrastructure.ITechInvestmentTurnsRequired += 200;
+                    Infrastructure.TurnsRemaining = GetTurnsRequiredForLevel(Infrastructure.TotalLevels);
+                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
+                    StatusMessage = $"You gained 1 infrastructure level(s) </br > {turnsMessage.Message}";
+                    await _context.SaveChangesAsync();
+                    CurrentLevel = Infrastructure.TotalLevels;
+                    UnusedLevels = Infrastructure.UnusedLevels;
+                    AvailableTurns = turns.CurrentTurns;
+                    TurnsRemaining = Infrastructure.TurnsRemaining;
+                    return Page();
+                }
+                else
+                {
+                    var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToUse);
+                    StatusMessage = $"{turnsMessage.Message}";
+                    await _context.SaveChangesAsync();
+                    CurrentLevel = Infrastructure.TotalLevels;
+                    UnusedLevels = Infrastructure.UnusedLevels;
+                    AvailableTurns = turns.CurrentTurns;
+                    TurnsRemaining = Infrastructure.TurnsRemaining;
+                    return Page();
+                }
             }
         }
 

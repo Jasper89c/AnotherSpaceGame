@@ -82,19 +82,23 @@
                 <label for="turnsUsed" class="form-label">Turns to use:</label>  
                 <input type="number" id="turnsUsed" name="turnsUsed" class="form-control" min="1" max="@Model.UserExploration.TurnsRequired" value="@Model.UserExploration.TurnsRequired" required />  
             </div>  
+            @if (Model.ProjectsResearch.AdvancedExploration == true)  
+            {  
                 <div class="mb-3">  
                 <label for="planetType" class="form-label">Preferred Planet Type:</label>  
-            @if (Model.UserProjects.AdvancedExploration == true)  
-            {  
                 <select id="planetType" name="SelectedPlanetType" class="form-select">  
                 @foreach (var option in Model.PlanetTypeOptions)  
                 {  
                      <option value="@option.Value" selected="@(option.Selected ? "true" : "false")">@option.Text</option>  
                 }  
                 </select>  
-            }  
                 </div>  
-            <button type="submit" class="btn btn-primary">Explore</button>  
+            <div class="mb-3">
+                <input type="checkbox" asp-for="EnableFeature" />
+                <label asp-for="EnableFeature">Enable Advanced Exploration</label>
+            </div>
+            }  
+            <button type="submit" class="btn btn-primary">Explore</button>
             @Html.AntiForgeryToken()  
         </form>  
     }  

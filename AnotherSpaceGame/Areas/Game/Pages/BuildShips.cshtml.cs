@@ -54,7 +54,19 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.Commodities)
                 .Include(u => u.Fleets)
                 .Include(u => u.Federation)
+                .Include(u => u.UWShips)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            if (user.UWShips == null)
+            {
+                user.UWShips = new UWShips
+                {
+                    ApplicationUserId = user.Id,
+                    ApplicationUser = user
+                };
+               _context.UWShips.Add(user.UWShips);
+               await _context.SaveChangesAsync();
+            }
 
             var ships = await _context.Ships.ToListAsync();
 
@@ -107,7 +119,23 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     AddShipById(CurrentUser.ViralReversedShips.MarauderShip3Id);
                 } // Marauder Ship 3
             }
-
+            // uw ships
+            if (user.UWShips.UWship1 == true)
+            {
+                AddShipById(324); // UW ship 1
+            }
+            if (user.UWShips.UWship2 == true)
+            {
+                AddShipById(325); // UW ship 2
+            }
+            if (user.UWShips.UWship3 == true)
+            {
+                AddShipById(326); // UW ship 2
+            }
+            if (user.UWShips.UWship4 == true)
+            {
+                AddShipById(327); // UW ship 2
+            }
             // CyrilClassResearch
             if (CurrentUser.CyrilClassResearch is { CyrilCorvette: true, CyrilCorvetteTurnsRequired: 0 }) AddShipById(312);
             if (CurrentUser.CyrilClassResearch is { CyrilFrigate: true, CyrilFrigateTurnsRequired: 0 }) AddShipById(313);

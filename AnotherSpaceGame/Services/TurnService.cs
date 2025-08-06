@@ -236,14 +236,13 @@ public class TurnService
         creditIncome -= fleetCost * turnsToUse;
 
         // Out of Damage Protection Bonus
-        if (user.DamageProtection < DateTime.Now)
+        if (user.DamageProtection < DateTime.Now && creditIncome > 0)
         {
-            outOfDamageProtectionBonus = Math.Floor(creditIncome * 0.05m) * turnsToUse;
-            creditIncome += outOfDamageProtectionBonus;
+            outOfDamageProtectionBonus = Math.Floor(creditIncome * 0.10m);
         }
 
         // Update user commodities
-        UpdateUserCommodities(user, creditIncome, agricultureIncome, goodsIncome, miningTMIncome, miningRCIncome, miningWCIncome, miningCIncome, miningRIncome, miningSOIncome);
+        UpdateUserCommodities(user, creditIncome, agricultureIncome, goodsIncome, miningTMIncome, miningRCIncome, miningWCIncome, miningCIncome, miningRIncome, miningSOIncome, outOfDamageProtectionBonus);
         // update cols + planet counts
         user.TotalColonies = userPlanets.Count;
         user.TotalPlanets = userPlanets.Sum(x => x.TotalPlanets);
@@ -448,19 +447,25 @@ public class TurnService
         return Math.Floor(planets.Sum(h => h.Housing) + planets.Sum(c => c.Commercial) + planets.Sum(i => i.Industry) + planets.Sum(a => a.Agriculture) + planets.Sum(m => m.Mining) * mods.InfrastructreMaintenanceCost);
     }
 
-    private static void UpdateUserCommodities(ApplicationUser user, decimal creditIncome, decimal agricultureIncome, decimal goodsIncome, decimal miningTMIncome, decimal miningRCIncome, decimal miningWCIncome, decimal miningCIncome, decimal miningRIncome, decimal miningSOIncome)
+    private static void UpdateUserCommodities(ApplicationUser user, decimal creditIncome, decimal agricultureIncome, decimal goodsIncome, decimal miningTMIncome, decimal miningRCIncome, decimal miningWCIncome, decimal miningCIncome, decimal miningRIncome, decimal miningSOIncome, decimal OutOfDp)
     {
-        user.Commodities.Credits += (int)creditIncome;
-        user.Commodities.Food += (int)agricultureIncome;
-        user.Commodities.ConsumerGoods += (int)goodsIncome;
-        user.Commodities.TerranMetal += (int)miningTMIncome;
-        user.Commodities.RedCrystal += (int)miningRCIncome;
-        user.Commodities.WhiteCrystal += (int)miningWCIncome;
-        user.Commodities.Rutile += (int)miningRIncome;
-        user.Commodities.Composite += (int)miningCIncome;
-        user.Commodities.StrafezOrganism += (int)miningSOIncome;
+        user.Commodities.Credits += ClampToLong(creditIncome);
+        user.Commodities.Food += ClampToLong(agricultureIncome);
+        user.Commodities.ConsumerGoods += ClampToLong(goodsIncome);
+        user.Commodities.TerranMetal += ClampToLong(miningTMIncome);
+        user.Commodities.RedCrystal += ClampToLong(miningRCIncome);
+        user.Commodities.WhiteCrystal += ClampToLong(miningWCIncome);
+        user.Commodities.Rutile += ClampToLong(miningRIncome);
+        user.Commodities.Composite += ClampToLong(miningCIncome);
+        user.Commodities.StrafezOrganism += ClampToLong(miningSOIncome);
+        user.Commodities.Credits += ClampToLong(OutOfDp);
     }
-
+    private static long ClampToLong(decimal value)
+    {
+        if (value > long.MaxValue) return long.MaxValue;
+        if (value < long.MinValue) return long.MinValue;
+        return (long)value;
+    }
     // Helper for faction modifiers
     private (decimal FactionTaxModifier, decimal FactionCommercialModifier, decimal FactionIndustryModifier,
              decimal FactionAgricultureModifier, decimal FactionMiningModifier, decimal FactionDemandForGoods, decimal InfrastructreMaintenanceCost)

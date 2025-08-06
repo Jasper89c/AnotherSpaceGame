@@ -29,11 +29,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         public Exploration UserExploration { get; set; }
         public UserProjects UserProjects { get; set; }
+        public ProjectsResearch ProjectsResearch { get; set; }
         public string ExploreMessage { get; set; }
         public bool CanExplore { get; set; }
         public Planets? NewPlanet { get; set; }
         [BindProperty]
-        public PlanetType SelectedPlanetType { get; set; } = PlanetType.None;
+        public PlanetType SelectedPlanetType { get; set; } = PlanetType.Barren;
+        [BindProperty]
+        public bool EnableFeature { get; set; }
         public IEnumerable<SelectListItem> PlanetTypeOptions =>
         Enum.GetValues(typeof(PlanetType))
         .Cast<PlanetType>().Where(pt => 
@@ -59,7 +62,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         {
             Value = pt.ToString(),
             Text = pt.ToString(),
-            Selected = pt == PlanetType.None
+            Selected = pt == PlanetType.Barren
         });
         public async Task<IActionResult> OnGetAsync()
         {
@@ -77,7 +80,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             UserExploration = await _context.Explorations
                 .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
+            EnableFeature = UserExploration.EnableFeature; // <-- Add this property to your Exploration model
             UserProjects = await _context.UserProjects
+                .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
+            ProjectsResearch = await _context.ProjectsResearches
                 .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
 
             if (UserExploration == null)
@@ -110,7 +116,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             UserExploration = await _context.Explorations
                 .FirstOrDefaultAsync(e => e.ApplicationUserId == user.Id);
+            UserExploration.EnableFeature = EnableFeature;
             UserProjects = await _context.UserProjects
+                .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
+            ProjectsResearch = await _context.ProjectsResearches
                 .FirstOrDefaultAsync(up => up.ApplicationUserId == user.Id);
 
             if (UserExploration == null)
@@ -378,14 +387,16 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 // Calculate LandAvailable
                 NewPlanet.LandAvailable = NewPlanet.TotalLand - (NewPlanet.Housing + NewPlanet.Commercial + NewPlanet.Industry + NewPlanet.Agriculture + NewPlanet.Mining);
-                if (NewPlanet.Type != SelectedPlanetType)
+                if (NewPlanet.Type != SelectedPlanetType && UserExploration.EnableFeature == true && ProjectsResearch.AdvancedExploration == true)
                 {
-                    ModelState.AddModelError(string.Empty, "Planet plundered due to not being the chosen type.");  
+                    ModelState.AddModelError(string.Empty, "Planet plundered due to not being the chosen type.");
+                    ExploreMessage = turnResult.Message;
                     NewPlanet = null;
                 }
                 else
                 {
                     _context.Planets.Add(NewPlanet);
+                    ExploreMessage = turnResult.Message;
                     ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";
                 }
             }

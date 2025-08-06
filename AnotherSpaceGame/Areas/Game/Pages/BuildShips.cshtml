@@ -142,21 +142,6 @@ else
         });
     </script>
     <script>
-        document.querySelectorAll('.add-one-turn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var shipId = btn.getAttribute('data-shipid');
-                var buildRate = parseInt(btn.getAttribute('data-buildrate')) || 1;
-                var input = document.querySelector('input[name="BuildAmounts[' + shipId + ']"]');
-                if (input) {
-                    var current = parseInt(input.value) || 0;
-                    input.value = current + buildRate;
-                    // Trigger input event to update turns display
-                    input.dispatchEvent(new Event('input'));
-                }
-            });
-        });
-    </script>
-    <script>
         const rememberKey = "buildAmounts";
         const rememberCheckKey = "rememberBuildsChecked";
 

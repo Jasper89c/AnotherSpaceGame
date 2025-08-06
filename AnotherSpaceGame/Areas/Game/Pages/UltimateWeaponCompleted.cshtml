@@ -4,3 +4,54 @@
     ViewData["Title"] = "UW Complete";
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
+<h2>Choose Your Ultimate Weapon Options</h2>
+
+<form method="post">
+    <h4>Select New Faction</h4>
+    <div>
+        <label><strong>Faction:</strong></label><br />
+        <select asp-for="SelectedFaction" asp-items="@(new SelectList(Model.AvailableFactions))">
+            <option value="">-- Select Faction --</option>
+            @foreach (var faction in Model.AvailableFactions)
+            {
+                <option value="@faction">@faction</option>
+            }
+        </select>
+    </div>
+    <h4>Choose Reward Options (1 from each)</h4>
+    <div>
+        <label><strong>Option Group 1:</strong></label><br />
+        <input type="radio" asp-for="OptionGroup1" name="OptionGroup1" value="11" /> 25,000 Land U.Large <br />
+        <input type="radio" asp-for="OptionGroup1" name="OptionGroup1" value="12" /> 25,000 Land U.Eden <br />
+        <input type="radio" asp-for="OptionGroup1" name="OptionGroup1" value="13" /> 10,000 Land U.Fertile <br />
+        <input type="radio" asp-for="OptionGroup1" name="OptionGroup1" value="14" /> 20,000 Land Barren <br />
+    </div>
+    <div>
+        <label><strong>Option Group 2:</strong></label><br />
+        <input type="radio" asp-for="OptionGroup2" name="OptionGroup2" value="21" /> 30 Regalo<br />
+        <input type="radio" asp-for="OptionGroup2" name="OptionGroup2" value="22" /> 10 Big Time Capsule<br />
+        <input type="radio" asp-for="OptionGroup2" name="OptionGroup2" value="23" /> 10 Major Gordo<br />
+    </div>
+    <div>
+        <label><strong>Option Group 3:</strong></label><br />
+        <input type="radio" asp-for="OptionGroup3" name="OptionGroup3" value="31" /> 30 Regalo<br />
+        <input type="radio" asp-for="OptionGroup3" name="OptionGroup3" value="32" /> 10 Big Time Capsule<br />
+        <input type="radio" asp-for="OptionGroup3" name="OptionGroup3" value="33" /> 10 Major Gordo<br />
+    </div>
+    <div>
+        <label><strong>Option Group 4:</strong></label><br />
+        <input type="radio" asp-for="OptionGroup4" name="OptionGroup4" value="41" /> 30 Regalo<br />
+        <input type="radio" asp-for="OptionGroup4" name="OptionGroup4" value="42" /> 10 Big Time Capsule<br />
+        <input type="radio" asp-for="OptionGroup4" name="OptionGroup4" value="43" /> 10 Major Gordo<br />
+    </div>
+    <h4>Addition Rewards</h4>
+    <p>+15 Small Time Capsules</p>
+    <p>+25 Minor Gordos</p>
+    <p>+5 Planetary Core Capsules</p>
+    <p>+20 Infrastructure Levels</p>
+    <p>Restarting as Terran or A.Miner will set your homeworld to clusterable/capturable.</p>
+    <p>Restarting as Guardian will award +1000 Loyalty to homeworld and reward planet but not above 3000 limit.</p>
+    <p>Your Empire name will be engraved into the UW Winners List forever.</p>
+
+    <button type="submit">Submit</button>
+</form>

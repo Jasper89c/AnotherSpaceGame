@@ -79,7 +79,8 @@ public class FederationUpdater : BackgroundService
                 }
                 catch (Exception ex1)
                 {
-                    _logger.LogError(ex1, "Error occurred in FederationUpdater.");
+                    _logger.LogError(ex1, "Detailed error: {Error}", ex1.ToString());
+                    throw;
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(server.FederationTimer), stoppingToken);

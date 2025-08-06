@@ -34,7 +34,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Neutral
                 new ResearchItem { Name = "Capsule Laboratory", IsResearched = research.CapsuleLaboratory, TurnsRequired = research.CapsuleLaboratoryTurnsRequired },
                 new ResearchItem { Name = "ITech", IsResearched = research.ITechLaboratory, TurnsRequired = research.ITechLaboratoryTurnsRequired },
                 new ResearchItem { Name = "Kal-Zul Overmind", IsResearched = research.KalZulOvermind, TurnsRequired = research.KalZulOvermindTurnsRequired },
-                new ResearchItem { Name = "Kal-Zul Artifact", IsResearched = research.KalZulArtifact, TurnsRequired = research.KalZulArtifactTurnsRequired }
+                new ResearchItem { Name = "Kal-Zul Artifact", IsResearched = research.KalZulArtifact, TurnsRequired = research.KalZulArtifactTurnsRequired },
+                new ResearchItem { Name = "Advanced Exploration", IsResearched = research.AdvancedExploration, TurnsRequired = research.AdvancedExplorationTurnsRequired }
             };
         }
 

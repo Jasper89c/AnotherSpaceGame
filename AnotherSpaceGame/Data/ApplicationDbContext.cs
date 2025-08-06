@@ -12,6 +12,7 @@ namespace AnotherSpaceGame.Data
         {
         }
         public DbSet<GalaxyEnd> GalaxyEnd { get; set; }
+        public DbSet<UWShips> UWShips { get; set; }
         public DbSet<UWWinners> UWWinners { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<ViralReversedShips> ViralReversedShips { get; set; }
@@ -289,6 +290,12 @@ namespace AnotherSpaceGame.Data
                 .HasOne(v => v.ApplicationUser)
                 .WithOne(u => u.ViralReversedShips)
                 .HasForeignKey<ViralReversedShips>(v => v.ApplicationUserId)
+                .IsRequired();
+            // configure one-to-many relationship for UWShips
+            builder.Entity<UWShips>()
+                .HasOne(u => u.ApplicationUser)
+                .WithOne(a => a.UWShips)
+                .HasForeignKey<UWShips>(u => u.ApplicationUserId)
                 .IsRequired();
             //// Seed NPCs
 

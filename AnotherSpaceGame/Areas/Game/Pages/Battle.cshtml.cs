@@ -1205,94 +1205,104 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             AttackerTotalPowerRating = AttackerFleet.Sum(f => f.TotalPowerRating);
             DefenderTotalPowerRating = DefenderFleet.Sum(f => f.TotalPowerRating);
+            foreach (var f in AttackerFleet)
+            {
+                f.TotalPowerRating = f.PowerRating * f.TotalShips;
+            }
+            foreach (var d in DefenderFleet)
+            {
+                d.TotalPowerRating = d.PowerRating * d.TotalShips;
+            }
+            AttackerFleet = AttackerFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
+            DefenderFleet = DefenderFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
             CurrentUserFleetsStart = AttackerFleet
             .Select(f => new MergedFleet
             {
-        Id = f.Id,
-        ApplicationUserId = f.ApplicationUserId,
-        ApplicationUser = f.ApplicationUser, // If you want a deep copy, clone this too
-        ShipId = f.ShipId,
-        TotalShips = f.TotalShips,
-        TotalPowerRating = f.TotalPowerRating,
-        TotalUpkeep = f.TotalUpkeep,
-        ShipName = f.ShipName,
-        ShipType = f.ShipType,
-        PowerRating = f.PowerRating,
-        Range = f.Range,
-        Weapon = f.Weapon,
-        Hull = f.Hull,
-        EnergyWeapon = f.EnergyWeapon,
-        KineticWeapon = f.KineticWeapon,
-        MissileWeapon = f.MissileWeapon,
-        ChemicalWeapon = f.ChemicalWeapon,
-        EnergyShield = f.EnergyShield,
-        KineticShield = f.KineticShield,
-        MissileShield = f.MissileShield,
-        ChemicalShield = f.ChemicalShield,
-        NoDefense = f.NoDefense,
-        NoRetal = f.NoRetal,
-        CapChance = f.CapChance,
-        Cost = f.Cost,
-        Upkeep = f.Upkeep,
-        TerranMetal = f.TerranMetal,
-        RedCrystal = f.RedCrystal,
-        WhiteCrystal = f.WhiteCrystal,
-        Rutile = f.Rutile,
-        Composite = f.Composite,
-        StrafezOrganism = f.StrafezOrganism,
-        ScanningPower = f.ScanningPower,
-        BuildRate = f.BuildRate,
-        CostToBuild = f.CostToBuild,
-        ImmuneToCapture = f.ImmuneToCapture,
-        CanCapture = f.CanCapture,
-        TotalShipsStart = f.TotalShipsStart
+                Id = f.Id,
+                ApplicationUserId = f.ApplicationUserId,
+                ApplicationUser = f.ApplicationUser, // If you want a deep copy, clone this too
+                ShipId = f.ShipId,
+                TotalShips = f.TotalShips,
+                TotalPowerRating = f.TotalPowerRating,
+                TotalUpkeep = f.TotalUpkeep,
+                ShipName = f.ShipName,
+                ShipType = f.ShipType,
+                PowerRating = f.PowerRating,
+                Range = f.Range,
+                Weapon = f.Weapon,
+                Hull = f.Hull,
+                EnergyWeapon = f.EnergyWeapon,
+                KineticWeapon = f.KineticWeapon,
+                MissileWeapon = f.MissileWeapon,
+                ChemicalWeapon = f.ChemicalWeapon,
+                EnergyShield = f.EnergyShield,
+                KineticShield = f.KineticShield,
+                MissileShield = f.MissileShield,
+                ChemicalShield = f.ChemicalShield,
+                NoDefense = f.NoDefense,
+                NoRetal = f.NoRetal,
+                CapChance = f.CapChance,
+                Cost = f.Cost,
+                Upkeep = f.Upkeep,
+                TerranMetal = f.TerranMetal,
+                RedCrystal = f.RedCrystal,
+                WhiteCrystal = f.WhiteCrystal,
+                Rutile = f.Rutile,
+                Composite = f.Composite,
+                StrafezOrganism = f.StrafezOrganism,
+                ScanningPower = f.ScanningPower,
+                BuildRate = f.BuildRate,
+                CostToBuild = f.CostToBuild,
+                ImmuneToCapture = f.ImmuneToCapture,
+                CanCapture = f.CanCapture,
+                TotalShipsStart = f.TotalShipsStart
             })
+            .OrderByDescending(f => f.TotalPowerRating)
             .ToList(); ;
             TargetUserFleetsStart = DefenderFleet
             .Select(f => new MergedFleet
-    {
-        Id = f.Id,
-        ApplicationUserId = f.ApplicationUserId,
-        ApplicationUser = f.ApplicationUser, // If you want a deep copy, clone this too
-        ShipId = f.ShipId,
-        TotalShips = f.TotalShips,
-        TotalPowerRating = f.TotalPowerRating,
-        TotalUpkeep = f.TotalUpkeep,
-        ShipName = f.ShipName,
-        ShipType = f.ShipType,
-        PowerRating = f.PowerRating,
-        Range = f.Range,
-        Weapon = f.Weapon,
-        Hull = f.Hull,
-        EnergyWeapon = f.EnergyWeapon,
-        KineticWeapon = f.KineticWeapon,
-        MissileWeapon = f.MissileWeapon,
-        ChemicalWeapon = f.ChemicalWeapon,
-        EnergyShield = f.EnergyShield,
-        KineticShield = f.KineticShield,
-        MissileShield = f.MissileShield,
-        ChemicalShield = f.ChemicalShield,
-        NoDefense = f.NoDefense,
-        NoRetal = f.NoRetal,
-        CapChance = f.CapChance,
-        Cost = f.Cost,
-        Upkeep = f.Upkeep,
-        TerranMetal = f.TerranMetal,
-        RedCrystal = f.RedCrystal,
-        WhiteCrystal = f.WhiteCrystal,
-        Rutile = f.Rutile,
-        Composite = f.Composite,
-        StrafezOrganism = f.StrafezOrganism,
-        ScanningPower = f.ScanningPower,
-        BuildRate = f.BuildRate,
-        CostToBuild = f.CostToBuild,
-        ImmuneToCapture = f.ImmuneToCapture,
-        CanCapture = f.CanCapture,
-        TotalShipsStart = f.TotalShipsStart
-    })
+            {
+                Id = f.Id,
+                ApplicationUserId = f.ApplicationUserId,
+                ApplicationUser = f.ApplicationUser, // If you want a deep copy, clone this too
+                ShipId = f.ShipId,
+                TotalShips = f.TotalShips,
+                TotalPowerRating = f.TotalPowerRating,
+                TotalUpkeep = f.TotalUpkeep,
+                ShipName = f.ShipName,
+                ShipType = f.ShipType,
+                PowerRating = f.PowerRating,
+                Range = f.Range,
+                Weapon = f.Weapon,
+                Hull = f.Hull,
+                EnergyWeapon = f.EnergyWeapon,
+                KineticWeapon = f.KineticWeapon,
+                MissileWeapon = f.MissileWeapon,
+                ChemicalWeapon = f.ChemicalWeapon,
+                EnergyShield = f.EnergyShield,
+                KineticShield = f.KineticShield,
+                MissileShield = f.MissileShield,
+                ChemicalShield = f.ChemicalShield,
+                NoDefense = f.NoDefense,
+                NoRetal = f.NoRetal,
+                CapChance = f.CapChance,
+                Cost = f.Cost,
+                Upkeep = f.Upkeep,
+                TerranMetal = f.TerranMetal,
+                RedCrystal = f.RedCrystal,
+                WhiteCrystal = f.WhiteCrystal,
+                Rutile = f.Rutile,
+                Composite = f.Composite,
+                StrafezOrganism = f.StrafezOrganism,
+                ScanningPower = f.ScanningPower,
+                BuildRate = f.BuildRate,
+                CostToBuild = f.CostToBuild,
+                ImmuneToCapture = f.ImmuneToCapture,
+                CanCapture = f.CanCapture,
+                TotalShipsStart = f.TotalShipsStart
+            })
+            .OrderByDescending(f => f.TotalPowerRating)
             .ToList();
-            AttackerFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
-            DefenderFleet.OrderByDescending(f => f.TotalPowerRating).ToList();
             if (TargetUserFleets.Count() > 0)
             {
                 // Wave 1
@@ -5558,7 +5568,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             int cap = maxColoniesByFaction.TryGetValue(user.Faction, out int val) ? val : 10;
             return user.TotalColonies > cap - 1;
         }
-
         public void UWEnd(ApplicationUser user,ServerStats serverStats)
         {
             var userProject = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
