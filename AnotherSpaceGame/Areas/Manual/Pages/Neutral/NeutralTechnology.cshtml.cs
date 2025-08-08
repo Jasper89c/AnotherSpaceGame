@@ -11,12 +11,14 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Neutral
         public CyrilClassResearch CyrilClassResearch { get; set; } = new CyrilClassResearch();
         public EClassResearch EClassResearch { get; set; } = new EClassResearch();
         public FClassResearch FClassResearch { get; set; } = new FClassResearch();
+        public StrafezResearch StrafezResearch { get; set; } = new StrafezResearch();
 
         public List<ResearchItem> ProjectsResearchItems { get; set; }
         public List<ResearchItem> ClusterResearchItems { get; set; }
         public List<ResearchItem> CyrilClassResearchItems { get; set; }
         public List<ResearchItem> EClassResearchItems { get; set; }
         public List<ResearchItem> FClassResearchItems { get; set; }
+        public List<ResearchItem> SClassResearchItems { get; set; }
 
         public void OnGet()
         {
@@ -25,6 +27,7 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Neutral
             CyrilClassResearchItems = GetCyrilClassResearchItems(CyrilClassResearch);
             EClassResearchItems = GetEClassResearchItems(EClassResearch);
             FClassResearchItems = GetFClassResearchItems(FClassResearch);
+            SClassResearchItems = GetSClassReasearchItems(StrafezResearch);
         }
 
         public static List<ResearchItem> GetProjectsResearchItems(ProjectsResearch research)
@@ -86,7 +89,21 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Neutral
                 new ResearchItem { Name = "F-Class Cruiser", IsResearched = research.FClassCruiser, TurnsRequired = research.FClassCruiserTurnsRequired }
             };
         }
+
+        public static List<ResearchItem> GetSClassReasearchItems(StrafezResearch research)
+        {
+            return new List<ResearchItem>
+            {
+                new ResearchItem { Name = "Strafez Small Genetic Engineering", IsResearched = research.SmallGeneticEngineering, TurnsRequired = research.SmallGeneticEngineeringTurnsRequired },
+                new ResearchItem { Name = "Strafez Small Fodder/Runner", IsResearched = research.SmallStrafezRunnerFodder, TurnsRequired = research.SmallStrafezRunnerFodderTurnsRequired },
+                new ResearchItem { Name = "Strafez Large Genetic Engineering", IsResearched = research.LargeGeneticEngineering, TurnsRequired = research.LargeGeneticEngineeringTurnsRequired },
+                new ResearchItem { Name = "Strafez Large Fodder/Runner", IsResearched = research.LargeStrafezRunnerFodder, TurnsRequired = research.LargeStrafezRunnerFodderTurnsRequired },
+                new ResearchItem { Name = "Strafez Queen/King", IsResearched = research.StrafezQueenKing, TurnsRequired = research.StrafezQueenKingTurnsRequired }
+                };
+
+        }
     }
+
 
     public class ResearchItem
     {

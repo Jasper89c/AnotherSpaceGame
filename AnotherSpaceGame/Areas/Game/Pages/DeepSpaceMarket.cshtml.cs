@@ -80,7 +80,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.Ore += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.RawMaterial:
@@ -95,7 +95,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.RawMaterial += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.ConsumerGoods:
@@ -110,7 +110,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.ConsumerGoods += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.TerranMetal:
@@ -125,7 +125,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.TerranMetal += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.RedCrystal:
@@ -140,7 +140,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.RedCrystal += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.WhiteCrystal:
@@ -155,7 +155,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.WhiteCrystal += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.Rutile:
@@ -170,7 +170,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.Rutile += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.Composite:
@@ -185,7 +185,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.Composite += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 case MarketType.StrafezOrganism:
@@ -200,7 +200,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         StatusMessage = "Not enough Credits, Enter lower amount to buy.";
                         return Page();
                     }
-                    commodities.Food += Quantity;
+                    commodities.StrafezOrganism += Quantity;
                     commodities.Credits -= totalCost;
                     break;
                 default:
@@ -208,7 +208,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             await _context.SaveChangesAsync();
 
-            StatusMessage = $"Successfully purchased {Quantity:N0} units of {SelectedMarketType}.";
+            StatusMessage = $"Successfully purchased {Quantity:N0} units of {SelectedMarketType} for {totalCost.ToString("C0")}.";
 
             return Page();
         }

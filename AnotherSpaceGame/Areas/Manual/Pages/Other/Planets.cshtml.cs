@@ -37,7 +37,7 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
             {
                 PlanetType.Barren => new DisplayPlanet
                 {
-                    Name = "Terran",
+                    Name = "Barren",
                     Description = "This planet generally has thin atmosphere and relatively flat. This would make it a perfect place for construction.",
                     PopulationGrowth = "-50%",
                     AgricultureModifier = "-100%",

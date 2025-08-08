@@ -24,9 +24,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         [BindProperty]
         public int TargetFederationId { get; set; }
-
         public string? FeedbackMessage { get; set; }
-
         public List<Federations> AvailableFederations { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync()
@@ -97,12 +95,41 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var existingWar = await _context.FederationWars
                 .FirstOrDefaultAsync(w => w.AttackerFederationId == user.Federation.Id);
 
+            Federations usersFed = await _context.Federations
+                .Include(x => x.FederationMembers)
+                .FirstOrDefaultAsync(f => f.Id == user.Federation.Id);
+            Federations targetFed = await _context.Federations
+                .Include(x => x.FederationMembers)
+                .FirstOrDefaultAsync(f => f.Id == targetFederationId);
+
             if (existingWar != null)
             {
                 // Override the old war
                 existingWar.DefenderFederationId = targetFederationId;
                 existingWar.DeclaredAt = DateTime.Now;
                 FeedbackMessage = "Previous war overridden. New war declared successfully!";
+                foreach (var member in usersFed.FederationMembers)
+                {
+                    var warLog = new ImportantEvents
+                    {
+                        ApplicationUserId = member.Id,
+                        ImportantEventTypes = ImportantEventTypes.Misc,
+                        Text = $"Your federation has declared war on {targetFed.FederationName}!",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(warLog);
+                }
+                foreach (var member in targetFed.FederationMembers)
+                {
+                    var warLog = new ImportantEvents
+                    {
+                        ApplicationUserId = member.Id,
+                        ImportantEventTypes = ImportantEventTypes.Misc,
+                        Text = $"Your federation is now at war with {usersFed.FederationName}!",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(warLog);
+                }
             }
             else
             {
@@ -115,6 +142,30 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 };
                 _context.FederationWars.Add(war);
                 FeedbackMessage = "War declared successfully!";
+                foreach (var member in usersFed.FederationMembers)
+                {
+                    var warLog = new ImportantEvents
+                    {
+                        ApplicationUser = member,
+                        ApplicationUserId = member.Id,
+                        ImportantEventTypes = ImportantEventTypes.Misc,
+                        Text = $"Your federation has declared war on {targetFed.FederationName}!",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(warLog);
+                }
+                foreach (var member in targetFed.FederationMembers)
+                {
+                    var warLog = new ImportantEvents
+                    {
+                        ApplicationUser = member,
+                        ApplicationUserId = member.Id,
+                        ImportantEventTypes = ImportantEventTypes.Misc,
+                        Text = $"Your federation is now at war with {usersFed.FederationName}!",
+                        DateAndTime = DateTime.Now
+                    };
+                    _context.ImportantEvents.Add(warLog);
+                }
             }
 
             await _context.SaveChangesAsync();

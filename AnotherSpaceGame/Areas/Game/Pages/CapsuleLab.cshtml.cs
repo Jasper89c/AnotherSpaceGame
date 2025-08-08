@@ -79,6 +79,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public int SelectedArtifact4 { get; set; }
         public string CreationMessage { get; set; }
         public List<ArtifactSelectOption> ArtifactOptions { get; set; } = new();
+        public UserProjects userProjects { get; set; }
 
         public CapsuleLabModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
@@ -92,7 +93,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
-            var userProjects = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
+
+            userProjects = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
+
+            if (userProjects.CapsuleLab == false)
+            {
+                return RedirectToPage("/Projects");
+            }
 
             if (userProjects != null && userProjects.CapsuleLab && userProjects.CapsuleLabUnlockTimer < DateTime.Now)
             {

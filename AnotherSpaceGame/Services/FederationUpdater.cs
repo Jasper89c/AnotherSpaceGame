@@ -83,7 +83,7 @@ public class FederationUpdater : BackgroundService
                     throw;
                 }
 
-                await Task.Delay(TimeSpan.FromMinutes(server.FederationTimer), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
             }
         }
     }

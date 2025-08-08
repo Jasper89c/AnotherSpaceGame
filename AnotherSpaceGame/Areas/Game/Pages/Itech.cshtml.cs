@@ -14,7 +14,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly TurnService _turnService;
-
+        [TempData]
+        public string StatusMessage { get; set; }
+        public int TotalLevels { get; set; }
+        public int TurnsRequired { get; set; }
+        public bool CanRedistribute { get; set; }
+        public Infrastructer Infrastructer { get; set; }
+        public DateTime CooldownTimer { get; set; }
+        public UserProjects UserProjects { get; set; }
 
         public ItechModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager, TurnService turnService)
         {
@@ -23,14 +30,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _turnService = turnService;
         }
 
-        [TempData]
-        public string StatusMessage { get; set; }
-
-        public int TotalLevels { get; set; }
-        public int TurnsRequired { get; set; }
-        public bool CanRedistribute { get; set; }
-        public Infrastructer Infrastructer { get; set; }
-        public DateTime CooldownTimer { get; set; }
+        
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -39,6 +39,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
             Infrastructer = _context.Infrastructers.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            UserProjects = _context.UserProjects.FirstOrDefault(i => i.ApplicationUserId == user.Id);
+            if(UserProjects.Itech != true)
+            {
+                return RedirectToPage("/Projects");
+            }
             if (Infrastructer == null)
             {
                 StatusMessage = "Infrastructure not found.";

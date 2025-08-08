@@ -31,6 +31,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public Planets? NewPlanet { get; set; } 
         [BindProperty(SupportsGet = true)]
         public int id { get; set; }
+
+
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             var user = await _userManager.GetUserAsync(User);

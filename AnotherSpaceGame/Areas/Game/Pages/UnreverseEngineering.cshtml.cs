@@ -11,22 +11,32 @@ namespace AnotherSpaceGame.Areas.Game.Pages
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-
+        [TempData]
+        public string StatusMessage { get; set; }
+        public ViralSpecificResearch ViralSpecificResearch { get; set; }
         public UnreverseEngineeringModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        [TempData]
-        public string StatusMessage { get; set; }
+        
 
         public async Task<IActionResult> OnGet()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-
+            ViralSpecificResearch = _context.ViralSpecificResearches.FirstOrDefault(v => v.ApplicationUserId == user.Id);
+            if (ViralSpecificResearch.UnreverseEngineering != true)
+            {
+                return RedirectToPage("/Projects");
+            }
+            if (user.Faction != Faction.Viral)
+            {
+                StatusMessage = "You must be a Viral to Unreverse Engineering.";
+                return RedirectToPage();
+            }
             return Page();
         }
 
@@ -35,13 +45,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
-
+            ViralSpecificResearch = _context.ViralSpecificResearches.FirstOrDefault(v => v.ApplicationUserId == user.Id);
             var userProjects = _context.UserProjects.FirstOrDefault(up => up.ApplicationUserId == user.Id);
+            if (ViralSpecificResearch.UnreverseEngineering != true || userProjects.UnreverseEngineering != true)
+            {
+                return RedirectToPage("/Projects");
+            }
+
+            // Fix for CS0168: Ensure 'userProjects' is used in the code
             if (userProjects == null)
             {
                 StatusMessage = "User projects not found.";
                 return RedirectToPage();
             }
+
             if (user.Faction != Faction.Viral)
             {
                 StatusMessage = "You must be a Viral to Unreverse Engineering.";

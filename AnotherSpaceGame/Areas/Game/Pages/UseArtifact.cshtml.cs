@@ -26,12 +26,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
-
         [BindProperty]
         public string TargetUsername { get; set; }
-
         public Artifacts Artifact { get; set; }
         public string UseMessage { get; set; }
+        public string ArtifactEffect { get; set; }
 
         // Artifact shield reduction values
         private static readonly Dictionary<ArtifactName, double> ArtifactShieldValues = new()
@@ -67,7 +66,51 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             if (Artifact == null)
                 return RedirectToPage("/Artifacts", new { area = "Game" });
+            ArtifactEffect = Artifact.ArtifactName switch
+            {
+                ArtifactName.EnergyPod or ArtifactName.WhiteOrb or ArtifactName.BlackOrb or ArtifactName.BlueOrb or
+                ArtifactName.GreenOrb or ArtifactName.OrangeOrb or ArtifactName.YellowOrb or ArtifactName.PurpleOrb or
+                ArtifactName.GrayOrb or ArtifactName.BrownOrb or ArtifactName.MoccasinOrb or ArtifactName.GoldenOrb or
+                ArtifactName.TurquoiseOrb or ArtifactName.AquaOrb or ArtifactName.PinkOrb or ArtifactName.PlumOrb or
+                ArtifactName.OrganicBase or ArtifactName.AssimilatedBase or ArtifactName.MinorRequerido or
+                ArtifactName.MinorGente or ArtifactName.MinorAlimento or ArtifactName.MinorCosecha or
+                ArtifactName.Traicione or ArtifactName.MinorAfortunado or ArtifactName.MajorAfortunado or
+                ArtifactName.MinorEstructura or ArtifactName.MajorAlimento or ArtifactName.MajorCosecha or
+                ArtifactName.GrandEstructura or ArtifactName.GrandAlimenter or ArtifactName.GrandCosecha or
+                ArtifactName.GrandGente or ArtifactName.GrandProducto or ArtifactName.GrandRequerido or
+                ArtifactName.GrandAlimento or ArtifactName.CuartoMapa =>
+                    "This artifact has no effect.",
 
+                ArtifactName.BronzeDinero => "Gives 50,000 credits to the target.",
+                ArtifactName.SilverDinero => "Gives 150,000 credits to the target.",
+                ArtifactName.GoldDinero => "Gives 250,000 credits to the target.",
+                ArtifactName.PlatinumDinero => "Gives 500,000 credits to the target.",
+                ArtifactName.AmberDinero => "Takes 750,000 credits from the target.",
+                ArtifactName.GarnetDinero => "Takes 50,000 credits from the target.",
+                ArtifactName.TopazDinero => "Takes 250,000 credits from the target.",
+                ArtifactName.OpalDinero => "Takes 500,000 credits from the target.",
+                ArtifactName.AmethystDinero => "Takes 750,000 credits from the target.",
+                ArtifactName.SmallTimeCapsule => "Gives 10 turns to the target.",
+                ArtifactName.BigTimeCapsule => "Gives 100 turns to the target.",
+                ArtifactName.MinorSuerte => "Gives +Luck to the target.",
+                ArtifactName.MajorSuerte => "Gives ++Luck to the target.",
+                ArtifactName.MinorTierra => "Reduces ore by 1% on all target's planets.",
+                ArtifactName.MajorTierra => "Reduces ore by 3% on all target's planets.",
+                ArtifactName.GrandTierra => "Reduces ore by 6% on all target's planets.",
+                ArtifactName.MinorGordo => "Gives 20-30 land to the target's top planet.",
+                ArtifactName.MajorGordo => "Gives 60-100 land to the target's top planet.",
+                ArtifactName.MinorBarrera => "Provides 10 artifact shield to the target.",
+                ArtifactName.MajorBarrera => "Provides 20 artifact shield to the target.",
+                ArtifactName.GrandBarrera => "Provides 45 artifact shield to the target.",
+                ArtifactName.Historia => "Removes 40 turns from the target.",
+                ArtifactName.Persiana => "Delays attacks on the target.",
+                ArtifactName.Regalo => "Gives 3-5 random artifacts to the target.",
+                ArtifactName.MajorProducto => "Decreases target's consumer goods by 5%.",
+                ArtifactName.MajorDinero => "Decreases target's credits by 3%.",
+                ArtifactName.GrandDinero => "Decreases target's credits by 10%.",
+                ArtifactName.PlanetaryCore => "Gives a random planet to the target.",
+                _ => "This artifact has no effect."
+            };
             Id = id;
             return Page();
         }
@@ -82,7 +125,51 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             Artifact = await _context.Artifacts
                 .Include(a => a.ApplicationUser)
                 .FirstOrDefaultAsync(a => a.Id == Id && a.ApplicationUserId == user.Id);
+            ArtifactEffect = Artifact.ArtifactName switch
+            {
+                ArtifactName.EnergyPod or ArtifactName.WhiteOrb or ArtifactName.BlackOrb or ArtifactName.BlueOrb or
+                ArtifactName.GreenOrb or ArtifactName.OrangeOrb or ArtifactName.YellowOrb or ArtifactName.PurpleOrb or
+                ArtifactName.GrayOrb or ArtifactName.BrownOrb or ArtifactName.MoccasinOrb or ArtifactName.GoldenOrb or
+                ArtifactName.TurquoiseOrb or ArtifactName.AquaOrb or ArtifactName.PinkOrb or ArtifactName.PlumOrb or
+                ArtifactName.OrganicBase or ArtifactName.AssimilatedBase or ArtifactName.MinorRequerido or
+                ArtifactName.MinorGente or ArtifactName.MinorAlimento or ArtifactName.MinorCosecha or
+                ArtifactName.Traicione or ArtifactName.MinorAfortunado or ArtifactName.MajorAfortunado or
+                ArtifactName.MinorEstructura or ArtifactName.MajorAlimento or ArtifactName.MajorCosecha or
+                ArtifactName.GrandEstructura or ArtifactName.GrandAlimenter or ArtifactName.GrandCosecha or
+                ArtifactName.GrandGente or ArtifactName.GrandProducto or ArtifactName.GrandRequerido or
+                ArtifactName.GrandAlimento or ArtifactName.CuartoMapa =>
+                    "This artifact has no effect.",
 
+                ArtifactName.BronzeDinero => "Gives 50,000 credits to the target.",
+                ArtifactName.SilverDinero => "Gives 150,000 credits to the target.",
+                ArtifactName.GoldDinero => "Gives 250,000 credits to the target.",
+                ArtifactName.PlatinumDinero => "Gives 500,000 credits to the target.",
+                ArtifactName.AmberDinero => "Takes 750,000 credits from the target.",
+                ArtifactName.GarnetDinero => "Takes 50,000 credits from the target.",
+                ArtifactName.TopazDinero => "Takes 250,000 credits from the target.",
+                ArtifactName.OpalDinero => "Takes 500,000 credits from the target.",
+                ArtifactName.AmethystDinero => "Takes 750,000 credits from the target.",
+                ArtifactName.SmallTimeCapsule => "Gives 10 turns to the target.",
+                ArtifactName.BigTimeCapsule => "Gives 100 turns to the target.",
+                ArtifactName.MinorSuerte => "Gives +Luck to the target.",
+                ArtifactName.MajorSuerte => "Gives ++Luck to the target.",
+                ArtifactName.MinorTierra => "Reduces ore by 1% on all target's planets.",
+                ArtifactName.MajorTierra => "Reduces ore by 3% on all target's planets.",
+                ArtifactName.GrandTierra => "Reduces ore by 6% on all target's planets.",
+                ArtifactName.MinorGordo => "Gives 20-30 land to the target's top planet.",
+                ArtifactName.MajorGordo => "Gives 60-100 land to the target's top planet.",
+                ArtifactName.MinorBarrera => "Provides 10 artifact shield to the target.",
+                ArtifactName.MajorBarrera => "Provides 20 artifact shield to the target.",
+                ArtifactName.GrandBarrera => "Provides 45 artifact shield to the target.",
+                ArtifactName.Historia => "Removes 40 turns from the target.",
+                ArtifactName.Persiana => "Delays attacks on the target.",
+                ArtifactName.Regalo => "Gives 3-5 random artifacts to the target.",
+                ArtifactName.MajorProducto => "Decreases target's consumer goods by 5%.",
+                ArtifactName.MajorDinero => "Decreases target's credits by 3%.",
+                ArtifactName.GrandDinero => "Decreases target's credits by 10%.",
+                ArtifactName.PlanetaryCore => "Gives a random planet to the target.",
+                _ => "This artifact has no effect."
+            };
             if (Artifact == null || Artifact.Total < 1)
             {
                 UseMessage = "You do not own this artifact or have none left.";
@@ -152,11 +239,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ArtifactName.SilverDinero => AddCredits(targetUser, 150000, TargetUsername),
                 ArtifactName.GoldDinero => AddCredits(targetUser, 250000, TargetUsername),
                 ArtifactName.PlatinumDinero => AddCredits(targetUser, 500000, TargetUsername),
-                ArtifactName.AmberDinero => AddCredits(targetUser, -50000, TargetUsername, true),
-                ArtifactName.GarnetDinero => AddCredits(targetUser, 150000, TargetUsername),
-                ArtifactName.TopazDinero => AddCredits(targetUser, 250000, TargetUsername),
-                ArtifactName.OpalDinero => AddCredits(targetUser, 500000, TargetUsername),
-                ArtifactName.AmethystDinero => AddCredits(targetUser, 750000, TargetUsername),
+                ArtifactName.AmberDinero => AddCredits(targetUser, 750000, TargetUsername, true),
+                ArtifactName.GarnetDinero => AddCredits(targetUser, -50000, TargetUsername),
+                ArtifactName.TopazDinero => AddCredits(targetUser, -250000, TargetUsername),
+                ArtifactName.OpalDinero => AddCredits(targetUser, -500000, TargetUsername),
+                ArtifactName.AmethystDinero => AddCredits(targetUser, -750000, TargetUsername),
 
                 // Turns
                 ArtifactName.SmallTimeCapsule => AddTurns(targetUser, 10, TargetUsername),
@@ -206,6 +293,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // Decrement artifact
             Artifact.Total -= 1;
+            if (Artifact.Total <= 0)
+            {
+                _context.Artifacts.Remove(Artifact);
+            }
+            else
+            {
+                _context.Artifacts.Update(Artifact);
+            }
             await _context.SaveChangesAsync();
 
             UseMessage = $"Used {Artifact.ArtifactName} on {TargetUsername}. {effectMsg}";

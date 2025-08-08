@@ -99,6 +99,22 @@
                     </td>
                 </tr>
             }
+            <tr>
+                <td colspan="2">
+                    <b> S Class Research</b>
+                </td>
+            </tr>
+            @foreach (var item in Model.SClassResearchItems)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.TurnsRequired
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
