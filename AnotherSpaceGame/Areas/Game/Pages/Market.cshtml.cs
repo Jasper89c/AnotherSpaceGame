@@ -111,9 +111,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 DateTime = DateTime.Now.AddHours(48),
                 ApplicationUserId = user.Id
             };
+            var imp = new ImportantEvents
+            {
+                ApplicationUser = user,
+                ApplicationUserId = user.Id,
+                DateAndTime = DateTime.Now,
+                ImportantEventTypes = ImportantEventTypes.Market,
+                Text = $"Successfully posted {SellAmount} of {SellMarketType} for {SellPrice} credits each."
+            };
+            _context.ImportantEvents.Add(imp);
             _context.MarketPosts.Add(post);
             await _context.SaveChangesAsync();
-            TempData["MarketSuccess"] = $"Successfully posted {SellAmount} {SellMarketType} for {SellPrice} credits each.";
+            TempData["MarketSuccess"] = $"Successfully posted {SellAmount} of {SellMarketType} for {SellPrice} credits each.";
             return RedirectToPage();
         }
 
@@ -237,13 +246,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 _context.MarketPosts.Remove(post);
             }
-
+            var imp = new ImportantEvents
+            {
+                ApplicationUser = user,
+                ApplicationUserId = user.Id,
+                DateAndTime = DateTime.Now,
+                ImportantEventTypes = ImportantEventTypes.Market,
+                Text = $"Successfully purchased {BuyAmount} of {post.MarketType} for {post.Price * BuyAmount} credits."
+            };
+            _context.ImportantEvents.Add(imp);
             await _context.SaveChangesAsync();
-            TempData["MarketSuccess"] = $"Successfully purchased {BuyAmount} {post.MarketType} for {post.Price * BuyAmount} credits.";
+            TempData["MarketSuccess"] = $"Successfully purchased {BuyAmount} of {post.MarketType} for {post.Price * BuyAmount} credits.";
             return RedirectToPage();
         }
 
-        // Helper to get commodity amount by type
         private long GetUserCommodityAmount(Commodities c, MarketType type) => type switch
         {
             MarketType.Food => c.Food,
@@ -258,8 +274,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             MarketType.StrafezOrganism => c.StrafezOrganism,
             _ => 0
         };
-
-        // Helper to set commodity amount by type
         private void SetUserCommodityAmount(Commodities c, MarketType type, long value)
         {
             switch (type)

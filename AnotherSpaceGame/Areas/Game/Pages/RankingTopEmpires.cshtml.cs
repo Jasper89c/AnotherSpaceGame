@@ -45,7 +45,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                             Faction = u.Faction.ToString(),
                             TotalPlanets = u.TotalPlanets,
                             PowerRating = u.PowerRating,
-                            LastActivity = u.LastAction
+                            LastActivity = u.LastAction,
+                            DamageProtection = u.DamageProtection
                         })
                         .ToList();
 

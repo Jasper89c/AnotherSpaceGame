@@ -166,14 +166,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (CurrentUser.TerranResearch is { TerranDestroyer: true, TerranDestroyerTurnsRequired: 0 }) AddShipById(222);
                 if (CurrentUser.TerranResearch is { TerranCruiser: true, TerranCruiserTurnsRequired: 0 }) { AddShipById(223); AddShipById(224); }
                 if (CurrentUser.TerranResearch is { TerranBattleship: true, TerranBattleshipTurnsRequired: 0 }) AddShipById(225);
-                if (CurrentUser.TerranResearch is { TerranDreadnaught: true, TerranDreadnaughtTurnsRequired: 0 }) { AddShipById(226); AddShipById(227); }
-                if (CurrentUser.TerranResearch is { TerranStarbase: true, TerranStarbaseTurnsRequired: 0 }) { AddShipById(228); AddShipById(229); }
+                if (CurrentUser.TerranResearch is { TerranAdvancedScout: true, TerranAdvancedScoutTurnsRequired: 0 }) AddShipById(236);
                 if (CurrentUser.TerranResearch is { PhotonCorvette: true, PhotonCorvetteTurnsRequired: 0 }) AddShipById(230);
                 if (CurrentUser.TerranResearch is { PhotonFrigate: true, PhotonFrigateTurnsRequired: 0 }) AddShipById(231);
                 if (CurrentUser.TerranResearch is { PhotonDestroyer: true, PhotonDestroyerTurnsRequired: 0 }) AddShipById(232);
                 if (CurrentUser.TerranResearch is { PhotonCruiser: true, PhotonCruiserTurnsRequired: 0 }) AddShipById(233);
+                if (CurrentUser.TerranResearch is { TerranStarbase: true, TerranStarbaseTurnsRequired: 0 }) { AddShipById(228); AddShipById(229); }
+                if (CurrentUser.TerranResearch is { TerranDreadnaught: true, TerranDreadnaughtTurnsRequired: 0 }) { AddShipById(226); AddShipById(227); }
                 if (CurrentUser.TerranResearch is { TerranJuggernaught: true, TerranJuggernaughtTurnsRequired: 0 }) AddShipById(234);
-                if (CurrentUser.TerranResearch is { TerranAdvancedScout: true, TerranAdvancedScoutTurnsRequired: 0 }) AddShipById(236);
             }
 
             // AMinerResearch
@@ -215,6 +215,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // CollectiveResearch
             if (CurrentUser.Faction == Faction.Collective)
             {
+                AddShipById(257);
                 if (CurrentUser.CollectiveResearch is { FighterClass: true, FighterClassTurnsRequired: 0 }) AddShipById(263);
                 if (CurrentUser.CollectiveResearch is { FrigateClass: true, FrigateClassTurnsRequired: 0 }) AddShipById(264);
                 if (CurrentUser.CollectiveResearch is { DestroyerClass: true, DestroyerClassTurnsRequired: 0 }) AddShipById(265);
@@ -222,7 +223,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 if (CurrentUser.CollectiveResearch is { HClassDreadnought: true, HClassDreadnoughtTurnsRequired: 0 }) AddShipById(267);
                 if (CurrentUser.CollectiveResearch is { HClassLeviathan: true, HClassLeviathanTurnsRequired: 0 }) AddShipById(268);
                 if (CurrentUser.CollectiveResearch is { HClassStarbase: true, HClassStarbaseTurnsRequired: 0 }) AddShipById(269);
-                if (CurrentUser.CollectiveResearch is { RClassCorvette: true, RClassCorvetteTurnsRequired: 0 }) AddShipById(257);
                 if (CurrentUser.CollectiveResearch is { RClassFrigate: true, RClassFrigateTurnsRequired: 0 }) AddShipById(258);
                 if (CurrentUser.CollectiveResearch is { RClassDestroyer: true, RClassDestroyerTurnsRequired: 0 }) AddShipById(259);
                 if (CurrentUser.CollectiveResearch is { RClassBattleship: true, RClassBattleshipTurnsRequired: 0 }) AddShipById(260);

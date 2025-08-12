@@ -107,6 +107,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     fleet.TotalPowerRating = fleet.TotalShips * ship.PowerRating;
                     fleet.TotalUpkeep = fleet.TotalShips * ship.Upkeep;
+                    user.PowerRating -= fleet.TotalShips * ship.PowerRating;
                 }
             }
 

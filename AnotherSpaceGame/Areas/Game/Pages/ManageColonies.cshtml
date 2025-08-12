@@ -33,7 +33,7 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th></th>
+                    <th colspan="2"></th>
                     <th>Name</th>
                     <th>Type</th>
                     <th>Current Population</th>
@@ -52,6 +52,113 @@
                     <tr>
                         <td>
                             <input type="checkbox" name="PlunderPlanetIds" value="@planet.Id" />
+                        </td>
+                        <td>
+                            @switch (planet.Type)
+                            {
+                                case PlanetType.Barren:
+                                    <img src="/images/Planets/barren.png" alt="Barren Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Icy:
+                                    <img src="/images/Planets/icy.png" alt="Icy Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Marshy:
+                                    <img src="/images/Planets/marshy.png" alt="Marshy Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Forest:
+                                    <img src="/images/Planets/forest.png" alt="Forest Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Oceanic:
+                                    <img src="/images/Planets/oceanic.png" alt="Oceanic Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Rocky:
+                                    <img src="/images/Planets/rocky.png" alt="Rocky Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Desert:
+                                    <img src="/images/Planets/desert.png" alt="Desert Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Balanced:
+                                    <img src="/images/Planets/balanced.png" alt="Balanced Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Gas:
+                                    <img src="/images/Planets/gas.png" alt="Gas Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.URich:
+                                    <img src="/images/Planets/urich.png" alt="Ultra Rich Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.UEden:
+                                    <img src="/images/Planets/ueden.png" alt="Ultra Eden Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.USpazial:
+                                    <img src="/images/Planets/uspazial.png" alt="Ultra Spazial Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.ULarge:
+                                    <img src="/images/Planets/ularge.png" alt="Ultra Large Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.UFertile:
+                                    <img src="/images/Planets/ufertile.png" alt="Ultra Fertile Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.Dead:
+                                    <img src="/images/Planets/dead.png" alt="Dead Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.ClusterLevel1:
+                                <img src="/images/Planets/cluster1.png" alt="Cluster Level 1 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.ClusterLevel2:
+                                <img src="/images/Planets/cluster1.png" alt="Cluster Level 2 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.ClusterLevel3:
+                                <img src="/images/Planets/cluster1.png" alt="Cluster Level 3 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.AssimilatedC1:
+                                <img src="/images/Planets/assimilated.png" alt="Assimilated Cluster Level 1 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.AssimilatedC2:
+                                <img src="/images/Planets/assimilated.png" alt="Assimilated Cluster Level 2 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.AssimilatedC3:
+                                <img src="/images/Planets/assimilated.png" alt="Assimilated Cluster Level 3 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.InfectedC1:
+                                <img src="/images/Planets/infected.png" alt="Infected Cluster Level 1 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.InfectedC2:
+                                <img src="/images/Planets/infected.png" alt="Infected Cluster Level 2 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.InfectedC3:
+                                <img src="/images/Planets/infected.png" alt="Infected Cluster Level 3 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.SimilareC1:
+                                <img src="/images/Planets/similare.png" alt="Similare Cluster Level 1 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.SimilareC2:
+                                <img src="/images/Planets/similare.png" alt="Similare Cluster Level 2 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.SimilareC3:
+                                <img src="/images/Planets/similare.png" alt="Similare Cluster Level 3 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.SimilareC4:
+                                <img src="/images/Planets/similare.png" alt="Similare Cluster Level 4 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.SimilareC5:
+                                <img src="/images/Planets/similare.png" alt="Similare Cluster Level 4 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.TaintedC1:
+                                <img src="/images/Planets/tainted.png" alt="Tainted Cluster Level 1 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.TaintedC2:
+                                <img src="/images/Planets/tainted.png" alt="Tainted Cluster Level 2 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.TaintedC3:
+                                <img src="/images/Planets/tainted.png" alt="Tainted Cluster Level 3 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                case PlanetType.TaintedC4:
+                                <img src="/images/Planets/tainted.png" alt="Tainted Cluster Level 4 Planet" style="height:20px;width:20px;" />
+                                    break;
+                                default:
+                                    <img src="/images/unknown.png" alt="Unknown Planet" style="height:20px;width:20px;" />
+                                    break;
+                            }
                         </td>
                         <td>
                             <a asp-page="ManagePlanet" asp-route-id="@planet.Id">@planet.Name</a>

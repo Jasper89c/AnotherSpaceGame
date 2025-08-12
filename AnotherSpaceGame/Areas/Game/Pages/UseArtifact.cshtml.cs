@@ -482,6 +482,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 // Set up base values
                 var newPlanet = new Planets
                 {
+                    ApplicationUser = target,
                     ApplicationUserId = target.Id,
                     Name = "E." + random.Next(1000, 9999).ToString(),
                     Type = chosenType,
@@ -497,7 +498,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Agriculture = 0,
                     Mining = 1,
                     MineralProduced = 0,
-                    PowerRating = 0
+                    PowerRating = 0,
+                    TotalPlanets = 1
                 };
 
                 // Set type-specific values

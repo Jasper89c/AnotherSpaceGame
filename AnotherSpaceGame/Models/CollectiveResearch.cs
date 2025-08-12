@@ -108,6 +108,8 @@ namespace AnotherSpaceGame.Models
         public CollectiveResearch()
         {
             // Initialize default values
+            FighterClass = false;
+            FighterClassTurnsRequired = 60;
             FrigateClass = false;
             FrigateClassTurnsRequired = 100;
             DestroyerClass = false;

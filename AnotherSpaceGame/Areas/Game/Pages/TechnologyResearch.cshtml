@@ -12,29 +12,2394 @@
 {
     <div class="alert alert-info">@Model.ResearchMessage</div>
 }
-<table>
+<br />
+<br />
+<br />
+<table class="table table-striped table-bordered">
     <thead>
         <tr>
             <th>Research</th>
             <th>Turns Required</th>
-            <th></th>
+            <th>Turn To Invest</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var research in Model.ListOfAvailableResearch)
+        <tr>
+            <td colspan="3"><b>@Model.user.Faction.ToDescription() Research</b></td>
+        </tr>
+        @switch (Model.user.Faction)
+        {
+            case Faction.Terran:
+                if (Model.user.TerranResearch.SmallTerranHull != true)
+                {
+                    <tr>
+                        <td>Small Terran Hull</td>
+                        <td>@Model.user.TerranResearch.SmallTerranHullTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                    <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchSmallTerranHull">Research</button>
+                                </div>                         
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.TerranResearch.CrystalLenses != true)
+                {
+                    <tr>
+                        <td>Crystal Lenses</td>
+                        <td>@Model.user.TerranResearch.CrystalLensesTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                    <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCrystalLenses">Research</button>
+                                </div>                            
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.TerranResearch.SmallTerranHull == true)
+                {
+                    if (Model.user.TerranResearch.MediumTerranHull != true)
+                    {
+                        <tr>
+                            <td>Medium Terran Hull</td>
+                            <td>@Model.user.TerranResearch.MediumTerranHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                        <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMediumTerranHull">Research</button>
+                                    </div>                           
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.TerranResearch.TerranCorvette != true)
+                    {
+                        <tr>
+                            <td>Terran Corvette</td>
+                            <td>@Model.user.TerranResearch.TerranCorvetteTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                        <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranCorvette">Research</button>
+                                    </div>                                
+                                </form>
+                            </td>
+                        </tr>
+                    }                    
+                }
+                if (Model.user.TerranResearch.MediumTerranHull == true)
+                {
+                    if (Model.user.TerranResearch.LargeTerranHull != true)
+                    {
+                        <tr>
+                            <td>Large Terran Hull</td>
+                            <td>@Model.user.TerranResearch.LargeTerranHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLargeTerranHull">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.TerranResearch.TerranFrigate != true)
+                    {
+                        <tr>
+                            <td>Terran Frigate</td>
+                            <td>@Model.user.TerranResearch.TerranFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.LargeTerranHull == true)
+                {
+                    if (Model.user.TerranResearch.TerranDestroyer != true)
+                    {
+                        <tr>
+                            <td>Terran Destroyer</td>
+                            <td>@Model.user.TerranResearch.TerranDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.TerranDestroyer == true)
+                {
+                    if (Model.user.TerranResearch.TerranCruiser != true)
+                    {
+                        <tr>
+                            <td>Terran Cruiser</td>
+                            <td>@Model.user.TerranResearch.TerranCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.TerranCruiser == true)
+                {
+                    if (Model.user.TerranResearch.TerranBattleship != true)
+                    {
+                        <tr>
+                            <td>Terran Battleship</td>
+                            <td>@Model.user.TerranResearch.TerranBattleshipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranBattleship">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.TerranBattleship == true && Model.user.TerranResearch.CrystalLenses == true)
+                {
+                    if (Model.user.TerranResearch.AdvancedRadar != true)
+                    {
+                        <tr>
+                            <td>Advanced Radar</td>
+                            <td>@Model.user.TerranResearch.AdvancedRadarTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedRadar">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.TerranResearch.PhotonTorpedo != true)
+                    {
+                        <tr>
+                            <td>Photon Torpedo</td>
+                            <td>@Model.user.TerranResearch.PhotonTorpedoTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchPhotonTorpedo">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.AdvancedRadar == true)
+                {
+                    if (Model.user.TerranResearch.TerranAdvancedScout != true)
+                    {
+                        <tr>
+                            <td>Terran Advanced Scout</td>
+                            <td>@Model.user.TerranResearch.TerranAdvancedScoutTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranAdvancedScout">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.PhotonTorpedo == true)
+                {
+                    if (Model.user.TerranResearch.PhotonCorvette != true)
+                    {
+                        <tr>
+                            <td>Photon Corvette</td>
+                            <td>@Model.user.TerranResearch.PhotonCorvetteTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchPhotonCorvette">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.PhotonCorvette == true)
+                {
+                    if (Model.user.TerranResearch.PhotonFrigate != true)
+                    {
+                        <tr>
+                            <td>Photon Frigate</td>
+                            <td>@Model.user.TerranResearch.PhotonFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+
+                                        <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchPhotonFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.PhotonFrigate == true)
+                {
+                    if (Model.user.TerranResearch.PhotonDestroyer != true)
+                    {
+                        <tr>
+                            <td>Photon Destroyer</td>
+                            <td>@Model.user.TerranResearch.PhotonDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchPhotonDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.PhotonDestroyer == true)
+                {
+                    if (Model.user.TerranResearch.PhotonCruiser != true)
+                    {
+                        <tr>
+                            <td>Photon Cruiser</td>
+                            <td>@Model.user.TerranResearch.PhotonCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchPhotonCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.PhotonCruiser == true)
+                {
+                    if (Model.user.TerranResearch.TerranDreadnaught != true)
+                    {
+                        <tr>
+                            <td>Terran Dreadnaught</td>
+                            <td>@Model.user.TerranResearch.TerranDreadnaughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranDreadnaught">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.TerranDreadnaught == true)
+                {
+                    if (Model.user.TerranResearch.TerranStarbase != true)
+                    {
+                        <tr>
+                            <td>Terran Starbase</td>
+                            <td>@Model.user.TerranResearch.TerranStarbaseTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranStarbase">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.TerranResearch.TerranStarbase == true)
+                {
+                    if (Model.user.TerranResearch.TerranJuggernaught != true)
+                    {
+                        <tr>
+                            <td>Terran Juggernaught</td>
+                            <td>@Model.user.TerranResearch.TerranJuggernaughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                        <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTerranJuggernaught">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                break;
+            case Faction.AMiner:
+                if (Model.user.AMinerResearch.StarshipEngineering != true)
+                {
+                    <tr>
+                        <td>Starship Engineering</td>
+                        <td>@Model.user.AMinerResearch.StarshipEngineeringTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchStarshipEngineering">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.AMinerResearch.StarbaseEngineering != true)
+                {
+                    <tr>
+                        <td>Starbase Engineering</td>
+                        <td>@Model.user.AMinerResearch.StarbaseEngineeringTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchStarbaseEngineering">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.AMinerResearch.StarshipEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaCorvette != true)
+                    {
+                        <tr>
+                            <td>Aspha Corvette</td>
+                            <td>@Model.user.AMinerResearch.AsphaCorvetteTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaCorvette">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.AMinerResearch.SensorEngineering != true)
+                    {
+                        <tr>
+                            <td>Sensor Engineering</td>
+                            <td>@Model.user.AMinerResearch.SensorEngineeringTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchSensorEngineering">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaCorvette == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaFrigate != true)
+                    {
+                        <tr>
+                            <td>Aspha Frigate</td>
+                            <td>@Model.user.AMinerResearch.AsphaFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaFrigate == true)
+                {
+                    if (Model.user.AMinerResearch.FlagshipEngineering != true)
+                    {
+                        <tr>
+                            <td>Flagship Engineering</td>
+                            <td>@Model.user.AMinerResearch.FlagshipEngineeringTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFlagshipEngineering">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.FlagshipEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaDestroyer != true)
+                    {
+                        <tr>
+                            <td>Aspha Destroyer</td>
+                            <td>@Model.user.AMinerResearch.AsphaDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaDestroyer == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaCruiser != true)
+                    {
+                        <tr>
+                            <td>Aspha Cruiser</td>
+                            <td>@Model.user.AMinerResearch.AsphaCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaCruiser == true)
+                {
+                    if (Model.user.AMinerResearch.AdvancedEngineering != true)
+                    {
+                        <tr>
+                            <td>Advanced Engineering</td>
+                            <td>@Model.user.AMinerResearch.AdvancedEngineeringTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedEngineering">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AdvancedEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaBattleship != true)
+                    {
+                        <tr>
+                            <td>Aspha Battleship</td>
+                            <td>@Model.user.AMinerResearch.AsphaBattleshipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaBattleship">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaBattleship == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaDreadnought != true)
+                    {
+                        <tr>
+                            <td>Aspha Dreadnought</td>
+                            <td>@Model.user.AMinerResearch.AsphaDreadnoughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaDreadnought">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.SensorEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaSeeker != true)
+                    {
+                        <tr>
+                            <td>Aspha Seeker</td>
+                            <td>@Model.user.AMinerResearch.AsphaSeekerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaSeeker">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaSeeker == true && Model.user.AMinerResearch.AdvancedEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaRanger != true)
+                    {
+                        <tr>
+                            <td>Aspha Ranger</td>
+                            <td>@Model.user.AMinerResearch.AsphaRangerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaRanger">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.StarbaseEngineering == true)
+                {
+                    if (Model.user.AMinerResearch.AsphaLightStarbase != true)
+                    {
+                        <tr>
+                            <td>Aspha Light Starbase</td>
+                            <td>@Model.user.AMinerResearch.AsphaLightStarbaseTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaLightStarbase">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.AMinerResearch.AsphaHeavyStarbase != true && Model.user.AMinerResearch.AdvancedEngineering == true)
+                    {
+                        <tr>
+                            <td>Aspha Heavy Starbase</td>
+                            <td>@Model.user.AMinerResearch.AsphaHeavyStarbaseTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAsphaHeavyStarbase">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.AsphaHeavyStarbase == true)
+                {
+                    if (Model.user.AMinerResearch.GClassShip != true)
+                    {
+                        <tr>
+                            <td>G Class Ship</td>
+                            <td>@Model.user.AMinerResearch.GClassShipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchGClassShip">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.AMinerResearch.GClassShip == true)
+                {
+                    if (Model.user.AMinerResearch.GClassJuggernaught != true)
+                    {
+                        <tr>
+                            <td>G Class Juggernaught</td>
+                            <td>@Model.user.AMinerResearch.GClassJuggernaughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchGClassJuggernaught">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                break;
+            case Faction.Marauder:
+                if (Model.user.MarauderResearch.Class3MarauderHull != true)
+                {
+                    <tr>
+                        <td>Class 3 Marauder Hull</td>
+                        <td>@Model.user.MarauderResearch.Class3MarauderHullTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass3MarauderHull">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.MarauderResearch.Class3MarauderHull == true)
+                {
+                    if (Model.user.MarauderResearch.Class4MarauderHull != true)
+                    {
+                        <tr>
+                            <td>Class 4 Marauder Hull</td>
+                            <td>@Model.user.MarauderResearch.Class4MarauderHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass4MarauderHull">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.MarauderResearch.Class5MarauderHull != true)
+                    {
+                        <tr>
+                            <td>Class 5 Marauder Hull</td>
+                            <td>@Model.user.MarauderResearch.Class5MarauderHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass5MarauderHull">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.MarauderResearch.MarauderCorvette != true)
+                    {
+                        <tr>
+                            <td>Marauder Corvette</td>
+                            <td>@Model.user.MarauderResearch.MarauderCorvetteTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMarauderCorvette">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.MarauderResearch.MarauderFrigate != true)
+                    {
+                        <tr>
+                            <td>Marauder Frigate</td>
+                            <td>@Model.user.MarauderResearch.MarauderFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMarauderFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.Class4MarauderHull == true)
+                {
+                    if (Model.user.MarauderResearch.MarauderDestroyer != true)
+                    {
+                        <tr>
+                            <td>Marauder Destroyer</td>
+                            <td>@Model.user.MarauderResearch.MarauderDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMarauderDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.MarauderResearch.MarauderCruiser != true)
+                    {
+                        <tr>
+                            <td>Marauder Cruiser</td>
+                            <td>@Model.user.MarauderResearch.MarauderCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMarauderCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.Class5MarauderHull == true)
+                {
+                    if (Model.user.MarauderResearch.MarauderBattleship != true)
+                    {
+                        <tr>
+                            <td>Marauder Battleship</td>
+                            <td>@Model.user.MarauderResearch.MarauderBattleshipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMarauderBattleship">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.MarauderBattleship == true)
+                {
+                    if (Model.user.MarauderResearch.AdvancedEngineering != true)
+                    {
+                        <tr>
+                            <td>Advanced Engineering</td>
+                            <td>@Model.user.MarauderResearch.AdvancedEngineeringTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedEngineeringM">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.AdvancedEngineering == true)
+                {
+                    if (Model.user.MarauderResearch.TypeDFrigate != true)
+                    {
+                        <tr>
+                            <td>Type D Frigate</td>
+                            <td>@Model.user.MarauderResearch.TypeDFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTypeDFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.TypeDFrigate == true)
+                {
+                    if (Model.user.MarauderResearch.TypeDDestroyer != true)
+                    {
+                        <tr>
+                            <td>Type D Destroyer</td>
+                            <td>@Model.user.MarauderResearch.TypeDDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTypeDDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.TypeDDestroyer == true)
+                {
+                    if (Model.user.MarauderResearch.TypeDCruiser != true)
+                    {
+                        <tr>
+                            <td>Type D Cruiser</td>
+                            <td>@Model.user.MarauderResearch.TypeDCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTypeDCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.TypeDCruiser == true)
+                {
+                    if (Model.user.MarauderResearch.Class6MarauderHull != true)
+                    {
+                        <tr>
+                            <td>Class 6 Marauder Hull</td>
+                            <td>@Model.user.MarauderResearch.Class6MarauderHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass6MarauderHull">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.MarauderResearch.Class6MarauderHull == true)
+                {
+                    if (Model.user.MarauderResearch.TypeDBattleship != true)
+                    {
+                        <tr>
+                            <td>Type D Battleship</td>
+                            <td>@Model.user.MarauderResearch.TypeDBattleshipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchTypeDBattleship">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            break;
+            case Faction.Viral:
+                if (Model.user.ViralResearch.Class1ViralHull != true)
+                {
+                    <tr>
+                        <td>Class 1 Viral Hull</td>
+                        <td>@Model.user.ViralResearch.Class1ViralHullTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass1ViralHull">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.ViralResearch.Class1ViralHull == true)
+                {
+                    if (Model.user.ViralResearch.Class2ViralHull != true)
+                    {
+                        <tr>
+                            <td>Class 2 Viral Hull</td>
+                            <td>@Model.user.ViralResearch.Class2ViralHullTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchClass2ViralHull">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.ViralResearch.VClassDestroyer != true)
+                    {
+                        <tr>
+                            <td>V Class Destroyer</td>
+                            <td>@Model.user.ViralResearch.VClassDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchVClassDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.ViralResearch.Class2ViralHull == true)
+                {
+                    if (Model.user.ViralResearch.BClassCruiser != true)
+                    {
+                        <tr>
+                            <td>B Class Cruiser</td>
+                            <td>@Model.user.ViralResearch.BClassCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchBClassCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.ViralResearch.VClassCruiser != true)
+                    {
+                        <tr>
+                            <td>V Class Cruiser</td>
+                            <td>@Model.user.ViralResearch.VClassCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchVClassCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.ViralResearch.BClassCruiser == true)
+                {
+                    if (Model.user.ViralResearch.BClassStarbase != true)
+                    {
+                        <tr>
+                            <td>B Class Starbase</td>
+                            <td>@Model.user.ViralResearch.BClassStarbaseTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchBClassStarbase">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.ViralResearch.Class2ViralHull == true)
+                {
+                    if (Model.user.ViralResearch.AdvancedExploration != true)
+                    {
+                        <tr>
+                            <td>Advanced Exploration</td>
+                            <td>@Model.user.ViralResearch.AdvancedExplorationTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedExploration">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.ViralResearch.AdvancedExploration == true)
+                {
+                    if (Model.user.ViralResearch.KohoutekScout != true)
+                    {
+                        <tr>
+                            <td>Kohoutek Scout</td>
+                            <td>@Model.user.ViralResearch.KohoutekScoutTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchKohoutekScout">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.ViralSpecificResearch.ViralClustering != true)
+                {
+                    <tr>
+                        <td>Viral Clustering</td>
+                        <td>@Model.user.ViralSpecificResearch.ViralClusteringTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchViralClustering">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.ViralSpecificResearch.UnreverseEngineering != true)
+                {
+                    <tr>
+                        <td>Unreverse Engineering</td>
+                        <td>@Model.user.ViralSpecificResearch.UnreverseEngineeringTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchUnreverseEngineering">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            break;
+            case Faction.Guardian:
+                if (Model.user.GuardianResearch.FighterClass != true)
+                {
+                    <tr>
+                        <td>Fighter Class</td>
+                        <td>@Model.user.GuardianResearch.FighterClassTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFighterClassG">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.GuardianResearch.FocusCrystal != true)
+                {
+                    <tr>
+                        <td>Focus Crystal</td>
+                        <td>@Model.user.GuardianResearch.FocusCrystalTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFocusCrystal">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.GuardianResearch.OrganicSensors != true)
+                {
+                    <tr>
+                        <td>Organic Sensors</td>
+                        <td>@Model.user.GuardianResearch.OrganicSensorsTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchOrganicSensors">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.GuardianResearch.FighterClass == true)
+                {
+                    if (Model.user.GuardianResearch.CorvetteClass != true)
+                    {
+                        <tr>
+                            <td>Corvette Class</td>
+                            <td>@Model.user.GuardianResearch.CorvetteClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCorvetteClass">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.CorvetteClass == true)
+                {
+                    if (Model.user.GuardianResearch.FrigateClass != true)
+                    {
+                        <tr>
+                            <td>Frigate Class</td>
+                            <td>@Model.user.GuardianResearch.FrigateClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFrigateClassG">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.FrigateClass == true)
+                {
+                    if (Model.user.GuardianResearch.DestroyerClass != true)
+                    {
+                        <tr>
+                            <td>Destroyer Class</td>
+                            <td>@Model.user.GuardianResearch.DestroyerClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchDestroyerClassG">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.GuardianResearch.WeaponsPlatform != true)
+                    {
+                        <tr>
+                            <td>Weapons Platform</td>
+                            <td>@Model.user.GuardianResearch.WeaponsPlatformTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchWeaponsPlatform">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.DestroyerClass == true)
+                {
+                    if (Model.user.GuardianResearch.CruiserClass != true)
+                    {
+                        <tr>
+                            <td>Cruiser Class</td>
+                            <td>@Model.user.GuardianResearch.CruiserClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCruiserClassG">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.CruiserClass == true)
+                {
+                    if (Model.user.GuardianResearch.AdvancedEngineering != true)
+                    {
+                        <tr>
+                            <td>Advanced Engineering</td>
+                            <td>@Model.user.GuardianResearch.AdvancedEngineeringTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedEngineeringG">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.AdvancedEngineering == true)
+                {
+                    if (Model.user.GuardianResearch.AdvancedScouts != true)
+                    {
+                        <tr>
+                            <td>Advanced Scouts</td>
+                            <td>@Model.user.GuardianResearch.AdvancedScoutsTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedScouts">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.FocusCrystal == true && Model.user.GuardianResearch.OrganicSensors == true)
+                {
+                    if (Model.user.GuardianResearch.LanceTorpodoes != true)
+                    {
+                        <tr>
+                            <td>Lance Torpodoes</td>
+                            <td>@Model.user.GuardianResearch.LanceTorpodoesTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLanceTorpodoes">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.LanceTorpodoes == true)
+                {
+                    if (Model.user.GuardianResearch.LClassFrigate != true)
+                    {
+                        <tr>
+                            <td>L-Class Frigate</td>
+                            <td>@Model.user.GuardianResearch.LClassFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLClassFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.LClassFrigate == true)
+                {
+                    if (Model.user.GuardianResearch.LClassDestroyer != true)
+                    {
+                        <tr>
+                            <td>L-Class Destroyer</td>
+                            <td>@Model.user.GuardianResearch.LClassDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLClassDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.LClassDestroyer == true)
+                {
+                    if (Model.user.GuardianResearch.LClassCruiser != true)
+                    {
+                        <tr>
+                            <td>L-Class Cruiser</td>
+                            <td>@Model.user.GuardianResearch.LClassCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLClassCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.LClassCruiser == true)
+                {
+                    if (Model.user.GuardianResearch.KClassDestroyer != true)
+                    {
+                        <tr>
+                            <td>K-Class Destroyer</td>
+                            <td>@Model.user.GuardianResearch.KClassDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchKClassDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.GuardianResearch.KClassDestroyer == true)
+                {
+                    if (Model.user.GuardianResearch.KClassCruiser != true)
+                    {
+                        <tr>
+                            <td>K-Class Cruiser</td>
+                            <td>@Model.user.GuardianResearch.KClassCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchKClassCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                break;
+            break;
+            case Faction.Collective:
+                if (Model.user.CollectiveResearch.FighterClass != true)
+                {
+                    <tr>
+                        <td>Fighter Class</td>
+                        <td>@Model.user.CollectiveResearch.FighterClassTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFighterClass">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                if (Model.user.CollectiveResearch.FighterClass == true)
+                {
+                    if (Model.user.CollectiveResearch.FrigateClass != true)
+                    {
+                        <tr>
+                            <td>Frigate Class</td>
+                            <td>@Model.user.CollectiveResearch.FrigateClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFrigateClass">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.CollectiveResearch.RClassFrigate != true)
+                    {
+                        <tr>
+                            <td>R Class Frigate</td>
+                            <td>@Model.user.CollectiveResearch.RClassFrigateTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchRClassFrigate">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.FrigateClass == true)
+                {
+                    if (Model.user.CollectiveResearch.DestroyerClass != true)
+                    {
+                        <tr>
+                            <td>Destroyer Class</td>
+                            <td>@Model.user.CollectiveResearch.DestroyerClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchDestroyerClass">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.CollectiveResearch.RClassDestroyer != true)
+                    {
+                        <tr>
+                            <td>R Class Destroyer</td>
+                            <td>@Model.user.CollectiveResearch.RClassDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchRClassDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.DestroyerClass == true)
+                {
+                    if (Model.user.CollectiveResearch.CruiserClass != true)
+                    {
+                        <tr>
+                            <td>Cruiser Class</td>
+                            <td>@Model.user.CollectiveResearch.CruiserClassTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCruiserClass">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.CruiserClass == true)
+                {
+                    if (Model.user.CollectiveResearch.HClassShips != true)
+                    {
+                        <tr>
+                            <td>H Class Ships</td>
+                            <td>@Model.user.CollectiveResearch.HClassShipsTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassShips">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.HClassShips == true)
+                {
+                    if (Model.user.CollectiveResearch.HClassDestroyer != true)
+                    {
+                        <tr>
+                            <td>H Class Destroyer</td>
+                            <td>@Model.user.CollectiveResearch.HClassDestroyerTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassDestroyer">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.HClassDestroyer == true)
+                {
+                    if (Model.user.CollectiveResearch.HClassCruiser != true)
+                    {
+                        <tr>
+                            <td>H Class Cruiser</td>
+                            <td>@Model.user.CollectiveResearch.HClassCruiserTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassCruiser">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.HClassCruiser == true)
+                {
+                    if (Model.user.CollectiveResearch.RClassBattleship != true)
+                    {
+                        <tr>
+                            <td>R Class Battleship</td>
+                            <td>@Model.user.CollectiveResearch.RClassBattleshipTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchRClassBattleship">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.CollectiveResearch.HClassStarbase != true)
+                    {
+                        <tr>
+                            <td>H Class Starbase</td>
+                            <td>@Model.user.CollectiveResearch.HClassStarbaseTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassStarbases">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.HClassStarbase == true)
+                {
+                    if (Model.user.CollectiveResearch.HClassDreadnought != true)
+                    {
+                        <tr>
+                            <td>H Class Dreadnought</td>
+                            <td>@Model.user.CollectiveResearch.HClassDreadnoughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassDreadnought">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.CollectiveResearch.RClassDreadnought != true)
+                    {
+                        <tr>
+                            <td>R Class Dreadnought</td>
+                            <td>@Model.user.CollectiveResearch.RClassDreadnoughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchRClassDreadnought">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveResearch.HClassDreadnought == true)
+                {
+                    if (Model.user.CollectiveResearch.HClassLeviathan != true)
+                    {
+                        <tr>
+                            <td>H Class Leviathan</td>
+                            <td>@Model.user.CollectiveResearch.HClassLeviathanTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchHClassLeviathan">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    if (Model.user.CollectiveResearch.RClassJuggernaught != true)
+                    {
+                        <tr>
+                            <td>R Class Juggernaught</td>
+                            <td>@Model.user.CollectiveResearch.RClassJuggernaughtTurnsRequired</td>
+                            <td>
+                                <form method="post">
+                                    <div class="mb-1 d-inline-flex">
+                                        
+                                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchRClassJuggernaught">Research</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                if (Model.user.CollectiveSpecificResearch.CollectiveClustering != true)
+                {
+                    <tr>
+                        <td>Collective Clustering</td>
+                        <td>@Model.user.CollectiveSpecificResearch.CollectiveClusteringTurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCollectiveClustering">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            break;
+            default:
+                break;
+        }
+        <tr>
+            <td colspan="3"><b>Neutral Research</b></td>
+        </tr>
+        @if (Model.user.StrafezResearch.BasicGeneticEngineering != true)
+        {
+        <tr>
+            <td>Basic Genetic Engineering</td>
+            <td>@Model.user.StrafezResearch.BasicGeneticEngineeringTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                        <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchBasicGeneticEngineering">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        
+        @if (Model.user.StrafezResearch.BasicGeneticEngineering == true)
+        {
+        @if (Model.user.StrafezResearch.SmallGeneticEngineering != true)
+        {
+        <tr>
+            <td>Small Genetic Engineering</td>
+            <td>@Model.user.StrafezResearch.SmallGeneticEngineeringTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchSmallGeneticEngineering">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        }
+        
+        @if (Model.user.StrafezResearch.SmallGeneticEngineering == true)
+        {
+        @if (Model.user.StrafezResearch.SmallStrafezRunnerFodder != true)
+        {
+        <tr>
+            <td>Small Strafez Runner Fodder</td>
+            <td>@Model.user.StrafezResearch.SmallStrafezRunnerFodderTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchSmallStrafezRunnerFodder">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        }
+        
+        @if (Model.user.StrafezResearch.SmallStrafezRunnerFodder == true)
+        {
+        @if (Model.user.StrafezResearch.LargeGeneticEngineering != true)
+        {
+        <tr>
+            <td>Large Genetic Engineering</td>
+            <td>@Model.user.StrafezResearch.LargeGeneticEngineeringTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLargeGeneticEngineering">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        }
+        
+        @if (Model.user.StrafezResearch.LargeGeneticEngineering == true)
+        {
+        @if (Model.user.StrafezResearch.LargeStrafezRunnerFodder != true)
+        {
+        <tr>
+            <td>Large Strafez Runner Fodder</td>
+            <td>@Model.user.StrafezResearch.LargeStrafezRunnerFodderTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLargeStrafezRunnerFodder">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        }
+        
+        @if (Model.user.StrafezResearch.LargeStrafezRunnerFodder == true)
+        {
+        @if (Model.user.StrafezResearch.StrafezQueenKing != true)
+        {
+        <tr>
+            <td>Strafez Queen King</td>
+            <td>@Model.user.StrafezResearch.StrafezQueenKingTurnsRequired</td>
+            <td>
+                <form method="post">
+                    <div class="mb-1 d-inline-flex">
+                        
+                                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="45" value="45" />
+                        <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="ResearchStrafezQueenKing">Research</button>
+                    </div>
+                </form>
+            </td>
+        </tr>
+        }
+        }
+    
+        @if (Model.user.CyrilClassResearch.CyrilAlloy != true)
         {
             <tr>
-                <td>@research.Name</td>
-                <td>@research.TurnsRequired.ToString("N0")</td>
+                <td>Cyril Alloy</td>
+                <td>@Model.user.CyrilClassResearch.CyrilAlloyTurnsRequired</td>
                 <td>
-                    <form method="post" style="display:inline;">
-                        <input type="hidden" name="SelectedResearchName" value="@research.Name" />
-                        <input type="number" name="TurnsToInvest" min="1" max="@research.TurnsRequired" value="@research.TurnsRequired" />
-                        <button type="submit">Research</button>
-                        @Html.AntiForgeryToken()
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.CyrilAlloyTurnsRequired" value="@Model.user.CyrilClassResearch.CyrilAlloyTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCyrilAlloy">Research</button>
+                        </div>
                     </form>
                 </td>
             </tr>
         }
+        
+        @if (Model.user.CyrilClassResearch.CyrilAlloy == true)
+        {
+            @if (Model.user.CyrilClassResearch.SmallCyrilHull != true)
+            {
+                <tr>
+                    <td>Small Cyril Hull</td>
+                    <td>@Model.user.CyrilClassResearch.SmallCyrilHullTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.SmallCyrilHullTurnsRequired" value="@Model.user.CyrilClassResearch.SmallCyrilHullTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchSmallCyrilHull">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.CyrilClassResearch.SmallCyrilHull == true)
+        {
+            @if (Model.user.CyrilClassResearch.MediumCyrilHull != true)
+            {
+                <tr>
+                    <td>Medium Cyril Hull</td>
+                    <td>@Model.user.CyrilClassResearch.MediumCyrilHullTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.MediumCyrilHullTurnsRequired" value="@Model.user.CyrilClassResearch.MediumCyrilHullTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchMediumCyrilHull">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.user.CyrilClassResearch.CyrilCorvette != true)
+            {
+                <tr>
+                    <td>Cyril Corvette</td>
+                    <td>@Model.user.CyrilClassResearch.CyrilCorvetteTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.CyrilCorvetteTurnsRequired" value="@Model.user.CyrilClassResearch.CyrilCorvetteTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCyrilCorvette">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.CyrilClassResearch.MediumCyrilHull == true)
+        {
+            @if (Model.user.CyrilClassResearch.LargeCyrilHull != true)
+            {
+                <tr>
+                    <td>Large Cyril Hull</td>
+                    <td>@Model.user.CyrilClassResearch.LargeCyrilHullTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.LargeCyrilHullTurnsRequired" value="@Model.user.CyrilClassResearch.LargeCyrilHullTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchLargeCyrilHull">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.user.CyrilClassResearch.CyrilFrigate != true)
+            {
+                <tr>
+                    <td>Cyril Frigate</td>
+                    <td>@Model.user.CyrilClassResearch.CyrilFrigateTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.CyrilFrigateTurnsRequired" value="@Model.user.CyrilClassResearch.CyrilFrigateTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCyrilFrigate">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.CyrilClassResearch.LargeCyrilHull == true)
+        {
+            @if (Model.user.CyrilClassResearch.CyrilDestroyer != true)
+            {
+                <tr>
+                    <td>Cyril Destroyer</td>
+                    <td>@Model.user.CyrilClassResearch.CyrilDestroyerTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.CyrilDestroyerTurnsRequired" value="@Model.user.CyrilClassResearch.CyrilDestroyerTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCyrilDestroyer">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.CyrilClassResearch.CyrilDestroyer == true)
+        {
+            @if (Model.user.CyrilClassResearch.CyrilCruiser != true)
+            {
+                <tr>
+                    <td>Cyril Cruiser</td>
+                    <td>@Model.user.CyrilClassResearch.CyrilCruiserTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.CyrilClassResearch.CyrilCruiserTurnsRequired" value="@Model.user.CyrilClassResearch.CyrilCruiserTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCyrilCruiser">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (Model.user.FClassResearch.FClassEngineering != true && Model.user.CyrilClassResearch.CyrilCruiser == true)
+        {
+            <tr>
+                <td>F-Class Engineering</td>
+                <td>@Model.user.FClassResearch.FClassEngineeringTurnsRequired</td>
+                <td>
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.FClassResearch.FClassEngineeringTurnsRequired" value="@Model.user.FClassResearch.FClassEngineeringTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFClassEngineering">Research</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+        
+        @if (Model.user.FClassResearch.FClassEngineering == true)
+        {
+            @if (Model.user.FClassResearch.FClassFrigate != true)
+            {
+                <tr>
+                    <td>F-Class Frigate</td>
+                    <td>@Model.user.FClassResearch.FClassFrigateTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.FClassResearch.FClassFrigateTurnsRequired" value="@Model.user.FClassResearch.FClassFrigateTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFClassFrigate">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.FClassResearch.FClassFrigate == true)
+        {
+            @if (Model.user.FClassResearch.FClassDestroyer != true)
+            {
+                <tr>
+                    <td>F-Class Destroyer</td>
+                    <td>@Model.user.FClassResearch.FClassDestroyerTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.FClassResearch.FClassDestroyerTurnsRequired" value="@Model.user.FClassResearch.FClassDestroyerTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFClassDestroyer">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.FClassResearch.FClassDestroyer == true)
+        {
+            @if (Model.user.FClassResearch.FClassCruiser != true)
+            {
+                <tr>
+                    <td>F-Class Cruiser</td>
+                    <td>@Model.user.FClassResearch.FClassCruiserTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.FClassResearch.FClassCruiserTurnsRequired" value="@Model.user.FClassResearch.FClassCruiserTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchFClassCruiser">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+ 
+        @if (Model.user.FClassResearch.FClassCruiser == true)
+        {
+            @if (Model.user.EClassResearch.ExaHertzClassRailgun != true)
+            {
+                <tr>
+                    <td>ExaHertz Class Railgun</td>
+                    <td>@Model.user.EClassResearch.ExaHertzClassRailgunTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.EClassResearch.ExaHertzClassRailgunTurnsRequired" value="@Model.user.EClassResearch.ExaHertzClassRailgunTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchExaHertzClassRailgun">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (Model.user.EClassResearch.ExaHertzClassRailgun == true)
+        {
+            @if (Model.user.EClassResearch.EClassFighter != true)
+            {
+                <tr>
+                    <td>E-Class Fighter</td>
+                    <td>@Model.user.EClassResearch.EClassFighterTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.EClassResearch.EClassFighterTurnsRequired" value="@Model.user.EClassResearch.EClassFighterTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchEClassFighter">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (Model.user.EClassResearch.EClassFighter == true)
+        {
+            @if (Model.user.EClassResearch.EClassFrigate != true)
+            {
+                <tr>
+                    <td>E-Class Frigate</td>
+                    <td>@Model.user.EClassResearch.EClassFrigateTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.EClassResearch.EClassFrigateTurnsRequired" value="@Model.user.EClassResearch.EClassFrigateTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchEClassFrigate">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+
+        @if (Model.user.EClassResearch.EClassFrigate == true)
+        {
+            @if (Model.user.EClassResearch.EClassDestroyer != true)
+            {
+                <tr>
+                    <td>E-Class Destroyer</td>
+                    <td>@Model.user.EClassResearch.EClassDestroyerTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.EClassResearch.EClassDestroyerTurnsRequired" value="@Model.user.EClassResearch.EClassDestroyerTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchEClassDestroyer">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+
+        <tr>
+            <td colspan="3"><b>Project Research</b></td>
+        </tr>
+        @if (Model.user.Faction == Faction.Terran || Model.user.Faction == Faction.AMiner || Model.user.Faction == Faction.Marauder || Model.user.Faction == Faction.Guardian)
+        {
+            @if (Model.user.ClusterResearch.ColonyClusterLevel1 != true)
+            {
+                <tr>
+                    <td>Colony Cluster Level 1</td>
+                    <td>@Model.user.ClusterResearch.ColonyClusterLevel1TurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+                                
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ClusterResearch.ColonyClusterLevel1TurnsRequired" value="@Model.user.ClusterResearch.ColonyClusterLevel1TurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchColonyClusterLevel1">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.user.ClusterResearch.ColonyClusterLevel1 == true)
+            {
+                @if (Model.user.ClusterResearch.ColonyClusterLevel2 != true)
+                {
+                    <tr>
+                        <td>Colony Cluster Level 2</td>
+                        <td>@Model.user.ClusterResearch.ColonyClusterLevel2TurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                    <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ClusterResearch.ColonyClusterLevel2TurnsRequired" value="@Model.user.ClusterResearch.ColonyClusterLevel2TurnsRequired" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchColonyClusterLevel2">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            @if (Model.user.ClusterResearch.ColonyClusterLevel2 == true)
+            {
+                @if (Model.user.ClusterResearch.ColonyClusterLevel3 != true)
+                {
+                    <tr>
+                        <td>Colony Cluster Level 3</td>
+                        <td>@Model.user.ClusterResearch.ColonyClusterLevel3TurnsRequired</td>
+                        <td>
+                            <form method="post">
+                                <div class="mb-1 d-inline-flex">
+                                    
+                                    <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ClusterResearch.ColonyClusterLevel3TurnsRequired" value="@Model.user.ClusterResearch.ColonyClusterLevel3TurnsRequired" />
+                                    <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                                <button type="submit" class="btn btn-primary" asp-page-handler="ResearchColonyClusterLevel3">Research</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+
+        }
+
+        @if (Model.user.ProjectsResearch.ITechLaboratory != true)
+        {
+            <tr>
+                <td>I-Tech Laboratory</td>
+                <td>@Model.user.ProjectsResearch.ITechLaboratoryTurnsRequired</td>
+                <td>
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+                            
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ProjectsResearch.ITechLaboratoryTurnsRequired" value="@Model.user.ProjectsResearch.ITechLaboratoryTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchITechLaboratory">Research</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+        
+        @if (Model.user.ProjectsResearch.CapsuleLaboratory != true)
+        {
+            <tr>
+                <td>Capsule Laboratory</td>
+                <td>@Model.user.ProjectsResearch.CapsuleLaboratoryTurnsRequired</td>
+                <td>
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+                            
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ProjectsResearch.CapsuleLaboratoryTurnsRequired" value="@Model.user.ProjectsResearch.CapsuleLaboratoryTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchCapsuleLaboratory">Research</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+        
+        @if (Model.user.ProjectsResearch.KalZulOvermind != true && Model.user.Faction != Faction.Guardian)
+        {
+            <tr>
+                <td>Kal'Zul Overmind</td>
+                <td>@Model.user.ProjectsResearch.KalZulOvermindTurnsRequired</td>
+                <td>
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+                            
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ProjectsResearch.KalZulOvermindTurnsRequired" value="@Model.user.ProjectsResearch.KalZulOvermindTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchKalZulOvermind">Research</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+        
+        @if (Model.user.ProjectsResearch.KalZulOvermind == true && Model.user.Faction != Faction.Guardian)
+        {
+            @if (Model.user.ProjectsResearch.KalZulArtifact != true && Model.user.Faction != Faction.Guardian)
+            {
+                <tr>
+                    <td>Kal'Zul Artifact</td>
+                    <td>@Model.user.ProjectsResearch.KalZulArtifactTurnsRequired</td>
+                    <td>
+                        <form method="post">
+                            <div class="mb-1 d-inline-flex">
+                                
+                                <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ProjectsResearch.KalZulArtifactTurnsRequired" value="@Model.user.ProjectsResearch.KalZulArtifactTurnsRequired" />
+                                <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                            <button type="submit" class="btn btn-primary" asp-page-handler="ResearchKalZulArtifact">Research</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        @if (Model.user.ProjectsResearch.AdvancedExploration != true)
+        {
+            <tr>
+                <td>Advanced Exploration</td>
+                <td>@Model.user.ProjectsResearch.AdvancedExplorationTurnsRequired</td>
+                <td>
+                    <form method="post">
+                        <div class="mb-1 d-inline-flex">
+                            
+                            <input style="width: 150px;" asp-for="TurnsToInvest" class="form-control" min="1" max="@Model.user.ProjectsResearch.AdvancedExplorationTurnsRequired" value="@Model.user.ProjectsResearch.AdvancedExplorationTurnsRequired" />
+                            <span asp-validation-for="TurnsToInvest" class="text-danger"></span>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="ResearchAdvancedExplorationP">Research</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+    
     </tbody>
 </table>

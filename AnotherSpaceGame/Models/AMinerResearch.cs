@@ -115,23 +115,41 @@ namespace AnotherSpaceGame.Models
         public AMinerResearch()
         {
             // Initialize default values if necessary
+            StarshipEngineering = false;
             StarshipEngineeringTurnsRequired = 40;
+            FlagshipEngineering = false;
             FlagshipEngineeringTurnsRequired = 60;
+            AdvancedEngineering = false;
             AdvancedEngineeringTurnsRequired = 70;
+            SensorEngineering = false;
             SensorEngineeringTurnsRequired = 50;
+            StarbaseEngineering = false;
             StarbaseEngineeringTurnsRequired = 80;
+            AsphaCorvette = false;
             AsphaCorvetteTurnsRequired = 30;
+            AsphaFrigate = false;
             AsphaFrigateTurnsRequired = 40;
+            AsphaDestroyer = false;
             AsphaDestroyerTurnsRequired = 50;
+            AsphaCruiser = false;
             AsphaCruiserTurnsRequired = 60;
+            AsphaBattleship = false;
             AsphaBattleshipTurnsRequired = 80;
+            AsphaDreadnought = false;
             AsphaDreadnoughtTurnsRequired = 120;
+            AsphaSeeker = false;
             AsphaSeekerTurnsRequired = 40;
+            AsphaRanger = false;
             AsphaRangerTurnsRequired = 90;
+            AsphaLightStarbase = false;
             AsphaLightStarbaseTurnsRequired = 80;
+            AsphaHeavyStarbase = false;
             AsphaHeavyStarbaseTurnsRequired = 180;
+            GClassShip = false;
             GClassShipTurnsRequired = 500;
+            GClassJuggernaught = false;
             GClassJuggernaughtTurnsRequired = 350;
+
         }
     }
 }

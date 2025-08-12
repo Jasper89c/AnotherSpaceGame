@@ -220,11 +220,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (UserExploration.ExplorationCompleted >= 100m)
             {
                 // Found a new planet
-                UserExploration.ExplorationCompleted = 0;
-                UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
-                user.TotalPlanets += 1;
-                user.TotalColonies += 1;
-                user.ColoniesExplored += 1;
                 NewPlanet = new Planets
                 {
                     ApplicationUserId = user.Id,
@@ -389,12 +384,20 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 NewPlanet.LandAvailable = NewPlanet.TotalLand - (NewPlanet.Housing + NewPlanet.Commercial + NewPlanet.Industry + NewPlanet.Agriculture + NewPlanet.Mining);
                 if (NewPlanet.Type != SelectedPlanetType && UserExploration.EnableFeature == true && ProjectsResearch.AdvancedExploration == true)
                 {
+                    UserExploration.ExplorationCompleted = 0;
+                    user.ColoniesExplored += 1;
+                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
                     ModelState.AddModelError(string.Empty, "Planet plundered due to not being the chosen type.");
                     ExploreMessage = turnResult.Message;
                     NewPlanet = null;
                 }
                 else
                 {
+                    UserExploration.ExplorationCompleted = 0;
+                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
+                    user.TotalPlanets += 1;
+                    user.TotalColonies += 1;
+                    user.ColoniesExplored += 1;
                     _context.Planets.Add(NewPlanet);
                     ExploreMessage = turnResult.Message;
                     ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";

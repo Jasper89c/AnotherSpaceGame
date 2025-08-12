@@ -26,16 +26,22 @@
                 <input type="hidden" name="SelectedPlanetIds" value="@planet.Id" />
             }  
         </tbody>  
+        <tfoot>
+                    <tr>
+                        <td>
+                            <label for="SelectedMineralType">Select Mineral Type:</label>
+                            <select asp-for="SelectedMineralType" asp-items="Model.MineralTypeSelectList">
+                                <option value="">-- Select --</option>
+                            </select>
+                            <span asp-validation-for="SelectedMineralType" class="text-danger"></span>
+                            <br />
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            @Html.AntiForgeryToken()
+                        </td>
+                    </tr>
+                </tfoot>
         </table>
-        <label for="SelectedMineralType">Select Mineral Type:</label>
-        <select asp-for="SelectedMineralType" asp-items="Model.MineralTypeSelectList">
-            <option value="">-- Select --</option>
-        </select>
-        <span asp-validation-for="SelectedMineralType" class="text-danger"></span>
-        <br />
-        <button type="submit">Submit</button>
-        @Html.AntiForgeryToken()
-    </form>
+        </form>
 }  
 else if (Model.NewPlanet != null) 
 {  
@@ -57,14 +63,39 @@ else if (Model.NewPlanet != null)
                 <td>@Model.NewPlanet.AvailableOre</td>  
                 </tr>              
         </tbody>  
+        <tfoot>
+            <tr>
+                <td>
+                    <p>
+                        <a asp-page="/ManageColonies">Click Here To Continue</a>
+                    </p>
+                </td>
+            </tr>
+        </tfoot>
     </table>  
-    <p>  
-        <a asp-page="/ManageColonies">Click Here To Continue</a>  
-    </p>  
+     
 }  
 else
-{  
-    <p>Not enough planets for this selection. Try exploring for more planets.</p>  
+{  <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h1>Cannot Create Colony Cluster</h1>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                         <p>Not enough planets for this selection. Try exploring for more planets.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }  
 
 @section Scripts {  

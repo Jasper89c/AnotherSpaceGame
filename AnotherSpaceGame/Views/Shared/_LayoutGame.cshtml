@@ -9,7 +9,65 @@
     var status = UserStatusService.GetCurrentStatus(User);
     var user = UserManager.GetUserAsync(User).Result;
     int unreadCount = 0;
-    
+    var userFederation = user.FederationId.HasValue ? DbContext.Federations.Find(user.FederationId.Value) : null;
+    var activeUserCount = DbContext.Users.Count(u => u.LastAction >= DateTime.Now.AddMinutes(-30));
+    // Example logic, adjust as needed for your time windows
+    var now = DateTime.Now; // or DateTime.Now for local time
+    string digType = "None";
+    var hour = now.Hour;
+    var minute = now.Minute;
+
+    // Common: 12:00-13:00, 3:00-4:00, 6:00-7:00, 9:00-10:00 (am/pm)
+    if ((hour == 12 && minute >= 0 && minute < 60) ||
+        (hour == 3 && minute >= 0 && minute < 60) ||
+        (hour == 6 && minute >= 0 && minute < 60) ||
+        (hour == 9 && minute >= 0 && minute < 60))
+    {
+        digType = "Common";
+    }
+
+    // Uncommon: 13:00-13:30, 4:00-4:30, 7:00-7:30, 10:00-10:30 (am/pm)
+    if ((hour == 13 && minute >= 0 && minute < 30) ||
+        (hour == 4 && minute >= 0 && minute < 30) ||
+        (hour == 7 && minute >= 0 && minute < 30) ||
+        (hour == 10 && minute >= 0 && minute < 30))
+    {
+        digType = "Uncommon";
+    }
+
+    // Rare: 13:30-13:45, 4:30-4:45, 7:30-7:45, 10:30-10:45 (am/pm)
+    if ((hour == 13 && minute >= 30 && minute < 45) ||
+        (hour == 4 && minute >= 30 && minute < 45) ||
+        (hour == 7 && minute >= 30 && minute < 45) ||
+        (hour == 10 && minute >= 30 && minute < 45))
+    {
+        digType = "Rare";
+    }
+
+    // Mirror for PM (add 12 to hour if hour < 12)
+    int pmHour = (hour + 12) % 24;
+    if ((pmHour == 12 && minute >= 0 && minute < 60) ||
+        (pmHour == 15 && minute >= 0 && minute < 60) ||
+        (pmHour == 18 && minute >= 0 && minute < 60) ||
+        (pmHour == 21 && minute >= 0 && minute < 60))
+    {
+        digType = "Common";
+    }
+    if ((pmHour == 13 && minute >= 0 && minute < 30) ||
+        (pmHour == 16 && minute >= 0 && minute < 30) ||
+        (pmHour == 19 && minute >= 0 && minute < 30) ||
+        (pmHour == 22 && minute >= 0 && minute < 30))
+    {
+        digType = "Uncommon";
+    }
+    if ((pmHour == 13 && minute >= 30 && minute < 45) ||
+        (pmHour == 16 && minute >= 30 && minute < 45) ||
+        (pmHour == 19 && minute >= 30 && minute < 45) ||
+        (pmHour == 22 && minute >= 30 && minute < 45))
+    {
+        digType = "Rare";
+    }
+
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +82,7 @@
     
 </head>
 <body>
+    <!-- Navigation Bar -->
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
@@ -141,25 +200,28 @@
                                     <a class="dropdown-item" asp-area="Game" asp-page="/FederationCreate">Create New Federation</a>
                                 </li>
                                 @if (user.FederationId != null)
-                                {                                    
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationMembers" asp-route-id="@user.FederationId">My Federation</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationDiscussion">Discussion</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationWar">Wars</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationBattleLogs">Activity</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationApplications" asp-route-id="@user.FederationId">Applications</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-area="Game" asp-page="/FederationResign">Resign</a>
-                                </li>
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Game" asp-page="/FederationMembers" asp-route-id="@user.FederationId">My Federation</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Game" asp-page="/FederationDiscussion">Discussion</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Game" asp-page="/FederationWar">Wars</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Game" asp-page="/FederationBattleLogs">Activity</a>
+                                    </li>
+                                    @if (userFederation.FederationLeaderId == user.Id)
+                                    { 
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Game" asp-page="/FederationApplications" asp-route-id="@user.FederationId">Applications</a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Game" asp-page="/FederationResign">Resign</a>
+                                    </li>
                                 }
                                 <!-- Add more dropdown items as needed -->
                             </ul>
@@ -221,6 +283,7 @@
             </div>
         </nav>
     </header>
+    <!-- Main Content Area -->
     <div class="container">
         <div class="container-fluid">
             <div class="row">
@@ -231,16 +294,8 @@
                         @RenderBody()
                     </main>
                 </div>
-                <div class="col-md-1">
-                    <!-- Chat Toggle Button -->
-                    @* <button id="chat-toggle-btn" class="btn btn-primary rounded-circle position-relative" title="Toggle Chat">
-                        <i class="bi bi-chat-dots"></i>
-                        <span id="chat-notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
-                            New
-                        </span>
-                    </button> *@
-
                     <!-- Chat Panel -->
+                <div class="col-md-1">                    
                     <div id="chat-panel">
                         <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
                             <span><i class="bi bi-chat-dots"></i> Game Chat</span>
@@ -293,7 +348,23 @@
                 <i class="bi bi-currency-dollar"></i> Income
             </a>
         </div>
+        <div class="mx-3">
+            <i class="bi bi-gem"></i>
+            <span>Current Dig:</span>
+            <strong>@digType</strong>
+        </div>
+        <div class="mx-3">
+            <i class="bi bi-clock"></i>
+            <span>Time:</span>
+            <strong id="turns-count">@DateTime.Now</strong>
+            <div class="mx-3">
+                <i class="bi bi-people"></i>
+                <span>Active Users:</span>
+                <strong>@activeUserCount</strong>
+            </div>
+        </div>
     </div>
+    <!-- JavaScript -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

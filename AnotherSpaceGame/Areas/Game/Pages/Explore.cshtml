@@ -84,14 +84,11 @@
             </div>  
             @if (Model.ProjectsResearch.AdvancedExploration == true)  
             {  
-                <div class="mb-3">  
-                <label for="planetType" class="form-label">Preferred Planet Type:</label>  
-                <select id="planetType" name="SelectedPlanetType" class="form-select">  
-                @foreach (var option in Model.PlanetTypeOptions)  
-                {  
-                     <option value="@option.Value" selected="@(option.Selected ? "true" : "false")">@option.Text</option>  
-                }  
-                </select>  
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label asp-for="SelectedPlanetType" class="form-label">Preferred Planet Type:</label>
+                        <select asp-for="SelectedPlanetType" asp-items="Model.PlanetTypeOptions" class="form-select"></select>
+                    </div>                
                 </div>  
             <div class="mb-3">
                 <input type="checkbox" asp-for="EnableFeature" />

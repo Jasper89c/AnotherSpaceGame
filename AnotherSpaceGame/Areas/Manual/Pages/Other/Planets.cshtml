@@ -24,7 +24,10 @@
             @foreach (var planet in Model.Planets)
             {
                 <tr>
-                    <td>@planet.Name</td>
+                    <td style="width: 170px;">
+                        @planet.Name <br>
+                        <img src="@planet.ImagePath" alt="@planet.Name" style="height:20px;width:20px;" />
+                    </td>
                     <td>@planet.Description</td>
                     <td>@planet.PopulationGrowth</td>
                     <td>@planet.AgricultureModifier</td>

@@ -31,6 +31,7 @@ else
                     <th>Total Power Rating</th>
                     <th>Turns</th>
                     <th>1 Turn</th>
+                    <th>Build Rate</th>
                     <th>Range</th>
                     <th>Weapon</th>
                     <th>Hull</th>
@@ -62,6 +63,7 @@ else
                 <td>
                     <button type="button" class="btn btn-sm btn-outline-primary add-one-turn" style="width: 35px; height: 30px;" data-shipid="@ship.Id" data-buildrate="@buildRate">+1</button>
                 </td>
+                        <td>@ship.BuildRate.ToString("N0")</td>
                         <td>@ship.Range.ToString("N0")</td>
                         <td>@ship.Weapon.ToString("N0")</td>
                         <td>@ship.Hull.ToString("N0")</td>

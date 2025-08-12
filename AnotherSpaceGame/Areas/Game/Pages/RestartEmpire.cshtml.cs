@@ -4,14 +4,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Shared;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace AnotherSpaceGame.Areas.Game.Pages
 {
@@ -111,6 +112,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     Text = $"Your empire has been restarted. You are now a {user.Faction}."
                 });
 
+                StatusMessage = $"Your empire has been restarted. You are now a {user.Faction}.";
+
                 await _userManager.UpdateAsync(user);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -119,7 +122,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                StatusMessage = $"An error occurred: {ex.Message}";
+                StatusMessage = $"An error occurred: {ex.Message} {(ex.InnerException != null ? ex.InnerException.Message : "")}";
             }
 
             ConfirmationString = GenerateRandomString(8);
@@ -137,7 +140,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             return new SelectList(factions, "Value", "Text");
         }
-
         private static string GenerateRandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -151,7 +153,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             return result.ToString();
         }
-
         private void ResetCommodities(Commodities commodities)
         {
             commodities.Food = 250000;
@@ -166,7 +167,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             commodities.StrafezOrganism = 10000;
             commodities.Credits = 250000;
         }
-
         private async Task ResetPlanetsAsync(ApplicationUser user, Faction faction)
         {
             // Remove old planets
@@ -209,8 +209,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             user.TotalColonies = 1;
             user.TotalPlanets = 1;
         }
-
-            private async Task ResetResearchAsync(ApplicationUser user, Faction faction)
+        private async Task ResetResearchAsync(ApplicationUser user, Faction faction)
             {
             // Remove all existing research objects for this user
             var userId = user.Id;
@@ -258,6 +257,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.Missions.Add(Missions);
 
             // UWships
+            var userUWShips = _context.UWShips.Where(x => x.ApplicationUserId == user.Id).FirstOrDefault();
+            _context.UWShips.Remove(userUWShips);
             var uWships = new UWShips { ApplicationUserId = userId };
             user.UWShips = uWships;
             _context.UWShips.Add(uWships);
@@ -318,9 +319,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     break;
                     // Add more cases as needed for other factions
             }
-        }
-        
-
+        }       
         private async Task ResetOtherPropertiesAsync(ApplicationUser user)
         {
             // Turns

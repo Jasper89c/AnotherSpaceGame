@@ -30,6 +30,7 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
         public string ArtifactModifier { get; set; }
         public string LandSize { get; set; }
         public string OreSize { get; set; }
+        public string ImagePath { get; set; }
 
         public static DisplayPlanet FromPlanetType(PlanetType type)
         {
@@ -43,7 +44,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-99%",
                     LandSize = "50-1,100",
-                    OreSize = "150-500"
+                    OreSize = "150-500",
+                    ImagePath = "/images/planets/barren.png"
                 },
                 PlanetType.Icy => new DisplayPlanet
                 {
@@ -53,7 +55,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "0%",
                     ArtifactModifier = "-99%",
                     LandSize = "24-83",
-                    OreSize = "1,500-4,500"
+                    OreSize = "1,500-4,500",
+                    ImagePath = "/images/planets/icy.png"
                 },
                 PlanetType.Marshy => new DisplayPlanet
                 {
@@ -63,7 +66,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-50%",
                     ArtifactModifier = "-99%",
                     LandSize = "50-150",
-                    OreSize = "0-150"
+                    OreSize = "0-150",
+                    ImagePath = "/images/planets/marshy.png"
                 },
                 PlanetType.Forest => new DisplayPlanet
                 {
@@ -73,7 +77,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-50%",
                     ArtifactModifier = "-99%",
                     LandSize = "50-150",
-                    OreSize = "0-150"
+                    OreSize = "0-150",
+                    ImagePath = "/images/planets/forest.png"
                 },
                 PlanetType.Oceanic => new DisplayPlanet
                 {
@@ -83,7 +88,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-90%",
                     LandSize = "10-50",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/oceanic.png"
                 },
                 PlanetType.Rocky => new DisplayPlanet
                 {
@@ -93,7 +99,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "0%",
                     ArtifactModifier = "-99.99%",
                     LandSize = "34-121",
-                    OreSize = "500-3,300"
+                    OreSize = "500-3,300",
+                    ImagePath = "/images/planets/rocky.png"
                 },
                 PlanetType.Desert => new DisplayPlanet
                 {
@@ -103,7 +110,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-25%",
                     ArtifactModifier = "-99%",
                     LandSize = "100-250",
-                    OreSize = "100-350"
+                    OreSize = "100-350",
+                    ImagePath = "/images/planets/desert.png"
                 },
                 PlanetType.Balanced => new DisplayPlanet
                 {
@@ -113,7 +121,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "0%",
                     ArtifactModifier = "-95%",
                     LandSize = "185-1,050",
-                    OreSize = "750-1,100"
+                    OreSize = "750-1,100",
+                    ImagePath = "/images/planets/balanced.png"
                 },
                 PlanetType.Gas => new DisplayPlanet
                 {
@@ -123,7 +132,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-95%",
                     LandSize = "2-6",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/gas.png"
                 },
                 PlanetType.URich => new DisplayPlanet
                 {
@@ -133,7 +143,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-99%",
                     LandSize = "11-28",
-                    OreSize = "50,000-350,000"
+                    OreSize = "50,000-350,000",
+                    ImagePath = "/images/planets/urich.png"
                 },
                 PlanetType.UEden => new DisplayPlanet
                 {
@@ -143,7 +154,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-98%",
                     ArtifactModifier = "-99%",
                     LandSize = "500-2,500",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/ueden.png"
                 },
                 PlanetType.USpazial => new DisplayPlanet
                 {
@@ -153,7 +165,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-85%",
                     LandSize = "2-4",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/uspazial.png"
                 },
                 PlanetType.ULarge => new DisplayPlanet
                 {
@@ -163,7 +176,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-99%",
                     LandSize = "7,000-16,000",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/ularge.png"
                 },
                 PlanetType.UFertile => new DisplayPlanet
                 {
@@ -173,7 +187,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "+175%",
                     ArtifactModifier = "-99%",
                     LandSize = "950-1,250",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/ufertile.png"
                 },
                 PlanetType.Dead => new DisplayPlanet
                 {
@@ -183,7 +198,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-100%",
                     ArtifactModifier = "-99%",
                     LandSize = "2-4",
-                    OreSize = "0"
+                    OreSize = "0",
+                    ImagePath = "/images/planets/dead.png"
                 },
                 PlanetType.SimilareC1 => new DisplayPlanet
                 {
@@ -193,7 +209,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-70%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/similar.png"
                 },
                 PlanetType.SimilareC2 => new DisplayPlanet
                 {
@@ -203,7 +220,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-65%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/similar.png"
                 },
                 PlanetType.SimilareC3 => new DisplayPlanet
                 {
@@ -213,7 +231,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-60%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/similar.png"
                 },
                 PlanetType.SimilareC4 => new DisplayPlanet
                 {
@@ -223,7 +242,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-55%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/similar.png"
                 },
                 PlanetType.SimilareC5 => new DisplayPlanet
                 {
@@ -233,7 +253,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-52%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/similar.png"
                 },
                 PlanetType.AssimilatedC1 => new DisplayPlanet
                 {
@@ -243,7 +264,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-20%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/assimilated.png"
                 },
                 PlanetType.AssimilatedC2 => new DisplayPlanet
                 {
@@ -253,7 +275,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-10%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/assimilated.png"
                 },
                 PlanetType.AssimilatedC3 => new DisplayPlanet
                 {
@@ -263,7 +286,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "0%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/assimilated.png"
                 },
                 PlanetType.TaintedC1 => new DisplayPlanet
                 {
@@ -273,7 +297,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-20%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/tainted.png"
                 },
                 PlanetType.TaintedC2 => new DisplayPlanet
                 {
@@ -283,7 +308,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-25%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/tainted.png"
                 },
                 PlanetType.TaintedC3 => new DisplayPlanet
                 {
@@ -293,7 +319,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-30%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/tainted.png"
                 },
                 PlanetType.TaintedC4 => new DisplayPlanet
                 {
@@ -303,7 +330,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-35%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/tainted.png"
                 },
                 PlanetType.InfectedC1 => new DisplayPlanet
                 {
@@ -313,7 +341,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "-10%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/infected.png"
                 },
                 PlanetType.InfectedC2 => new DisplayPlanet
                 {
@@ -323,7 +352,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "0%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/infected.png"
                 },
                 PlanetType.InfectedC3 => new DisplayPlanet
                 {
@@ -333,7 +363,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "+10%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/infected.png"
                 },
                 PlanetType.ClusterLevel1 => new DisplayPlanet
                 {
@@ -343,7 +374,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "+15%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/cluster1.png"
                 },
                 PlanetType.ClusterLevel2 => new DisplayPlanet
                 {
@@ -353,7 +385,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "+30%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/cluster1.png"
                 },
                 PlanetType.ClusterLevel3 => new DisplayPlanet
                 {
@@ -363,7 +396,8 @@ namespace AnotherSpaceGame.Areas.Manual.Pages.Other
                     AgricultureModifier = "+45%",
                     ArtifactModifier = "-99%",
                     LandSize = "Based on planets clustered",
-                    OreSize = "Based on planets clustered"
+                    OreSize = "Based on planets clustered",
+                    ImagePath = "/images/planets/cluster1.png"
                 },
                 
                 

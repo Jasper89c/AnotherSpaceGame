@@ -34,7 +34,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         [BindProperty]
         [Range(1, 9, ErrorMessage = "Turns must be between 1 and 9.")]
         public int TurnsToUse { get; set; }
-
+        public string CurrentDigType { get; set; }
         public string DigMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -43,13 +43,13 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
 
+            CurrentDigType = GetCurrentDigType(DateTime.Now);
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == id && p.ApplicationUserId == user.Id);
 
             if (Planet == null || Planet.ApplicationUserId != user.Id)
             {
                 return RedirectToPage("/ManageColonies", new { area = "Game" });
             }
-
             Id = id;
             return Page();
         }
@@ -60,7 +60,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
-
+            CurrentDigType = GetCurrentDigType(DateTime.UtcNow);
             Planet = await _context.Planets.FirstOrDefaultAsync(p => p.Id == Id && p.ApplicationUserId == user.Id);
             if (Planet == null || Planet.ApplicationUserId != user.Id)
             {
@@ -134,7 +134,53 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             TempData["DigMessage"] = DigMessage;
             return RedirectToPage(new { id = Planet.Id });
         }
+        private string GetCurrentDigType(DateTime time)
+        {
+            // Example logic, adjust as needed for your time windows
+            var hour = time.Hour;
+            var minute = time.Minute;
 
+            // Common: 12:00-13:00, 3:00-4:00, 6:00-7:00, 9:00-10:00 (am/pm)
+            if ((hour == 12 && minute >= 0 && minute < 60) ||
+                (hour == 3 && minute >= 0 && minute < 60) ||
+                (hour == 6 && minute >= 0 && minute < 60) ||
+                (hour == 9 && minute >= 0 && minute < 60))
+                return ArtifactType.Common.ToDescription();
+
+            // Uncommon: 13:00-13:30, 4:00-4:30, 7:00-7:30, 10:00-10:30 (am/pm)
+            if ((hour == 13 && minute >= 0 && minute < 30) ||
+                (hour == 4 && minute >= 0 && minute < 30) ||
+                (hour == 7 && minute >= 0 && minute < 30) ||
+                (hour == 10 && minute >= 0 && minute < 30))
+                return ArtifactType.Uncommon.ToDescription();
+
+            // Rare: 13:30-13:45, 4:30-4:45, 7:30-7:45, 10:30-10:45 (am/pm)
+            if ((hour == 13 && minute >= 30 && minute < 45) ||
+                (hour == 4 && minute >= 30 && minute < 45) ||
+                (hour == 7 && minute >= 30 && minute < 45) ||
+                (hour == 10 && minute >= 30 && minute < 45))
+                return ArtifactType.Rare.ToDescription();
+
+            // Mirror for PM (add 12 to hour if hour < 12)
+            int pmHour = (hour + 12) % 24;
+            if ((pmHour == 12 && minute >= 0 && minute < 60) ||
+                (pmHour == 15 && minute >= 0 && minute < 60) ||
+                (pmHour == 18 && minute >= 0 && minute < 60) ||
+                (pmHour == 21 && minute >= 0 && minute < 60))
+                return ArtifactType.Common.ToDescription();
+            if ((pmHour == 13 && minute >= 0 && minute < 30) ||
+                (pmHour == 16 && minute >= 0 && minute < 30) ||
+                (pmHour == 19 && minute >= 0 && minute < 30) ||
+                (pmHour == 22 && minute >= 0 && minute < 30))
+                return ArtifactType.Uncommon.ToDescription();
+            if ((pmHour == 13 && minute >= 30 && minute < 45) ||
+                (pmHour == 16 && minute >= 30 && minute < 45) ||
+                (pmHour == 19 && minute >= 30 && minute < 45) ||
+                (pmHour == 22 && minute >= 30 && minute < 45))
+                return ArtifactType.Rare.ToDescription();
+
+            return "None";
+        }
         private ArtifactType GetArtifactTypeForTime(DateTime now)
         {
             int hour = now.Hour;

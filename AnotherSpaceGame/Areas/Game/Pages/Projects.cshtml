@@ -20,27 +20,56 @@
         }
     </div>
 }
-<p>
-    <a asp-page="/Temple">Go to Temples</a>
-</p>
-
+<div class="col-5">
+    <table class="table table-bordered table-sm text-center">
+        <thead>
+            <tr>
+                <td><b>Temples</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+    <a asp-page="/Temple">Kal-Zul Temple</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
 @if (Model.Faction == AnotherSpaceGame.Models.Faction.Terran || Model.Faction == AnotherSpaceGame.Models.Faction.AMiner || Model.Faction == AnotherSpaceGame.Models.Faction.Marauder || Model.Faction == AnotherSpaceGame.Models.Faction.Guardian)
 {    
-<div>
-    <p>
+<div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+        <thead>
+            <tr>
+                <td><b>Cluster Colonies</b></td>
+            </tr>
+        </thead>
+        <tbody>    
             @if (Model.ClusterResearch.ColonyClusterLevel1 == true)
             {
+                <tr>
+                <td>
                 <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="1">Create Colony Cluster Level 1</a>
+                </td>
+                </tr>
             }
             @if (Model.ClusterResearch.ColonyClusterLevel2 == true)
-            {
+            {<tr>
+                <td>
                 <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="2">Create Colony Cluster Level 2</a>
+                        </td>
+                    </tr>
             }
             @if (Model.ClusterResearch.ColonyClusterLevel3 == true)
-            {
+            {<tr>
+                <td>
                 <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="3">Create Colony Cluster Level 3</a>
+                        </td>
+                    </tr>
             }
-    </p>
+        </tbody>    
+    </table>
     </div>
 }
 else if (Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
@@ -73,8 +102,18 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
 
 @if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true && Model.ServerUWEnabled != true)
 {
+    <div class="col-5">
+    <table class="table table-bordered table-sm text-center">
+        <thead>
+            <tr>
+                    <td><b><h2>Capsule Laboratory</h2></b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
     <div>
-        <h2>Capsule Laboratory</h2>
+        
         <p>Turns Required: @Model.UserProjects.CapsuleLabTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.CapsuleLabCreditsRequired</p>
         <p>Status: @(Model.UserProjects.CapsuleLab ? "Unlocked" : "Locked")</p>
@@ -86,15 +125,35 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
         <label>Credits to Invest:</label>
         <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.CapsuleLabCreditsRequired" />
         <br />
-        <button type="submit">Invest</button>
+                            <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
     </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.CapsuleLab == true && Model.ServerUWEnabled != true)
 {
+    <div class="col-5">
+    <table class="table table-bordered table-sm text-center">
+        <thead>
+            <tr>
+                    <td><b><h2>Capsule Laboratory</h2></b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
     <p>
         <a asp-page="/CapsuleLab">Go to Capsule Lab</a>
     </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
@@ -102,8 +161,18 @@ else
 
 @if (Model.UserProjects.Itech != true && Model.ProjectsResearch.ITechLaboratory == true && Model.ServerUWEnabled != true)
 {
+    <div class="col-5">
+    <table class="table table-bordered table-sm text-center">
+        <thead>
+            <tr>
+                    <td><b><h2>ITech Laboratory</h2></b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
     <div>
-        <h2>ITech Laboratory</h2>
+        
         <p>Turns Required: @Model.UserProjects.ItechTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.ItechCreditsRequired</p>
         <p>Status: @(Model.UserProjects.Itech ? "Unlocked" : "Locked")</p>
@@ -115,24 +184,57 @@ else
         <label>Credits to Invest:</label>
         <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.ItechCreditsRequired" />
         <br />
-        <button type="submit">Invest</button>
+                            <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
     </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.Itech == true && Model.ServerUWEnabled != true)
 {
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td><b><h2>ITech Laboratory</h2></b></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <p>
         <a asp-page="/Itech">Go to Itech</a>
     </p>
+      </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
 }
 
 @if (Model.UserProjects.UnreverseEngineering != true && Model.Faction == AnotherSpaceGame.Models.Faction.Viral && Model.ViralSpecificResearch.UnreverseEngineering == true && Model.ServerUWEnabled != true)
-{
+{<div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Unreverse Engineering</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <div>
-        <h2>Unreverse Engineering</h2>
         <p>Turns Required: @Model.UserProjects.UnreverseEngineeringTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.UnreverseEngineeringCreditsRequired</p>
         <p>Status: @(Model.UserProjects.UnreverseEngineering ? "Unlocked" : "Locked")</p>
@@ -144,15 +246,38 @@ else
         <label>Credits to Invest:</label>
         <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.UnreverseEngineeringCreditsRequired" />
         <br />
-        <button type="submit">Invest</button>
+        <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
     </form>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.UnreverseEngineering == true && Model.ServerUWEnabled != true)
 {
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Unreverse Engineering</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <p>
         <a asp-page="/UnreverseEngineering">Go to Unreverse Engineering</a>
     </p>
+    </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
@@ -160,8 +285,21 @@ else
 
 @if (Model.ProjectsResearch.KalZulArtifact == true && Model.ProjectsResearch.KalZulArtifactTurnsRequired == 0 && Model.ServerUWEnabled != true)
 {
-    <div>
-        <h2>Kal-Zul Hektar</h2>
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Kal-Zul Hektar</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+    <div>        
         <p>Turns Required: @Model.UserProjects.KalZulHektarTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.KalZulHektarCreditsRequired</p>
         <p>Status: @(Model.UserProjects.KalZulHektar ? "Unlocked" : "Locked")</p>
@@ -173,23 +311,60 @@ else
         <label>Credits to Invest:</label>
         <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulHektarCreditsRequired" />
         <br />
-        <button type="submit">Invest</button>
+        <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
-    </form>
+    </form>   
+    </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHektarUnlockTimer >= DateTime.Now)
 {
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Kal-Zul Loktar</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <div>
-        <h2>Kal-Zul Loktar</h2>
+        
         @{
             var minutes = (int)Math.Ceiling((Model.UserProjects.KalZulHektarUnlockTimer - DateTime.Now).TotalHours);
             if (minutes < 0) { minutes = 0; }
         }
         <p>Unlock Timer: @minutes Hours remaining</p>
     </div>
+    </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHektarUnlockTimer <= DateTime.Now)
 {
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Kal-Zul Loktar</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <div>
         <h2>Kal-Zul Loktar</h2>
         <p>Turns Required: @Model.UserProjects.KalZulLoktarTurnsRequired</p>
@@ -203,7 +378,7 @@ else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHek
         <label>Credits to Invest:</label>
         <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulLoktarCreditsRequired" />
         <br />
-        <button type="submit">Invest</button>
+        <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
     </form>
     <div>
@@ -217,9 +392,28 @@ else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHek
         <p>Your Big Time Capsules will be set to Quantity of 2.</p>
         <p>Once the timer ends and activated you will lose your empire but gain rewards for your next empire.</p>
     </div>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLoktarUnlockTimer > DateTime.Now)
 {
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h2>Kal-Zul Loktar</h2>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
     <div>
         <h2>Kal-Zul Loktar</h2>
         @{
@@ -228,19 +422,41 @@ else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLok
         }
         <p>Unlock Timer: @minutes minutes remaining</p>
     </div>
+    </tr>
+            </tbody>
+        </table>
+    </div>
 }
 else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLoktarUnlockTimer <= DateTime.Now)
 {
-    <h1>ACTIVATE ULTIMATE WEAPON</h1>
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td>
+                        <b>
+                            <h1>ACTIVATE ULTIMATE WEAPON</h1>
+                        </b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+    
     <p>WARNING: This will destroy your empire!!!</p>
     <p>Server Effects:</p>
     <p>All Empires Credits -99%</p>
     <p>All Empires Food -99%</p>
     <p>All Empires Minerals Etc -99%</p>
     <p>All Empires Damage Protection = 24 hours</p>
-    <form method="post" asp-page-handler="DestroyGalaxy">        
-        <button type="submit">DESTROY GALAXY!!</button>
+    <form method="post" asp-page-handler="DestroyGalaxy">
+        <button type="submit" class="btn btn-primary">DESTROY GALAXY!!</button>
         @Html.AntiForgeryToken()
     </form>
     <p>You will be redirected to restart your empire and choose your rewards. Failure to do this will result in the loss of your rewards.</p>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 }
