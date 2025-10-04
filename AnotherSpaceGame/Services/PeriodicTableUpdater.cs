@@ -53,7 +53,7 @@ public class PeriodicTableUpdater : BackgroundService
                         try
                         {
                             var turnsToUpdate = await dbContext.Turns
-                                .Where(t => t.CurrentTurns < t.MaxTurns)
+                                .Where(t => t.CurrentTurns < 5000)
                                 .ToListAsync(stoppingToken);
 
                             foreach (var turn in turnsToUpdate)
@@ -83,7 +83,7 @@ public class PeriodicTableUpdater : BackgroundService
                     _logger.LogInformation("Could not acquire distributed lock. Another instance is running the updater.");
                 }
             }
-            await Task.Delay(TimeSpan.FromSeconds(7), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
         }
     }
 }

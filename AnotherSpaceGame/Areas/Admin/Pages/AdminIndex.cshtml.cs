@@ -56,17 +56,6 @@ namespace AnotherSpaceGame.Areas.Admin.Pages
         [BindProperty]
         public int TotalLand { get; set; } = 100;
 
-        // Commodity edit properties
-        [BindProperty]
-        public string CommodityUserId { get; set; }
-        [BindProperty]
-        public int Food { get; set; }
-        [BindProperty]
-        public int Goods { get; set; }
-        [BindProperty]
-        public int Ore { get; set; }
-        [BindProperty]
-        public int Credits { get; set; }
 
         public List<ApplicationUser> Users { get; set; }
         public List<PlanetType> PlanetTypes { get; set; }
@@ -79,16 +68,11 @@ namespace AnotherSpaceGame.Areas.Admin.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Users = await _context.Users.OrderBy(u => u.UserName).ToListAsync();
             PlanetTypes = System.Enum.GetValues(typeof(PlanetType)).Cast<PlanetType>().ToList();
 
-            if (string.IsNullOrEmpty(SelectedUserId) || string.IsNullOrEmpty(PlanetName))
-            {
-                ModelState.AddModelError(string.Empty, "User and planet name are required.");
-                return Page();
-            }
-
-            var user = await _context.Users.FindAsync(SelectedUserId);
+            var userId = _userManager.GetUserId(User);
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "User not found.");
@@ -126,27 +110,22 @@ namespace AnotherSpaceGame.Areas.Admin.Pages
 
         public async Task<IActionResult> OnPostEditCommoditiesAsync()
         {
-            Users = await _context.Users.OrderBy(u => u.UserName).ToListAsync();
+            var userId = _userManager.GetUserId(User);
+            var user = await _context.Users
+                .Include(u => u.Commodities)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (string.IsNullOrEmpty(CommodityUserId))
-            {
-                ModelState.AddModelError(string.Empty, "User is required.");
-                return Page();
-            }
-
-            var user = await _context.Users.FindAsync(CommodityUserId);
-            if (user == null)
-            {
-                ModelState.AddModelError(string.Empty, "User not found.");
-                return Page();
-            }
-            var commodities = await _context.Commodities.FirstOrDefaultAsync(c => c.ApplicationUserId == user.Id);
-
-            // Update commodity values (adjust property names as needed)
-            commodities.Food = Food;
-            commodities.ConsumerGoods = Goods;
-            commodities.Ore = Ore;
-            commodities.Credits = Credits;
+            user.Commodities.Credits = 1000000000000;
+            user.Commodities.Food = 100000000;
+            user.Commodities.ConsumerGoods = 100000000;
+            user.Commodities.TerranMetal = 50000000;
+            user.Commodities.Composite = 50000000;
+            user.Commodities.Rutile = 50000000;
+            user.Commodities.RedCrystal = 50000000;
+            user.Commodities.WhiteCrystal = 50000000;
+            user.Commodities.StrafezOrganism = 50000000;
+            user.Commodities.Ore = 2000000;
+            user.Commodities.RawMaterial = 100000000;
 
             await _context.SaveChangesAsync();
 

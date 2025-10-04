@@ -1,0 +1,64 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.ShipSimModel
+@{
+    ViewData["Title"] = "Battle Sim";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+<h1>Ship Sim</h1>
+<p>Select a ship to simulate vs all ships</p>
+<p>the simulation will do 1,000,000 Power rating of selected ship vs 1,000,000 Power rating of each ship in the game</p>
+
+<form method="post">
+    <div>
+        <label for="shipSelect">Select Ship:</label>
+        <select id="shipSelect" name="SelectedShipId" class="form-control">
+            @foreach (var ship in Model.AllShips)
+            {
+                <option value="@ship.Id">@ship.ShipName</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="SelectedAttackType">Fleet Attitude:</label>
+        <select id="SelectedAttackType" name="SelectedAttackType" asp-items="Model.AttackTypeList"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Simulate</button>
+</form>
+@if (Model.IsSimulated && Model.Results != null && Model.Results.Count > 0)
+{
+    <h2>Simulation Results</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th style="padding: 2px;">Attacker Ship Name</th>
+                <th style="padding: 2px;">Attacker Start Count</th>
+                <th style="padding: 2px;">Attacker End Count</th>
+                <th style="padding: 2px;">Defender Ship Name</th>
+                <th style="padding: 2px;">Defender Start Count</th>
+                <th style="padding: 2px;">Defender End Count</th>
+                <th style="padding: 2px;">Outcome</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var result in Model.Results)
+            {
+                <tr>
+                    <td style="padding: 2px;">@result.AttackerShipName</td>
+                    <td style="padding: 2px;">@result.AttackerShipCountStart.ToString("N0")</td>
+                    <td style="padding: 2px;">@result.AttackerShipCountEnd.ToString("N0")</td>
+                    <td style="padding: 2px;">@result.DefenderShipName</td>
+                    <td style="padding: 2px;">@result.DefenderShipCountStart.ToString("N0")</td>
+                    <td style="padding: 2px;">@result.DefenderShipCountEnd.ToString("N0")</td>
+                    @if(result.ResultText == "Lose")
+                    {                        
+                        <td style="padding: 2px;color: red;">@result.ResultText</td>
+                    }
+                    else
+                    {
+                        <td style="padding: 2px;color: forestgreen;">@result.ResultText</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}

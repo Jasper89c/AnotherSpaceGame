@@ -1,0 +1,254 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.BattleSimModel
+@{
+    ViewData["Title"] = "Battle Sim";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="alert alert-info">@Model.StatusMessage</div>
+}
+<h1>Battle Simulator</h1>
+<form method="post">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Attacker Table -->
+        <div class="col-md-6">
+            <div>
+                <label for="attackerFaction">Attacker Faction</label>
+                <select asp-for="AttackerFactionId" asp-items="@(new SelectList(Model.Factions, "Id", "Name"))" id="attackerFaction"></select>
+            </div>
+            <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ship</th>
+                            <th>Count</th>
+                            <th>Total Power Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < 10; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select class="attackerShipSelect" name="AttackerFleet[@i].ShipId" id="attackerShipSelect_@i" data-row="@i"></select>
+                                </td>
+                                <td>
+                                    <input type="number" name="AttackerFleet[@i].TotalShips" min="0" class="form-control attackerShipCount" id="attackerShipCount_@i" data-row="@i" />
+                                </td>
+                                <td>
+                                    <span id="attackerPower_@i" class="attackerPower"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Defender Table -->
+        <div class="col-md-6">
+            <div>
+                <label for="defenderFaction">Defender Faction</label>
+                <select asp-for="DefenderFactionId" asp-items="@(new SelectList(Model.Factions, "Id", "Name"))" id="defenderFaction"></select>
+            </div>
+            <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ship</th>
+                            <th>Count</th>
+                            <th>Total Power Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < 10; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <select class="defenderShipSelect" name="DefenderFleet[@i].ShipId" id="defenderShipSelect_@i" data-row="@i"></select>
+                                </td>
+                                <td>
+                                    <input type="number" name="DefenderFleet[@i].TotalShips" min="0" class="form-control defenderShipCount" id="defenderShipCount_@i" data-row="@i" />
+                                </td>
+                                <td>
+                                    <span id="defenderPower_@i" class="defenderPower"></span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        <label for="SelectedAttackType">Fleet Attitude:</label>
+        <select id="SelectedAttackType" name="SelectedAttackType" asp-items="Model.AttackTypeList"></select>
+    <div class="row mt-3">
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary">Simulate Battle</button>
+        </div>
+    </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-md-12">
+        <h2>The Battle</h2>
+        <h1> Wave 1</h1>
+        @foreach (var battle in Model.BattleResultsWave1)
+        {
+            if (battle.IsAttacker == true)
+            {
+                <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                <p class="text-muted">@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+            }
+            else
+            {
+                <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+            }
+        }
+        @if (Model.BattleResultsWave2.Count > 0)
+        {
+            <h1> Wave 2</h1>
+        }
+        @foreach (var battle in Model.BattleResultsWave2)
+        {
+            if (battle.IsAttacker == true)
+            {
+                <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                <p>@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+            }
+            else
+            {
+                <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+            }
+        }
+    </div>
+    @if (Model.IsBattleSimulated)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h3>@Model.VictoryMessage</h3>
+                </div>
+                <h2>The Battle</h2>
+                <h1> Wave 1</h1>
+                @foreach (var battle in Model.BattleResultsWave1)
+                {
+                    if (battle.IsAttacker == true)
+                    {
+                        <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                        <p class="text-muted">@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                    }
+                    else
+                    {
+                        <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                        <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                    }
+                }
+                @if (Model.BattleResultsWave2.Count > 0)
+                {
+                    <h1> Wave 2</h1>
+                }
+                @foreach (var battle in Model.BattleResultsWave2)
+                {
+                    if (battle.IsAttacker == true)
+                    {
+                        <p>@battle.AttackerShipName attacks @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                        <p>@battle.DefenderShipName retaliates @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                    }
+                    else
+                    {
+                        <p>@battle.DefenderShipName attacks @battle.AttackerShipName killing @battle.AttackerShipTotalLoss</p>
+                        <p>@battle.AttackerShipName retaliates @battle.DefenderShipName killing @battle.DefenderShipTotalLoss</p>
+                    }
+                }
+            </div>
+            <div class="col-md-12">
+                <h2>Battle Summary</h2>
+                @Html.Raw(Model.EndFleets)
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Store ships for each faction for quick lookup
+        let attackerShips = [];
+        let defenderShips = [];
+
+        async function updateShipSelects(factionId, selectClass, shipsArray) {
+            const response = await fetch(`?handler=ShipsForFaction&factionId=${factionId}`);
+            const ships = await response.json();
+            shipsArray.length = 0;
+            ships.forEach(s => shipsArray.push(s));
+            const selects = document.querySelectorAll(selectClass);
+            selects.forEach((select, idx) => {
+                select.innerHTML = '';
+                ships.forEach(ship => {
+                    const option = document.createElement('option');
+                    option.value = ship.id;
+                    option.text = ship.name;
+                    option.setAttribute('data-powerrating', ship.powerRating ?? ship.powerrating ?? 0);
+                    select.appendChild(option);
+                });
+                // Trigger calculation on update
+                updatePowerRating(selectClass, idx, shipsArray);
+            });
+        }
+
+        function updatePowerRating(selectClass, idx, shipsArray) {
+            let select, countInput, powerSpan;
+            if (selectClass === '.attackerShipSelect') {
+                select = document.getElementById(`attackerShipSelect_${idx}`);
+                countInput = document.getElementById(`attackerShipCount_${idx}`);
+                powerSpan = document.getElementById(`attackerPower_${idx}`);
+            } else {
+                select = document.getElementById(`defenderShipSelect_${idx}`);
+                countInput = document.getElementById(`defenderShipCount_${idx}`);
+                powerSpan = document.getElementById(`defenderPower_${idx}`);
+            }
+            if (!select || !countInput || !powerSpan) return;
+            const selectedOption = select.options[select.selectedIndex];
+            const powerRating = selectedOption ? Number(selectedOption.getAttribute('data-powerrating')) : 0;
+            const count = Number(countInput.value) || 0;
+            powerSpan.textContent = (powerRating * count).toLocaleString();
+        }
+
+        function attachRowEvents(selectClass, shipsArray) {
+            for (let i = 0; i < 10; i++) {
+                const select = document.getElementById(`${selectClass === '.attackerShipSelect' ? 'attackerShipSelect_' : 'defenderShipSelect_'}${i}`);
+                const countInput = document.getElementById(`${selectClass === '.attackerShipSelect' ? 'attackerShipCount_' : 'defenderShipCount_'}${i}`);
+                if (select) {
+                    select.addEventListener('change', () => updatePowerRating(selectClass, i, shipsArray));
+                }
+                if (countInput) {
+                    countInput.addEventListener('input', () => updatePowerRating(selectClass, i, shipsArray));
+                }
+            }
+        }
+
+        document.getElementById('attackerFaction').addEventListener('change', function () {
+            updateShipSelects(this.value, '.attackerShipSelect', attackerShips).then(() => {
+                attachRowEvents('.attackerShipSelect', attackerShips);
+            });
+        });
+        document.getElementById('defenderFaction').addEventListener('change', function () {
+            updateShipSelects(this.value, '.defenderShipSelect', defenderShips).then(() => {
+                attachRowEvents('.defenderShipSelect', defenderShips);
+            });
+        });
+
+        // Initial population
+        window.addEventListener('DOMContentLoaded', function () {
+            updateShipSelects(document.getElementById('attackerFaction').value, '.attackerShipSelect', attackerShips).then(() => {
+                attachRowEvents('.attackerShipSelect', attackerShips);
+            });
+            updateShipSelects(document.getElementById('defenderFaction').value, '.defenderShipSelect', defenderShips).then(() => {
+                attachRowEvents('.defenderShipSelect', defenderShips);
+            });
+        });
+    </script>
+}
