@@ -12,10 +12,7 @@
         <label><strong>Faction:</strong></label><br />
         <select asp-for="SelectedFaction" asp-items="@(new SelectList(Model.AvailableFactions))">
             <option value="">-- Select Faction --</option>
-            @foreach (var faction in Model.AvailableFactions)
-            {
-                <option value="@faction">@faction</option>
-            }
+            
         </select>
     </div>
     <h4>Choose Reward Options (1 from each)</h4>

@@ -153,7 +153,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             else
             {
-                StatusMessage = $"Investment applied. <hr /> {turnMessage.Message}";
+                StatusMessage = $"Investment applied. Credits:{CreditsToInvest} + Turns:{TurnsToInvest} <hr /> {turnMessage.Message}";
             }
             ServerStats serverStats = await _context.ServerStats.FirstOrDefaultAsync();
             ServerUWEnabled = serverStats.UWEnabled;
@@ -244,7 +244,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             else
             {
-                StatusMessage = $"Investment applied. <hr> {turnMessage.Message}";
+                StatusMessage = $"Investment applied. Credits:{CreditsToInvest} + Turns:{TurnsToInvest} <hr> {turnMessage.Message}";
             }
             ServerStats serverStats = await _context.ServerStats.FirstOrDefaultAsync();
             ServerUWEnabled = serverStats.UWEnabled;
@@ -335,7 +335,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             else
             {
-                StatusMessage = $"Investment applied. <hr> {turnMessage.Message}";
+                StatusMessage = $"Investment applied. Credits:{CreditsToInvest} + Turns:{TurnsToInvest} <hr> {turnMessage.Message}";
             }
             ServerStats serverStats = await _context.ServerStats.FirstOrDefaultAsync();
             ServerUWEnabled = serverStats.UWEnabled;
@@ -378,9 +378,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 StatusMessage = "Project data not found.";
                 return Page();
             }
-            if (TurnsToInvest > UserProjects.ItechTurnsRequired)
+            if (TurnsToInvest > UserProjects.KalZulHektarTurnsRequired)
             {
-                TurnsToInvest = UserProjects.ItechTurnsRequired; // Ensure we don't invest more than required
+                TurnsToInvest = UserProjects.KalZulHektarTurnsRequired; // Ensure we don't invest more than required
             }
             if (TurnsToInvest > currentUser.Turns.CurrentTurns)
             {
@@ -390,9 +390,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 CreditsToInvest = currentUser.Commodities.Credits; // Ensure we don't invest more than available
             }
-            if (CreditsToInvest > UserProjects.ItechCreditsRequired)
+            if (CreditsToInvest > UserProjects.KalZulHektarCreditsRequired)
             {
-                CreditsToInvest = UserProjects.ItechCreditsRequired; // Ensure we don't invest more than required
+                CreditsToInvest = UserProjects.KalZulHektarCreditsRequired; // Ensure we don't invest more than required
             }
             if (TurnsToInvest <= 0 && CreditsToInvest <= 0)
             {
@@ -412,8 +412,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // Deduct from required, but not below zero
             UserProjects.KalZulHektarTurnsRequired =
                 System.Math.Max(0, UserProjects.KalZulHektarTurnsRequired - TurnsToInvest);
+            // Fix for CS0019: Replace the incorrect line with the correct property update
             UserProjects.KalZulHektarCreditsRequired =
                 (int)System.Math.Max(0, UserProjects.KalZulHektarCreditsRequired - CreditsToInvest);
+            user.Commodities.Credits -= CreditsToInvest;
 
             // Deduct from user
             var turnMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToInvest);
@@ -427,7 +429,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             else
             {
-                StatusMessage = $"Investment applied. <hr> {turnMessage.Message}";
+                StatusMessage = $"Investment applied. Credits:{CreditsToInvest} + Turns:{TurnsToInvest} <hr> {turnMessage.Message}";
             }
             ServerStats serverStats = await _context.ServerStats.FirstOrDefaultAsync();
             ServerUWEnabled = serverStats.UWEnabled;
@@ -474,7 +476,6 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             // DESTROY GALAXY LOGIC
             var serverStats = await _context.ServerStats.FirstOrDefaultAsync();
             serverStats.UWCompleted = true; 
-            serverStats.UWEnabled = false; // Disable UW after completion
             // Alter users data
             var Users = _context.Users.Include(x => x.Commodities).ToList();
             foreach (var u in Users)
@@ -504,7 +505,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             };
             _context.GalaxyEnd.Add(galaxyEnd); // Add the galaxy end record
             _context.SaveChanges();
-            return Page();
+            return RedirectToPage("/UltimateWeaponCompleted", "Game");
         }
 
         [ValidateAntiForgeryToken]
@@ -544,9 +545,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 StatusMessage = "Project data not found.";
                 return Page();
             }
-            if (TurnsToInvest > UserProjects.ItechTurnsRequired)
+            if (TurnsToInvest > UserProjects.KalZulLoktarTurnsRequired)
             {
-                TurnsToInvest = UserProjects.ItechTurnsRequired; // Ensure we don't invest more than required
+                TurnsToInvest = UserProjects.KalZulLoktarTurnsRequired; // Ensure we don't invest more than required
             }
             if (TurnsToInvest > currentUser.Turns.CurrentTurns)
             {
@@ -556,9 +557,9 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             {
                 CreditsToInvest = currentUser.Commodities.Credits; // Ensure we don't invest more than available
             }
-            if (CreditsToInvest > UserProjects.ItechCreditsRequired)
+            if (CreditsToInvest > UserProjects.KalZulLoktarCreditsRequired)
             {
-                CreditsToInvest = UserProjects.ItechCreditsRequired; // Ensure we don't invest more than required
+                CreditsToInvest = UserProjects.KalZulLoktarCreditsRequired; // Ensure we don't invest more than required
             }
             if (TurnsToInvest <= 0 && CreditsToInvest <= 0)
             {
@@ -580,6 +581,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 System.Math.Max(0, UserProjects.KalZulLoktarTurnsRequired - TurnsToInvest);
             UserProjects.KalZulLoktarCreditsRequired =
                 (int)System.Math.Max(0, UserProjects.KalZulLoktarCreditsRequired - CreditsToInvest);
+            user.Commodities.Credits -= CreditsToInvest;
 
             // Deduct from user
             var turnMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, TurnsToInvest);
@@ -625,7 +627,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             }
             else
             {
-                StatusMessage = $"Investment applied. <hr> {turnMessage.Message}";
+                StatusMessage = $"Investment applied. Credits:{CreditsToInvest} + Turns:{TurnsToInvest} <hr> {turnMessage.Message}";
             }
             ServerUWEnabled = serverStats.UWEnabled;
             _context.SaveChanges();

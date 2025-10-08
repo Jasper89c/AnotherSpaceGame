@@ -24,7 +24,7 @@
     <table class="table table-bordered table-sm text-center">
         <thead>
             <tr>
-                <td><b>Temples</b></td>
+                <td><b><h2>Temples</h2></b></td>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +42,8 @@
         <table class="table table-bordered table-sm text-center">
         <thead>
             <tr>
-                <td><b>Cluster Colonies</b></td>
+                    <td><b><h2>Cluster Colonies</h2></b>
+                </td>
             </tr>
         </thead>
         <tbody>    
@@ -74,30 +75,65 @@
 }
 else if (Model.Faction == AnotherSpaceGame.Models.Faction.Viral)
 {
-    @if(Model.ViralSpecificResearch.ViralClustering == true)
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td><b><h2>Cluster Colonies</h2></b>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Model.ViralSpecificResearch.ViralClustering == true)
     {
-    <p>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="4">Create Tainted C.2</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="5">Create Tainted C.3</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="6">Create Tainted C.4</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="7">Create Infected Colony Cluster 2</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="8">Create Infected Colony Cluster 3</a>
-    </p>
+
+               <tr>
+                        <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="4">Create Tainted C.2</a></td>
+                    </tr>
+                    <tr>
+                        <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="5">Create Tainted C.3</a></td>
+                    </tr>
+                    <tr>
+                        <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="6">Create Tainted C.4</a></td>
+                    </tr>
+                    <tr>
+                        <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="7">Create Infected Colony Cluster 2</a></td>
+                    </tr>
+                    <tr>
+                        <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="8">Create Infected Colony Cluster 3</a></td>
+                    </tr>
+    
     }
+      </tbody>    
+    </table>
+    </div>
 }
 else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
 {
-    @if (Model.CollectiveSpecificResearch.CollectiveClustering == true)
+
+    <div class="col-5">
+        <table class="table table-bordered table-sm text-center">
+            <thead>
+                <tr>
+                    <td><b><h2>Cluster Colonies</h2></b></td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.CollectiveSpecificResearch.CollectiveClustering == true)
     {
-        <p>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="9">Create Similare C.2</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="10">Create Similare C.3</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="11">Create Similare C.4</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="14">Create Similare C.5</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="12">Create Assimilated Cluster 2</a>
-            <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="13">Create Assimilated Cluster 3</a>
-        </p>
+
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="9">Create Similare C.2</a></td></tr>
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="10">Create Similare C.3</a></td></tr>
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="11">Create Similare C.4</a></td></tr>
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="14">Create Similare C.5</a></td></tr>
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="12">Create Assimilated Cluster 2</a></td></tr>
+                    <tr> <td> <a asp-area="Game" asp-page="/CreateColonyCluster" asp-route-id="13">Create Assimilated Cluster 3</a></td></tr>
+        
     }
+      </tbody>    
+    </table>
+    </div>
 }
 
 @if (Model.UserProjects.CapsuleLab != true && Model.ProjectsResearch.CapsuleLaboratory == true && Model.ServerUWEnabled != true)
@@ -120,10 +156,10 @@ else if (Model.Faction == AnotherSpaceGame.Models.Faction.Collective)
     </div>
     <form method="post" asp-page-handler="InvestCapsuleLab">
         <label>Turns to Invest:</label>
-        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <input asp-for="TurnsToInvest" type="number" value="45" min="0" max="45" />
         <br />
         <label>Credits to Invest:</label>
-        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.CapsuleLabCreditsRequired" />
+        <input asp-for="CreditsToInvest" type="number" min="0" value="@Model.UserProjects.CapsuleLabCreditsRequired" max="@Model.UserProjects.CapsuleLabCreditsRequired" />
         <br />
                             <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
@@ -179,12 +215,12 @@ else
     </div>
     <form method="post" asp-page-handler="InvestItech">
         <label>Turns to Invest:</label>
-        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <input asp-for="TurnsToInvest" type="number" value="45" min="0" max="45" />
         <br />
         <label>Credits to Invest:</label>
-        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.ItechCreditsRequired" />
+        <input asp-for="CreditsToInvest" type="number" min="0" value="@Model.UserProjects.ItechCreditsRequired" max="@Model.UserProjects.ItechCreditsRequired" />
         <br />
-                            <button type="submit" class="btn btn-primary">Invest</button>
+           <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
     </form>
                     </td>
@@ -241,10 +277,10 @@ else
     </div>
     <form method="post" asp-page-handler="InvestUnreverseEngineering">
         <label>Turns to Invest:</label>
-        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <input asp-for="TurnsToInvest" type="number" value="45" min="0" max="45" />
         <br />
         <label>Credits to Invest:</label>
-        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.UnreverseEngineeringCreditsRequired" />
+        <input asp-for="CreditsToInvest" type="number" min="0" value="@Model.UserProjects.UnreverseEngineeringCreditsRequired" max="@Model.UserProjects.UnreverseEngineeringCreditsRequired" />
         <br />
         <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
@@ -283,7 +319,7 @@ else
 {
 }
 
-@if (Model.ProjectsResearch.KalZulArtifact == true && Model.ProjectsResearch.KalZulArtifactTurnsRequired == 0 && Model.ServerUWEnabled != true)
+@if (Model.ProjectsResearch.KalZulArtifact == true && Model.ProjectsResearch.KalZulArtifactTurnsRequired == 0 && Model.UserProjects.KalZulHektar == false && Model.ServerUWEnabled != true)
 {
     <div class="col-5">
         <table class="table table-bordered table-sm text-center">
@@ -306,10 +342,10 @@ else
     </div>
     <form method="post" asp-page-handler="InvestKalZulHektar">
         <label>Turns to Invest:</label>
-        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <input asp-for="TurnsToInvest" type="number" value="45" min="0" max="45" />
         <br />
         <label>Credits to Invest:</label>
-        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulHektarCreditsRequired" />
+        <input asp-for="CreditsToInvest" type="number" min="0" value="@Model.UserProjects.KalZulHektarCreditsRequired" max="@Model.UserProjects.KalZulHektarCreditsRequired" />
         <br />
         <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
@@ -349,7 +385,7 @@ else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHek
         </table>
     </div>
 }
-else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHektarUnlockTimer <= DateTime.Now)
+else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulLoktar == false && Model.UserProjects.KalZulHektarUnlockTimer <= DateTime.Now)
 {
     <div class="col-5">
         <table class="table table-bordered table-sm text-center">
@@ -366,17 +402,16 @@ else if (Model.UserProjects.KalZulHektar == true && Model.UserProjects.KalZulHek
                 <tr>
                     <td>
     <div>
-        <h2>Kal-Zul Loktar</h2>
         <p>Turns Required: @Model.UserProjects.KalZulLoktarTurnsRequired</p>
         <p>Credits Required: @Model.UserProjects.KalZulLoktarCreditsRequired</p>
         <p>Status: @(Model.UserProjects.KalZulLoktar ? "Unlocked" : "Locked")</p>
     </div>
     <form method="post" asp-page-handler="InvestKalZulLoktar">
         <label>Turns to Invest:</label>
-        <input asp-for="TurnsToInvest" type="number" min="0" max="45" />
+        <input asp-for="TurnsToInvest" type="number" min="0" value="45" max="45" />
         <br />
         <label>Credits to Invest:</label>
-        <input asp-for="CreditsToInvest" type="number" min="0" max="@Model.UserProjects.KalZulLoktarCreditsRequired" />
+        <input asp-for="CreditsToInvest" type="number" min="0" value="@Model.UserProjects.KalZulLoktarCreditsRequired" max="@Model.UserProjects.KalZulLoktarCreditsRequired" />
         <br />
         <button type="submit" class="btn btn-primary">Invest</button>
         @Html.AntiForgeryToken()
@@ -415,12 +450,17 @@ else if (Model.UserProjects.KalZulLoktar == true && Model.UserProjects.KalZulLok
                 <tr>
                     <td>
     <div>
-        <h2>Kal-Zul Loktar</h2>
         @{
-            var minutes = (int)Math.Ceiling((Model.UserProjects.KalZulLoktarUnlockTimer - DateTime.Now).TotalMinutes);
+            var minutes = (int)Math.Ceiling((Model.UserProjects.KalZulLoktarUnlockTimer - DateTime.Now).TotalHours);
             if (minutes < 0) { minutes = 0; }
         }
-        <p>Unlock Timer: @minutes minutes remaining</p>
+        <p>Unlock Timer: @minutes hours remaining</p>
+                            <h3>Please Read the following!!</h3>
+                            <p>Your damage protection has ended.</p>
+                            <p>Your planets are at risk.</p>
+                            <p>All your ships are at risk.</p>
+                            <p>Exploring while this project is active will remove any damage protection.</p>
+                            <p>Losing a battle below 500,000 Power rating will destroy the project and reset the restrictions.</p>
     </div>
     </tr>
             </tbody>

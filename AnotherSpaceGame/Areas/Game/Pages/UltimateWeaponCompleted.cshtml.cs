@@ -59,6 +59,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(u => u.ImportantEvents)
                 .Include(u => u.Fleets)
                 .Include(u => u.Artifacts)
+                .Include(u => u.UserProjects)
+                .Include(u => u.ProjectsResearch)
                 .FirstOrDefaultAsync(u => u.Id == _userManager.GetUserId(User));
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
@@ -140,7 +142,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 // option 3
                 var artifact2 = new Artifacts();
-                if (OptionGroup2 == "31")
+                if (OptionGroup3 == "31")
                 {
                     if (artifact1.ArtifactId == 52)
                     {
@@ -151,7 +153,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         artifact2 = new Artifacts(52, 30, user.Id);
                     }
                 }
-                else if (OptionGroup2 == "32")
+                else if (OptionGroup3 == "32")
                 {
                     if (artifact1.ArtifactId == 30)
                     {
@@ -162,7 +164,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         artifact2 = new Artifacts(30, 10, user.Id);
                     }                    
                 }
-                else if (OptionGroup2 == "33")
+                else if (OptionGroup3 == "33")
                 {
                     if (artifact1.ArtifactId == 63)
                     {
@@ -175,33 +177,45 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 // option 4
                 var artifact3 = new Artifacts();
-                if (OptionGroup2 == "31")
+                if (OptionGroup4 == "31")
                 {
                     if (artifact1.ArtifactId == 52)
                     {
                         artifact1 = new Artifacts(52, 60, user.Id);
+                    }
+                    else if (artifact2.ArtifactId == 52)
+                    {
+                        artifact2 = new Artifacts(52, 60, user.Id);
                     }
                     else
                     {
                         artifact3 = new Artifacts(52, 30, user.Id);
                     }
                 }
-                else if (OptionGroup2 == "32")
+                else if (OptionGroup4 == "32")
                 {
                     if (artifact1.ArtifactId == 30)
                     {
                         artifact1 = new Artifacts(30, 20, user.Id);
+                    }
+                    else if (artifact2.ArtifactId == 30)
+                    {
+                        artifact2 = new Artifacts(30, 20, user.Id);
                     }
                     else
                     {
                         artifact3 = new Artifacts(30, 10, user.Id);
                     }
                 }
-                else if (OptionGroup2 == "33")
+                else if (OptionGroup4 == "33")
                 {
                     if (artifact1.ArtifactId == 63)
                     {
                         artifact1 = new Artifacts(63, 20, user.Id);
+                    }
+                    else if (artifact2.ArtifactId == 63)
+                    {
+                        artifact2 = new Artifacts(63, 20, user.Id);
                     }
                     else
                     {
@@ -247,7 +261,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 serverStats.UWHolderName = null;
                 serverStats.UWCompleted = false;
                 serverStats.UWEnabled = false;
-
+                
                 await _userManager.UpdateAsync(user);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -259,7 +273,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ModelState.AddModelError(string.Empty, "An error occurred while processing your request. Please try again later.");
                 return Page();
             }
-            return RedirectToPage("/Game/ImportantEvents");
+            return RedirectToPage("/ImportantEvents", "Game");
         }
 
         private async Task ResetPlanetsAsync(ApplicationUser user, Faction faction)
@@ -348,6 +362,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.StrafezResearches.RemoveRange(_context.StrafezResearches.Where(r => r.ApplicationUserId == userId));
             _context.FClassResearches.RemoveRange(_context.FClassResearches.Where(r => r.ApplicationUserId == userId));
             _context.ProjectsResearches.RemoveRange(_context.ProjectsResearches.Where(r => r.ApplicationUserId == userId));
+            _context.UserProjects.RemoveRange(_context.UserProjects.Where(r => r.ApplicationUserId == userId));
             _context.ViralSpecificResearches.RemoveRange(_context.ViralSpecificResearches.Where(r => r.ApplicationUserId == userId));
             _context.CollectiveSpecificResearches.RemoveRange(_context.CollectiveSpecificResearches.Where(r => r.ApplicationUserId == userId));
             _context.TerranResearches.RemoveRange(_context.TerranResearches.Where(r => r.ApplicationUserId == userId));
@@ -368,6 +383,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var strafezResearch = new StrafezResearch { ApplicationUserId = userId };
             var fClassResearch = new FClassResearch { ApplicationUserId = userId };
             var projectsResearch = new ProjectsResearch { ApplicationUserId = userId };
+            var userProjects = new UserProjects { ApplicationUserId = userId };
             var Missions = new Missions { ApplicationUserId = userId };
 
             user.EClassResearch = eClassResearch;
@@ -382,6 +398,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             _context.StrafezResearches.Add(strafezResearch);
             _context.FClassResearches.Add(fClassResearch);
             _context.ProjectsResearches.Add(projectsResearch);
+            _context.UserProjects.Add(userProjects);
             _context.Missions.Add(Missions);
 
             // Faction-specific research

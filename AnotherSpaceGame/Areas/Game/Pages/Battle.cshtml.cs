@@ -89,6 +89,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 .Include(s => s.ImportantEvents)
                 .Include(s => s.CounterAttacks)
                 .Include(s => s.Exploration)
+                .Include(s => s.UserProjects)
+                .Include(s => s.ProjectsResearch)
                 .FirstOrDefault(u => u.Id == TargetUserId);
             if (targetUser == null)
             {
@@ -2268,12 +2270,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         {
                             EndFleets += "<table border='1' cellpadding='4' cellspacing='0'><tr><th>Name</th><th>Type</th><th>Land</th></tr>";
                             EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>"; ;
-                            EndFleets += "/table>";
+                            EndFleets += "</table>";
                         }
                         if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
                         {
                             EndFleets += "<h3>Ultimate Weapon</h3>";
                             EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                            serverStats.UWEnabled = false;
+                            serverStats.UWHolderId = null;
+                            serverStats.UWHolderName = null;
+                            targetUser.UserProjects.KalZulHektar = false;
+                            targetUser.UserProjects.KalZulLoktar = false;
+                            targetUser.UserProjects.KalZulHektarCreditsRequired = 800000000; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulHektarTurnsRequired = 400; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarCreditsRequired = 400000000; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarTurnsRequired = 200; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                            targetUser.UserProjects.KalZulHektarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                            _context.UserProjects.Update(targetUser.UserProjects); // Update other users' projects
+                            targetUser.ProjectsResearch.KalZulArtifact = false;
+                            targetUser.ProjectsResearch.KalZulArtifactTurnsRequired = 90;
+                            _context.ProjectsResearches.Update(targetUser.ProjectsResearch); // Update other users' research projects
                         }
                         // Important Events
                         ImportantEvents attackerEvent = new ImportantEvents
@@ -2400,7 +2417,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         }
                         else
                         {
-                            targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            if (targetUser.UserName != serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            }
+                            else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddMinutes(15);
+                            }
                         }
                         var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 5);
                         StatusMessage = turnsMessage.Message;
@@ -2525,7 +2549,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         }
                         else
                         {
-                            targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            if (targetUser.UserName != serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            }
+                            else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                            {
+                                
+                            }
                         }
                         var turnsMessage = await _turnService.TryUseTurnsAsync(user.Id, 5);
                         StatusMessage = turnsMessage.Message;
@@ -3507,12 +3538,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         {
                             EndFleets += "<table border='1' cellpadding='4' cellspacing='0'><tr><th>Name</th><th>Type</th><th>Land</th></tr>";
                             EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>";
-                            EndFleets += "/table>";
+                            EndFleets += "</table>";
                         }
                         if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
                         {
                             EndFleets += "<h3>Ultimate Weapon</h3>";
                             EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                            serverStats.UWEnabled = false;
+                            serverStats.UWHolderId = null;
+                            serverStats.UWHolderName = null;
+                            targetUser.UserProjects.KalZulHektar = false;
+                            targetUser.UserProjects.KalZulLoktar = false;
+                            targetUser.UserProjects.KalZulHektarCreditsRequired = 800000000; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulHektarTurnsRequired = 400; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarCreditsRequired = 400000000; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarTurnsRequired = 200; // Reset requirements for other users
+                            targetUser.UserProjects.KalZulLoktarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                            targetUser.UserProjects.KalZulHektarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                            _context.UserProjects.Update(targetUser.UserProjects); // Update other users' projects
+                            targetUser.ProjectsResearch.KalZulArtifact = false;
+                            targetUser.ProjectsResearch.KalZulArtifactTurnsRequired = 90;
+                            _context.ProjectsResearches.Update(targetUser.ProjectsResearch); // Update other users' research projects
                         }
                         // Important Events
                         ImportantEvents attackerEvent = new ImportantEvents
@@ -3639,7 +3685,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         }
                         else
                         {
-                            targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            if (targetUser.UserName != serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            }
+                            else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddMinutes(15);
+                            }
                         }
                         var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                         StatusMessage = turnsMessage.Message;
@@ -3764,7 +3817,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                         }
                         else
                         {
-                            targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            if (targetUser.UserName != serverStats.UWHolderName)
+                            {
+                                targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                            }
+                            else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                            {
+
+                            }
                         }
                         var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                         StatusMessage = turnsMessage.Message;
@@ -4428,12 +4488,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     EndFleets += "<table border='1' cellpadding='4' cellspacing='0'><tr><th>Name</th><th>Type</th><th>Land</th></tr>";
                     EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>"; ;
-                    EndFleets += "/table>";
+                    EndFleets += "</table>";
                 }
                 if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
                 {
                     EndFleets += "<h3>Ultimate Weapon</h3>";
                     EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                    serverStats.UWEnabled = false;
+                    serverStats.UWHolderId = null;
+                    serverStats.UWHolderName = null;
+                    targetUser.UserProjects.KalZulHektar = false;
+                    targetUser.UserProjects.KalZulLoktar = false;
+                    targetUser.UserProjects.KalZulHektarCreditsRequired = 800000000; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulHektarTurnsRequired = 400; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarCreditsRequired = 400000000; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarTurnsRequired = 200; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                    targetUser.UserProjects.KalZulHektarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                    _context.UserProjects.Update(targetUser.UserProjects); // Update other users' projects
+                    targetUser.ProjectsResearch.KalZulArtifact = false;
+                    targetUser.ProjectsResearch.KalZulArtifactTurnsRequired = 90;
+                    _context.ProjectsResearches.Update(targetUser.ProjectsResearch); // Update other users' research projects
                 }
                 // Important Events
                 ImportantEvents attackerEvent = new ImportantEvents
@@ -4557,7 +4632,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 else
                 {
-                    targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    if (targetUser.UserName != serverStats.UWHolderName)
+                    {
+                        targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    }
+                    else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                    {
+                        targetUser.DamageProtection = DateTime.Now.AddMinutes(15);
+                    }
                 }
                 var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                 StatusMessage = turnsMessage.Message;
@@ -4680,7 +4762,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 else
                 {
-                    targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    if (targetUser.UserName != serverStats.UWHolderName)
+                    {
+                        targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    }
+                    else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                    {
+
+                    }
                 }
                 var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                 StatusMessage = turnsMessage.Message;
@@ -5339,12 +5428,27 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 {
                     EndFleets += "<table border='1' cellpadding='4' cellspacing='0'><tr><th>Name</th><th>Type</th><th>Land</th></tr>";
                     EndFleets += "<tr><td colspan='3'>Defender has no planets</td></tr>";
-                    EndFleets += "/table>";
+                    EndFleets += "</table>";
                 }
                 if ((serverStats.UWHolderId == targetUser.Id && targetUser.PowerRating < 500000) || serverStats.UWHolderId == targetUser.Id && targetUser.TotalColonies <= 1)
                 {
                     EndFleets += "<h3>Ultimate Weapon</h3>";
                     EndFleets += "<p>The Ultimate Weapon has been destroyed!</p>";
+                    serverStats.UWEnabled = false;
+                    serverStats.UWHolderId = null;
+                    serverStats.UWHolderName = null;
+                    targetUser.UserProjects.KalZulHektar = false;
+                    targetUser.UserProjects.KalZulLoktar = false;
+                    targetUser.UserProjects.KalZulHektarCreditsRequired = 800000000; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulHektarTurnsRequired = 400; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarCreditsRequired = 400000000; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarTurnsRequired = 200; // Reset requirements for other users
+                    targetUser.UserProjects.KalZulLoktarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                    targetUser.UserProjects.KalZulHektarUnlockTimer = DateTime.MinValue; // Reset unlock timer for other users
+                    _context.UserProjects.Update(targetUser.UserProjects); // Update other users' projects
+                    targetUser.ProjectsResearch.KalZulArtifact = false;
+                    targetUser.ProjectsResearch.KalZulArtifactTurnsRequired = 90;
+                    _context.ProjectsResearches.Update(targetUser.ProjectsResearch); // Update other users' research projects
                 }
                 // Important Events
                 ImportantEvents attackerEvent = new ImportantEvents
@@ -5471,7 +5575,14 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 }
                 else
                 {
-                    targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    if (targetUser.UserName != serverStats.UWHolderName)
+                    {
+                        targetUser.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection for defender
+                    }
+                    else if (serverStats.UWEnabled == true && targetUser.UserName == serverStats.UWHolderName)
+                    {
+                        targetUser.DamageProtection = DateTime.Now.AddMinutes(15);
+                    }
                 }
                 var turnsMessage = await _turnService.TryUseTurnsAsync(currentUser.Id, 5);
                 StatusMessage = turnsMessage.Message;

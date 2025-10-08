@@ -389,6 +389,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 CurrentUser.Commodities.StrafezOrganism -= ship.StrafezOrganism * amount;
                 CurrentUser.Commodities.Credits -= ship.Cost * amount;
             }
+            _context.SaveChanges();
             // Deduct turns
             var turnResult = await _turnService.TryUseTurnsAsync(user.Id, totalTurnsRequired);
             if (!turnResult.Success)

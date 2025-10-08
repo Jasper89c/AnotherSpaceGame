@@ -20,14 +20,16 @@
 <p>Here you can find a list of important events that have occurred in the game.</p>  
 
 @* UW STUFF *@
-@if (Model.Usernames.Count > 0)
+@if (Model.Usernames.Count > 0 && Model.serverStats.UWEnabled == false)
 {
     <div class="alert alert-info">
-        <p>WARNING!: The following users have completed the Kal-Zul Hektar:
-            @foreach (var s in Model.Usernames)
+        <p>
+            <span style="color: red; font-weight: bold;">WARNING!!</span>: The following users have completed the Kal-Zul Hektar:
+            @foreach (var username in Model.Usernames)
             {
-                s.ToString();
-            }            
+                <span style="color: red; font-weight: bold;">@username</span>
+                @(username != Model.Usernames.Last() ? ", " : "")
+            }
         </p>
     </div>
 
@@ -44,7 +46,7 @@
                     <div class="card-body">
                         <p class="card-text">
                             <h3>@Model.serverStats.UWHolderName has actived the Ultimate Weapon</h3>
-                            Attack Restrictions have been lifted against the Empire!
+                            Attack Restrictions have been lifted against the Empire!<br />
                             Stop this Empire before they destroy the galaxy!
                         </p>
                     </div>
@@ -54,7 +56,7 @@
                             // Fix for CS1061: 'DateTime' does not contain a definition for 'TotalDays'
                             // The 'KalZulLoktarUnlockTimer' property is likely a DateTime, not a TimeSpan. Adjust the code accordingly.
                             var timeRemaining = Model.userProject.KalZulLoktarUnlockTimer - DateTime.Now; // Calculate the remaining time as a TimeSpan  
-                            var days = timeRemaining.TotalDays;  
+                            var days = timeRemaining.Days;  
                             var hours = timeRemaining.Hours;  
                             var minutes = timeRemaining.Minutes;  
                             var seconds = timeRemaining.Seconds;  

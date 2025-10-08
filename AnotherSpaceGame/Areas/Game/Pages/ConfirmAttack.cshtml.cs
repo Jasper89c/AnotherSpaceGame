@@ -855,7 +855,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     }
                 }
             // check user has a fleet
-            if (currentUser.Fleets.Count == 0)
+            if (CurrentUserFleets.Count == 0 || CurrentUserFleets == null)
             {
                 NotEnoughTurnsMessage = "No Ships available to attack. Try building some ships first.";
                 return Page();
