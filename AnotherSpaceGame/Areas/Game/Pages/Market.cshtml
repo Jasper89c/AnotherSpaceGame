@@ -28,17 +28,17 @@
 <div class="mb-4">
     <h4>Your Commodities</h4>
     <ul>
-        <li>Credits: @Model.UserCommodities?.Credits</li>
-        <li>Food: @Model.UserCommodities?.Food</li>
-        <li>Ore: @Model.UserCommodities?.Ore</li>
-        <li>Raw Material: @Model.UserCommodities?.RawMaterial</li>
-        <li>Consumer Goods: @Model.UserCommodities?.ConsumerGoods</li>
-        <li>Terran Metal: @Model.UserCommodities?.TerranMetal</li>
-        <li>Red Crystal: @Model.UserCommodities?.RedCrystal</li>
-        <li>White Crystal: @Model.UserCommodities?.WhiteCrystal</li>
-        <li>Rutile: @Model.UserCommodities?.Rutile</li>
-        <li>Composite: @Model.UserCommodities?.Composite</li>
-        <li>Strafez Organism: @Model.UserCommodities?.StrafezOrganism</li>
+        <li>Credits: @Model.UserCommodities?.Credits.ToString("C0")</li>
+        <li>Food: @Model.UserCommodities?.Food.ToString("N0")</li>
+        <li>Ore: @Model.UserCommodities?.Ore.ToString("N0")</li>
+        <li>Raw Material: @Model.UserCommodities?.RawMaterial.ToString("N0")</li>
+        <li>Consumer Goods: @Model.UserCommodities?.ConsumerGoods.ToString("N0")</li>
+        <li>Terran Metal: @Model.UserCommodities?.TerranMetal.ToString("N0")</li>
+        <li>Red Crystal: @Model.UserCommodities?.RedCrystal.ToString("N0")</li>
+        <li>White Crystal: @Model.UserCommodities?.WhiteCrystal.ToString("N0")</li>
+        <li>Rutile: @Model.UserCommodities?.Rutile.ToString("N0")</li>
+        <li>Composite: @Model.UserCommodities?.Composite.ToString("N0")</li>
+        <li>Strafez Organism: @Model.UserCommodities?.StrafezOrganism.ToString("N0")</li>
     </ul>
     <a asp-area="Game" asp-page="/MarketWithdraw" class="btn btn-secondary btn-sm mt-2">Withdraw from Market</a>
     <a asp-area="Game" asp-page="/DeepSpaceMarket" class="btn btn-secondary btn-sm mt-2">Deep Space Market</a>
@@ -51,7 +51,7 @@
 {
                     <div class="col-md-6">
     <div class="mb-5">
-        <h4>@marketType.ToString() Market</h4>
+        <h4>@marketType.ToDescription() Market</h4>
 
         <!-- Sell Form -->
         <form method="post" asp-page-handler="Sell" class="row g-2 mb-3">
@@ -98,8 +98,8 @@
                 foreach (var post in posts)
                 {
                     <tr>
-                        <td>@post.Amount</td>
-                        <td>@post.Price</td>
+                                                <td>@post.Amount.ToString("N0")</td>
+                                                <td>@post.Price.ToString("C0")</td>
                         <td>@post.DateTime.ToString("g")</td>
                         <td>
                             <form method="post" asp-page-handler="Buy">

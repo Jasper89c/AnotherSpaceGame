@@ -26,7 +26,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         }
 
         public IList<ImportantEvents> Events { get; set; } = new List<ImportantEvents>();
-
+        [BindProperty(SupportsGet = true)]
+        public string EventType { get; set; }
         // Pagination properties
         [BindProperty(SupportsGet = true)]
         public int PageNumber { get; set; } = 1;
@@ -58,9 +59,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             if (user != null)
             {
                 var query = _context.ImportantEvents
-                    .Where(e => e.ApplicationUserId == user.Id)
-                    .OrderByDescending(e => e.DateAndTime);
+                .Where(e => e.ApplicationUserId == user.Id);
 
+
+                if (!string.IsNullOrEmpty(EventType))
+                {
+                    if (Enum.TryParse<ImportantEventTypes>(EventType, out var eventTypeEnum))
+                    {
+                        query = query.Where(e => e.ImportantEventTypes == eventTypeEnum);
+                    }
+                }
+                query = query.OrderByDescending(e => e.DateAndTime);
                 int totalEvents = await Task.Run(() => query.Count());
                 TotalPages = (int)System.Math.Ceiling(totalEvents / (double)PageSize);
 

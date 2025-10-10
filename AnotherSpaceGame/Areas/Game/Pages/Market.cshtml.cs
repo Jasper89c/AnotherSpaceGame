@@ -117,12 +117,12 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ApplicationUserId = user.Id,
                 DateAndTime = DateTime.Now,
                 ImportantEventTypes = ImportantEventTypes.Market,
-                Text = $"Successfully posted {SellAmount} of {SellMarketType} for {SellPrice} credits each."
+                Text = $"Successfully posted {SellAmount.ToString("N0")} units of {SellMarketType.ToDescription()} for {SellPrice.ToString("C0")} credits each."
             };
             _context.ImportantEvents.Add(imp);
             _context.MarketPosts.Add(post);
             await _context.SaveChangesAsync();
-            TempData["MarketSuccess"] = $"Successfully posted {SellAmount} of {SellMarketType} for {SellPrice} credits each.";
+            TempData["MarketSuccess"] = $"Successfully posted {SellAmount.ToString("N0")} units of {SellMarketType.ToDescription()} for {SellPrice.ToString("C0")} credits each.";
             return RedirectToPage();
         }
 
@@ -252,11 +252,11 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 ApplicationUserId = user.Id,
                 DateAndTime = DateTime.Now,
                 ImportantEventTypes = ImportantEventTypes.Market,
-                Text = $"Successfully purchased {BuyAmount} of {post.MarketType} for {post.Price * BuyAmount} credits."
+                Text = $"Successfully purchased {BuyAmount.ToString("N0")} units of {post.MarketType.ToDescription()} for {(post.Price * BuyAmount).ToString("C0")} credits."
             };
             _context.ImportantEvents.Add(imp);
             await _context.SaveChangesAsync();
-            TempData["MarketSuccess"] = $"Successfully purchased {BuyAmount} of {post.MarketType} for {post.Price * BuyAmount} credits.";
+            TempData["MarketSuccess"] = $"Successfully purchased {BuyAmount.ToString("N0")} units of {post.MarketType.ToDescription()} for {(post.Price * BuyAmount).ToString("C0")} credits.";
             return RedirectToPage();
         }
 

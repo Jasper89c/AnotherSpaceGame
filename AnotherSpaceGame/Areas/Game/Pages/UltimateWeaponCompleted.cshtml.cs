@@ -253,6 +253,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 user.ImportantEvents.Add(new ImportantEvents
                 {
                     ApplicationUserId = user.Id,
+                    DateAndTime = DateTime.Now,
                     ImportantEventTypes = ImportantEventTypes.Misc,
                     Text = $"Congratulations on completing the Ultimate Weapon,Your empire has been restarted. You are now a {user.Faction}."
                 });

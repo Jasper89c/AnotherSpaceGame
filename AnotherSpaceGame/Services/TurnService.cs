@@ -22,17 +22,15 @@ public class TurnService
             .Include(u => u.Turns)
             .Include(u => u.Fleets)
             .FirstOrDefaultAsync(u => u.Id == userId);
-        var currentUser = _context.Users
-                .FirstOrDefault(u => u.Id == user.Id);
         if (user == null)
             return new TurnResult { Success = false, Message = "User not found." };
         if (user.Turns.CurrentTurns < turnsToUse)
             return new TurnResult { Success = false, Message = "Not enough turns." };
 
         // Batch load related entities
-        var userPlanets = await _context.Planets.Where(p => p.ApplicationUserId == currentUser.Id).ToListAsync();
-        var userInfrastructer = await _context.Infrastructers.FirstOrDefaultAsync(i => i.ApplicationUserId == currentUser.Id);
-        var userFleet = await _context.Fleets.Where(f => f.ApplicationUserId == currentUser.Id).ToListAsync();
+        var userPlanets = await _context.Planets.Where(p => p.ApplicationUserId == user.Id).ToListAsync();
+        var userInfrastructer = await _context.Infrastructers.FirstOrDefaultAsync(i => i.ApplicationUserId == user.Id);
+        var userFleet = await _context.Fleets.Where(f => f.ApplicationUserId == user.Id).ToListAsync();
 
         var mods = GetFactionModifiers(user.Faction);
 
@@ -316,10 +314,10 @@ public class TurnService
     private decimal UpdatePlanetPopulation(Planets planet, Infrastructer infra, int turnsToUse, Faction faction, ApplicationUser user, decimal agricultureIncome)
     {
         // set max population
-        planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * (infra.Housing + 1))));
+        planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * (infra.Housing + 10)));
         if (faction == Faction.Collective)
         {
-            planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * 10 + (planet.Housing * (infra.Housing + 1))) * 2);
+            planet.MaxPopulation = (int)Math.Ceiling((double)(planet.Housing * (infra.Housing + 10))) * 2;
         }
         // Set Food Required
         var foodNeeded = planet.FoodRequired * turnsToUse;

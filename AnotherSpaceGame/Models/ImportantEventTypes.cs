@@ -4,9 +4,6 @@ namespace AnotherSpaceGame.Models
 {
     public enum ImportantEventTypes
     {
-        [Description("Show All")]
-        ShowAll,
-
         [Description("Battles")]
         Battles,
 

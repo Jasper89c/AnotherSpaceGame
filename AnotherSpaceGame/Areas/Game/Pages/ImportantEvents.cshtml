@@ -87,17 +87,21 @@
         <div class="col-auto">  
             <label for="eventType" class="col-form-label">Filter by Event Type:</label>  
         </div>  
-        <div class="col-auto">  
-            <select id="eventType" name="eventType" class="form-select" onchange="this.form.submit()">  
-                <option value="">All</option>  
-                @foreach (var type in eventTypes)  
-                {  
-                    var isSelected = selectedType == type.ToString() ? "selected" : "";  
-                    <option value="@type" selected="@isSelected">  
-                        @type  
-                    </option>  
-                }  
-            </select>  
+        <div class="col-auto">
+            <select id="eventType" name="eventType" class="form-select" onchange="this.form.submit()">
+                <option value="">All</option>
+                @foreach (var type in eventTypes)
+                {
+                    if (selectedType == type.ToString())
+                    {
+                        <option value="@type" selected="selected">@type</option>
+                    }
+                    else
+                    {
+                        <option value="@type">@type</option>
+                    }
+                }
+            </select>
         </div>  
     </div>  
 </form>  

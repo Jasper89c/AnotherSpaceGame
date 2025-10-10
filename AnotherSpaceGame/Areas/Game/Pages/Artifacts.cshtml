@@ -30,13 +30,13 @@ else
             <tr>  
                 <td>  
                     <a asp-page="/UseArtifact" asp-route-id="@artifact.Id">  
-                        @artifact.ArtifactName  
+                        @artifact.ArtifactName.ToDescription() 
                     </a>  
                 </td>  
-                <td>@artifact.ArtifactType</td>  
-                <td>@artifact.Total</td>  
-                <td>@artifact.MaxTotal</td>  
-            </tr>  
+                <td>@artifact.ArtifactType.ToDescription()</td>  
+                <td>@artifact.Total.ToString("N0")</td>
+                    <td>@artifact.MaxTotal.ToString("N0")</td>
+                </tr>  
         }  
         </tbody>  
     </table>  

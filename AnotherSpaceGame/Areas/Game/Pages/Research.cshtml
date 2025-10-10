@@ -41,6 +41,48 @@
 					<tr>
 						<td><strong>Available Turns:</strong> @Model.AvailableTurns.ToString("N0")</td>
 					</tr>
+					<tr>
+						<td>
+							@if (Model.CurrentLevel < Model.MaxLevel)
+							{
+								<form method="post" asp-page-handler="GainLevels" class="mb-4">
+									<div class="mb-2">
+										<label for="TurnsToUse" class="form-label"><b>Turns To Use:</b></label>
+										<input asp-for="TurnsToUse" class="form-control" min="1" max="45" value="45" />
+										<span asp-validation-for="TurnsToUse" class="text-danger"></span>
+									</div>
+									<button type="submit" class="btn btn-primary">Research</button>
+									@Html.AntiForgeryToken()
+								</form>
+							}
+							else
+							{
+								<div class="alert alert-success">You have reached the maximum level for Infrastructure Research.</div>
+
+							}
+
+							<form method="post" asp-page-handler="AssignPoints" class="mb-4" onsubmit="return confirmAssignPoints();">
+								<div class="mb-2">
+									<label for="AssignCategory" class="form-label"><b>Assign to:</b></label>
+									<select asp-for="AssignCategory" class="form-select">
+										<option value="Housing">Housing</option>
+										<option value="Commercial">Commercial</option>
+										<option value="Agriculture">Agriculture</option>
+										<option value="Industry">Industry</option>
+										<option value="Mining">Mining</option>
+									</select>
+									<span asp-validation-for="AssignCategory" class="text-danger"></span>
+								</div>
+								<div class="mb-2">
+									<label for="PointsToAssign" class="form-label"><b>Points to assign:</b></label>
+									<input asp-for="PointsToAssign" class="form-control" min="1" value="@Model.UnusedLevels" max="@Model.UnusedLevels" />
+									<span asp-validation-for="PointsToAssign" class="text-danger"></span>
+								</div>
+								<button type="submit" class="btn btn-success">Assign Points</button>
+								@Html.AntiForgeryToken()
+							</form>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -91,44 +133,7 @@
 		</div>
 	</div>
 </div>
-@if(Model.CurrentLevel < Model.MaxLevel)
-{    
-<form method="post" asp-page-handler="GainLevels" class="mb-4">
-        <div class="mb-2">
-            <label for="TurnsToUse" class="form-label">Turns To Use:</label>
-            <input asp-for="TurnsToUse" class="form-control" min="1" max="45" value="45"/>
-            <span asp-validation-for="TurnsToUse" class="text-danger"></span>
-        </div>
-    <button type="submit" class="btn btn-primary">Research</button>
-        @Html.AntiForgeryToken()
-    </form>
-}
-else
-{
-    <div class="alert alert-success">You have reached the maximum level for Infrastructure Research.</div>
 
-}
-
-<form method="post" asp-page-handler="AssignPoints" class="mb-4" onsubmit="return confirmAssignPoints();">
-    <div class="mb-2">
-        <label for="AssignCategory" class="form-label">Assign to:</label>
-        <select asp-for="AssignCategory" class="form-select">
-            <option value="Housing">Housing</option>
-            <option value="Commercial">Commercial</option>
-            <option value="Agriculture">Agriculture</option>
-            <option value="Industry">Industry</option>
-            <option value="Mining">Mining</option>
-        </select>
-        <span asp-validation-for="AssignCategory" class="text-danger"></span>
-    </div>
-    <div class="mb-2">
-        <label for="PointsToAssign" class="form-label">Points to assign:</label>
-        <input asp-for="PointsToAssign" class="form-control" min="1" max="@Model.UnusedLevels" />
-        <span asp-validation-for="PointsToAssign" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-success">Assign Points</button>
-    @Html.AntiForgeryToken()
-</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
