@@ -1,0 +1,305 @@
+﻿@page
+@model AnotherSpaceGame.Areas.Game.Pages.IncomeSimModel
+@using AnotherSpaceGame.Models
+@using System.ComponentModel
+@{
+    ViewData["Title"] = "Income Sim";
+    Layout = "~/Views/Shared/_LayoutGame.cshtml";
+    string GetEnumDescription(Enum value)
+    {
+        var fi = value.GetType().GetField(value.ToString());
+        var attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+        return attributes.Length > 0 ? attributes[0].Description : value.ToString();
+    }
+    var planetTypes = Enum.GetValues(typeof(PlanetType)).Cast<PlanetType>().ToList();
+    var mineralTypes = Enum.GetValues(typeof(MineralType)).Cast<MineralType>().ToList();
+    var factionTypes = Enum.GetValues(typeof(Faction)).Cast<Faction>().ToList();
+    var planetTypesJs = planetTypes
+        .Select(pt => new { value = (int)pt, text = GetEnumDescription(pt) })
+        .ToList();
+    var mineralTypesJs = mineralTypes
+        .Select(mt => new { value = (int)mt, text = GetEnumDescription(mt) })
+        .ToList();
+}
+
+<h3>Income Sim</h3>
+<form method="post" id="incomeSimForm">
+    <table class="table table-bordered" id="planetTable">
+        <thead>
+            <tr>
+                <th colspan="9">Planet Setup</th>
+            </tr>
+            <tr>
+                <th>Planet Type</th>
+                <th>Population</th>
+                <th>Commercial</th>
+                <th>Agriculture</th>
+                <th>Industry</th>
+                <th>Mining</th>
+                <th>Loyalty</th>
+                <th>Mineral Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Planets != null && Model.Planets.Count > 0)
+            {
+                for (int i = 0; i < Model.Planets.Count; i++)
+                {
+                    var p = Model.Planets[i];
+                    <tr>
+                        <td>
+                            <select name="Planets[@i].PlanetType" class="form-select">
+                                @foreach (var pt in planetTypes)
+                                {
+                                        if (p.PlanetType == pt)
+                                        {
+                                            <option value="@((int)pt)" selected>@GetEnumDescription(pt)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@((int)pt)">@GetEnumDescription(pt)</option>
+                                        }                                    
+                                }
+                            </select>
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Population" class="form-control" min="0" value="@p.Population" />
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Commercial" class="form-control" min="0" value="@p.Commercial" />
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Agriculture" class="form-control" min="0" value="@p.Agriculture" />
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Industry" class="form-control" min="0" value="@p.Industry" />
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Mining" class="form-control" min="0" value="@p.Mining" />
+                        </td>
+                        <td style="width: 100px;">
+                            <input type="number" name="Planets[@i].Loyalty" class="form-control" min="0" value="@p.Loyalty" />
+                        </td>
+                        <td>
+                            <select name="Planets[@i].MineralType" class="form-select">
+                                @foreach (var mt in mineralTypes)
+                                {
+                                    if (p.MineralType == mt)
+                                    {
+                                        <option value="@((int)mt)" selected>@GetEnumDescription(mt)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@((int)mt)">@GetEnumDescription(mt)</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-row" style="@(Model.Planets.Count > 1 ? "" : "display:none;")">Remove</button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        <select name="Planets[0].PlanetType" class="form-select">
+                            @foreach (var pt in planetTypes)
+                            {
+                                <option value="@((int)pt)">@GetEnumDescription(pt)</option>
+                            }
+                        </select>
+                    </td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Population" class="form-control" min="0" value="0" /></td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Commercial" class="form-control" min="0" value="0" /></td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Agriculture" class="form-control" min="0" value="0" /></td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Industry" class="form-control" min="0" value="0" /></td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Mining" class="form-control" min="0" value="0" /></td>
+                    <td style="width: 100px;"><input type="number" name="Planets[0].Loyalty" class="form-control" min="0" value="0" /></td>
+                    <td>
+                        <select name="Planets[0].MineralType" class="form-select">
+                            @foreach (var mt in mineralTypes)
+                            {
+                                <option value="@((int)mt)">@GetEnumDescription(mt)</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-row" style="display:none;">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-secondary" id="addRowBtn">Add Row</button>
+
+    <table style="margin-top: 15px;" class="table table-bordered mb-4" id="infrastructureTable">
+        <thead>
+            <tr>
+                <th colspan="5">Infrastructure Setup</th>
+            </tr>
+            <tr>
+                <th>Housing</th>
+                <th>Commercial</th>
+                <th>Agriculture</th>
+                <th>Industry</th>
+                <th>Mining</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="number" name="Infrastructure.Housing" class="form-control" min="0" value="@Model.Infrastructure?.Housing" />
+                </td>
+                <td>
+                    <input type="number" name="Infrastructure.Commercial" class="form-control" min="0" value="@Model.Infrastructure?.Commercial" />
+                </td>
+                <td>
+                    <input type="number" name="Infrastructure.Agriculture" class="form-control" min="0" value="@Model.Infrastructure?.Agriculture" />
+                </td>
+                <td>
+                    <input type="number" name="Infrastructure.Industry" class="form-control" min="0" value="@Model.Infrastructure?.Industry" />
+                </td>
+                <td>
+                    <input type="number" name="Infrastructure.Mining" class="form-control" min="0" value="@Model.Infrastructure?.Mining" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="mb-3">
+        <label for="Faction" class="form-label"><strong>Faction</strong></label>
+        <select style="width: 200px;" name="Faction" id="Faction" class="form-select" required>
+            @foreach (var f in factionTypes)
+            {
+                if (Model.Faction == f)
+                {
+                    <option value="@((int)f)" selected>@GetEnumDescription(f)</option>
+                }
+                else
+                {
+                    <option value="@((int)f)">@GetEnumDescription(f)</option>
+                }
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    @Html.AntiForgeryToken()
+</form>
+
+@if (HttpContext.Request.Method == "POST")
+{
+    <hr />
+    <h4>Simulation Results</h4>
+    <div class="mb-3">
+        <strong>Faction:</strong> @GetEnumDescription(Model.Faction)
+    </div>
+    <div class="mb-3">
+        <strong>Infrastructure:</strong>
+        <ul>
+            <li>Housing: @Model.Infrastructure?.Housing</li>
+            <li>Commercial: @Model.Infrastructure?.Commercial</li>
+            <li>Agriculture: @Model.Infrastructure?.Agriculture</li>
+            <li>Industry: @Model.Infrastructure?.Industry</li>
+            <li>Mining: @Model.Infrastructure?.Mining</li>
+        </ul>
+    </div>
+    <div class="mb-3">
+        <strong>Planets:</strong>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Type</th>
+                    <th>Population</th>
+                    <th>Commercial</th>
+                    <th>Agriculture</th>
+                    <th>Industry</th>
+                    <th>Mining</th>
+                    <th>Loyalty</th>
+                    <th>Mineral</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Planets?.Count; i++)
+                {
+                    var p = Model.Planets[i];
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@GetEnumDescription(p.PlanetType)</td>
+                        <td>@p.Population</td>
+                        <td>@p.Commercial</td>
+                        <td>@p.Agriculture</td>
+                        <td>@p.Industry</td>
+                        <td>@p.Mining</td>
+                        <td>@p.Loyalty</td>
+                        <td>@GetEnumDescription(p.MineralType)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-3">
+        <strong>Calculated Results:</strong>
+        <ul>
+            <li>Tax Credits Per Turn: @Model.TaxCreditsPerTurn</li>
+            <li>Tax Credits Per Turn With Goods: @Model.TaxCreditsPerTurnWithGoods</li>
+            <li>Commercial Credits Per Turn: @Model.CommercialCreditsPerTurn</li>
+            <li>Agriculture Per Turn: @Model.AgriculturePerTurn</li>
+            <li>Agriculture Per Turn Minus Food: @Model.AgriculturePerTurnMinusFood</li>
+            <li>Industry Per Turn: @Model.IndustryPerTurn</li>
+            <li>Industry Per Turn Minus Goods Eaten: @Model.IndustryPerTurnMinusGoodsEaten</li>
+            <li>Mining Per Turn: @Model.MiningPerTurn</li>
+            <li>Food Needed: @Model.FoodNeeded</li>
+            <li>Goods Needed: @Model.GoodsNeeded</li>
+        </ul>
+    </div>
+}
+
+<script>
+    const planetTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(planetTypesJs));
+    const mineralTypes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mineralTypesJs));
+    let rowIndex = @((Model.Planets?.Count ?? 1));
+
+    document.getElementById('addRowBtn').addEventListener('click', function () {
+        const tbody = document.querySelector('#planetTable tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+                <select name="Planets[${rowIndex}].PlanetType" class="form-select">
+                    ${planetTypes.map(pt => `<option value="${pt.value}">${pt.text}</option>`).join('')}
+                </select>
+            </td>
+            <td><input type="number" name="Planets[${rowIndex}].Population" class="form-control" min="0" value="0" /></td>
+            <td><input type="number" name="Planets[${rowIndex}].Commercial" class="form-control" min="0" value="0" /></td>
+            <td><input type="number" name="Planets[${rowIndex}].Agriculture" class="form-control" min="0" value="0" /></td>
+            <td><input type="number" name="Planets[${rowIndex}].Industry" class="form-control" min="0" value="0" /></td>
+            <td><input type="number" name="Planets[${rowIndex}].Mining" class="form-control" min="0" value="0" /></td>
+            <td><input type="number" name="Planets[${rowIndex}].Loyalty" class="form-control" min="0" value="0" /></td>
+            <td>
+                <select name="Planets[${rowIndex}].MineralType" class="form-select">
+                    ${mineralTypes.map(mt => `<option value="${mt.value}">${mt.text}</option>`).join('')}
+                </select>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+        rowIndex++;
+        updateRemoveButtons();
+    });
+
+    function updateRemoveButtons() {
+        document.querySelectorAll('.remove-row').forEach(btn => {
+            btn.style.display = document.querySelectorAll('#planetTable tbody tr').length > 1 ? '' : 'none';
+            btn.onclick = function () {
+                btn.closest('tr').remove();
+                updateRemoveButtons();
+            };
+        });
+    }
+    updateRemoveButtons();
+</script>

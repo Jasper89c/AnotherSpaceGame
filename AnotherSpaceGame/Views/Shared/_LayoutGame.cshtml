@@ -262,6 +262,9 @@
                                     <a class="dropdown-item" asp-area="Game" asp-page="/BattleSim">Battle Sim</a>
                                 </li>
                                 <li>
+                                    <a class="dropdown-item" asp-area="Game" asp-page="/IncomeSim">Income Sim</a>
+                                </li>
+                                <li>
                                     <a class="dropdown-item" asp-area="Game" asp-page="/Rules">Rules</a>
                                 </li>
                                 <!-- Add more dropdown items as needed -->
@@ -293,15 +296,14 @@
     <div class="container">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-10">
-                    <main role="main" class="pb-3">
+                
+                <div class="col-11">
+                    <main role="main" class="pb-1">
                         @RenderBody()
                     </main>
                 </div>
                     <!-- Chat Panel -->
-                <div class="col-md-1">                    
+                <div class="col-1">                    
                     <div id="chat-panel">
                         <div class="d-flex justify-content-between align-items-center border-bottom px-3 py-2">
                             <span><i class="bi bi-chat-dots"></i> Game Chat</span>
