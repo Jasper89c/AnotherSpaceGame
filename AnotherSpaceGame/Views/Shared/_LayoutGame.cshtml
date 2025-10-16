@@ -74,7 +74,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AnotherSpaceGame</title>
+    <title>(@status.Turns T)@ViewData["Title"] - AnotherSpaceGame</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AnotherSpaceGame.styles.css" asp-append-version="true" />
@@ -473,8 +473,11 @@
         });
 
         // Listen for turn updates
-        turnConnection.on("UpdateTurns", function (newTurns) {
+                turnConnection.on("UpdateTurns", function (newTurns) {
             document.getElementById("turns-count").textContent = newTurns;
+            // Update the page title
+            const baseTitle = document.title.replace(/^\(\d+ T\)/, ""); // Remove old turns prefix
+            document.title = `(${newTurns} T)${baseTitle}`;
         });
 
              function updateGameDateTime() {

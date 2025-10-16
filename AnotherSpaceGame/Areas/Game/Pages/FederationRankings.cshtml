@@ -21,7 +21,7 @@ else
                 <th>Total Power Rating</th>
                 <th>Total Planets</th>
                 <th>Total Members</th>
-                <th>Created At</th>
+                <th>Age</th>
             </tr>
         </thead>
         <tbody>
@@ -38,7 +38,7 @@ else
                     <td>@fed.TotalPowerating.ToString("N0")</td>
                     <td>@fed.TotalPlanets.ToString("N0")</td>
                 <td>@fed.TotalMembers</td>
-                <td>@fed.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>@((DateTime.Now - fed.CreatedAt).TotalDays.ToString("N0")) Days</td>
             </tr>
         }
         </tbody>

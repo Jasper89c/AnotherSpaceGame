@@ -18,7 +18,8 @@ else
     @if (TempData["BuildMessage"] != null)
     {
         <div class="alert alert-success" role="alert">
-            @Html.Raw(TempData["BuildMessage"])
+            @Html.Raw(TempData["BuildMessage"]) <br />
+            @Html.Raw(TempData["BuildCostMessage"])
         </div>
     }
     <form method="post">

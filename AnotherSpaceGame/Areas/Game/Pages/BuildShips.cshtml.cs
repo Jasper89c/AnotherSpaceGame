@@ -401,6 +401,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             user.DamageProtection = DateTime.Now;
             await _context.SaveChangesAsync();
             TempData["BuildMessage"] = $"Successfully built ships! Used {totalTurnsRequired} turns.<hr>{turnResult.Message}";
+            TempData["BuildCostMessage"] = $"Build Cost: ${Credits.ToString("C0")}, {TerranMetal.ToString("N0")} Teran Metal, {Rutile.ToString("N0")} Rutile, {Composite.ToString("N0")} Composite, {RedCyrstal.ToString("N0")} Red Crystal, {WhiteCyrstal.ToString("N0")} White Crystal, {StrafezOrganism.ToString("N0")} Strafez Organism.";
             return RedirectToPage();
         }
     }
