@@ -20,6 +20,8 @@
         <thead>
             <tr>
                 <th>Username</th>
+                <th>Planets</th>
+                <th>Power Rating</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +33,8 @@
                         @user.UserName
                     </a>
                 </td>
+                <td>@user.TotalPlanets.ToString("N0")</td>
+                    <td>@user.PowerRating.ToString("N0")</td>
             </tr>
         }
         </tbody>
