@@ -5,8 +5,9 @@
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
 
+@if (Model.hasFederation != true)
+{    
 <h2>Create a Federation</h2>
-
 @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
 {
     <div class="alert alert-info">@Model.FeedbackMessage</div>
@@ -33,3 +34,8 @@
         <li>You cannot already be a member of a federation</li>
     </ul>
 </div>
+}
+else
+{
+    <div class="alert alert-warning">You are already a member of a federation and cannot create a new one.</div>
+}

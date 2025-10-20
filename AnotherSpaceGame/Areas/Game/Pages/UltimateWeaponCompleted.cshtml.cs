@@ -76,6 +76,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 TotalPlanets = user.TotalPlanets.ToString("N0")
             };
             _context.UWWinners.Add(uwWinners);
+            user.PowerRating = 1500;
             if (serverStats.UWHolderId != user.Id)
             {
                 return RedirectToPage("/Game/ImportantEvents");

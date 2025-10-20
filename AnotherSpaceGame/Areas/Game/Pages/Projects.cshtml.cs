@@ -475,7 +475,16 @@ namespace AnotherSpaceGame.Areas.Game.Pages
 
             // DESTROY GALAXY LOGIC
             var serverStats = await _context.ServerStats.FirstOrDefaultAsync();
-            serverStats.UWCompleted = true; 
+            serverStats.UWCompleted = true;
+            GalaxyEnd galaxyEnd = new GalaxyEnd
+            {
+                Name = currentUser.UserName,
+                ApplicationUserId = currentUser.Id,
+                Description = "",
+                PowerRating = currentUser.PowerRating.ToString("N0"),
+                CreatedAt = DateTime.Now
+            };
+            _context.GalaxyEnd.Add(galaxyEnd); // Add the galaxy end record
             // Alter users data
             var Users = _context.Users.Include(x => x.Commodities).ToList();
             foreach (var u in Users)
@@ -491,19 +500,18 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 u.Commodities.Composite = (long)Math.Ceiling(u.Commodities.Composite * 0.01); // Reset credits
                 u.Commodities.Rutile = (long)Math.Ceiling(u.Commodities.Rutile * 0.01); // Reset credits
                 u.Commodities.StrafezOrganism = (long)Math.Ceiling(u.Commodities.StrafezOrganism * 0.01); // Reset credits
-                u.PowerRating = 1500;
                 u.DamageProtection = DateTime.Now.AddDays(1); // Reset damage protection
+                if (u.Id == currentUser.Id)
+                {
+
+                }
+                else
+                {
+                    u.PowerRating = 1500;
+                }
             }
             ServerUWEnabled = serverStats.UWEnabled;
-            GalaxyEnd galaxyEnd = new GalaxyEnd
-            {
-                Name = currentUser.UserName,
-                ApplicationUserId = currentUser.Id,
-                Description = "",
-                PowerRating = currentUser.PowerRating.ToString("N0"),
-                CreatedAt = DateTime.Now
-            };
-            _context.GalaxyEnd.Add(galaxyEnd); // Add the galaxy end record
+            
             _context.SaveChanges();
             return RedirectToPage("/UltimateWeaponCompleted", "Game");
         }

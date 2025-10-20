@@ -27,6 +27,7 @@ namespace AnotherSpaceGame.Areas.Game.Pages
         public string FederationDescription { get; set; }
 
         public string? FeedbackMessage { get; set; }
+        public bool hasFederation { get; set; }
 
         public void OnGet()
         {
@@ -38,9 +39,17 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             var user = await _userManager.GetUserAsync(User);
             user = await _context.Users
                 .Include(u => u.Commodities)
+                .Include(u => u.Federation)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
             if (user == null)
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
+            if(user.FederationId != null)
+            {
+                hasFederation = true;
+                FeedbackMessage = "You are already a member of a federation.";
+                return Page();
+            }
+
 
             if (user == null)
             {

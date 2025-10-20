@@ -58,7 +58,8 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 return RedirectToPage("/Game/ManageColonies");
 
             // Check if user has enough turns
-            int availableTurns = user.Turns?.CurrentTurns ?? 0;
+            var userTurns = _context.Turns.FirstOrDefault(x => x.ApplicationUserId == user.Id);
+            int availableTurns = userTurns.CurrentTurns;
             if (availableTurns < 5)
             {
                 StatusMessage = "You do not have enough turns to infect this planet (5 required).";

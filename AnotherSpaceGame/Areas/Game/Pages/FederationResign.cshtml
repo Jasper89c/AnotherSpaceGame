@@ -5,12 +5,13 @@
     Layout = "~/Views/Shared/_LayoutGame.cshtml";
 }
 
+<h3>Resign From Federation</h3>
 @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
 {
     <div class="alert alert-info">@Model.FeedbackMessage</div>
 }
 
 <form method="post" onsubmit="return confirm('Are you sure you want to resign from your federation? This action cannot be undone.');">
-    <button type="submit" class="btn btn-danger">Resign from Federation</button>
+    <button type="submit" class="btn btn-danger">Confirm Resign</button>
     @Html.AntiForgeryToken()
 </form>
