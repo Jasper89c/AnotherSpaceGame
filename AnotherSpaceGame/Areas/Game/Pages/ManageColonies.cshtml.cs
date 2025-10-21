@@ -119,14 +119,15 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                     var creditsGained = (int)Math.Floor(((planet.CurrentPopulation * 2500) + ((5500 * (totalPlanetInfra ^ 2)) / planet.TotalLand) + (200000 * planet.TotalPlanets) / 15) * mod.FactionPlunderModifier);
                     UserCommodities.Credits += creditsGained;
                     totalCreditsForPlunder += creditsGained;                    
-                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);                    
                     user.TotalColonies -= 1;
                     user.TotalPlanets -= planet.TotalPlanets;
                     user.PlanetsPlundered += planet.TotalPlanets;
+                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);   
+                    _context.Explorations.Update(UserExploration);
                     _context.Planets.Remove(planet); // Remove the planet from the database
                 }
             }
-
+            _context.SaveChanges();
             var turnResult = await _turnService.TryUseTurnsAsync(user.Id, totalTurnsRequired); // Use your turn service to save
             TempData["PlunderMessage"] = "Credits For Plunder: " + totalCreditsForPlunder.ToString("C");
             TempData["TurnMessage"] = $"Successfully plundered {planets.Count} planet(s) for {totalTurnsRequired} turns.<hr> {turnResult.Message}";

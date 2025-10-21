@@ -394,10 +394,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
                 else
                 {
                     UserExploration.ExplorationCompleted = 0;
-                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
                     user.TotalPlanets += 1;
                     user.TotalColonies += 1;
                     user.ColoniesExplored += 1;
+                    UserExploration.ExplorationPointsNeeded = SetExplorationPointsNeeded(user);
                     _context.Planets.Add(NewPlanet);
                     ExploreMessage = turnResult.Message;
                     ExploreMessage = $"Congratulations! You have discovered a new planet. <br> {turnResult.Message}";
@@ -451,6 +451,10 @@ namespace AnotherSpaceGame.Areas.Game.Pages
             else
             {
                 exploration.TurnsRequired = 0;
+            }
+            if(exploration.TurnsRequired <= 0)
+            {
+                exploration.TurnsRequired = 1;
             }
         }
 
